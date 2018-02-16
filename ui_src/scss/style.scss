@@ -1,0 +1,230 @@
+/**
+ * Description: UIUS.
+ * Version: 1.0.0
+ * Author: Arpit Jacob <ajacob@zetalight.com>
+ * Supported By: Nishant Bajpai <nishant.bajpai@jktech.com> 
+ * Summary:
+ *
+ *  - Common
+ *  - Fonts
+ *  - Layout
+ *  - Buttons
+ */
+
+@import 'bootstrap-custom.scss';
+@import 'fa/font-awesome.scss';
+@import "bootstrap-switch";
+
+/*
+ * Base structure
+ */
+
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; padding-top: 50px; color: #1e3948; }
+/*
+ * Global add-ons
+ */
+.sub-header {padding-bottom: 10px; border-bottom: 1px solid #eee; } 
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+
+.navbar-fixed-top {box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.10); .navbar-btn {margin-right: 20px; } } 
+.navbar-fixed-bottom {border-top: 1px solid darken (#fff, 20%) }
+.col-centered{float: none; margin: 10 auto; } 
+/*
+ * Sidebar
+ */
+.wrap-center {text-align: center; margin-top: 15px; } 
+.books {text-align: left; margin: 0; padding: 0; column-count: 4; li {display: inline-block; width: 135px; } }
+.chapter-picker {margin: 0; padding: 0; li {display: block; float: left; text-align: center; padding: 10px 0; width: 5%; border-bottom: 1px solid #ddd; border-left: 1px solid #ddd; a {display: block; } } }
+.chapter-picker li:nth-child(-n+20) {border-top: 1px solid #ddd; }
+.chapter-picker li:nth-child(20n+0),
+.chapter-picker li:last-child {border-right: 1px solid #ddd; }
+/* Hide for mobile, show later */
+.sidebar {display: none; .btn-group {padding-bottom: 20px; } }
+@media (min-width: 768px) {.sidebar {position: fixed; z-index: 1000; top: 51px; bottom: 0; left: 0; display: block; overflow-x: hidden; overflow-y: auto; 
+	/* Scrollable contents if viewport is shorter than content. */ padding: 20px; border-right: 1px solid #eee; background-color: #f5f8fa; } }
+.col-md-offset-3 {padding: 30px 0 0; }
+/* Editor */
+.center-align {text-align: center; .btn-group {padding: 10px 0 0; } } 
+.col-fixed {min-height:93.7vh; padding: 0px 40px 60px; background: #f5f8fa; border-right: 1px solid darken(#f5f8fa, 10%); } 
+.col-editor {background: #FFF;}
+html, body {height: 100%; }
+.col-flex {height: 100vh; display: flex; flex: 1; }
+.col-ref { div {padding: 5px 0; span:first-child {padding:  0 10px 0 0;} } } 
+.navbar-fixed-bottom, .navbar-fixed-top {.navbar-nav {display: inline-block; float: none; vertical-align: top; } .navbar-collapse {text-align: center; } } .btn-save {margin-left: 20px; }
+/* Sidebar navigation */
+.nav-sidebar {margin-right: -21px; /* 20px padding + 1px border */ margin-bottom: 20px; margin-left: -20px; }
+.nav-sidebar > li > a {padding-right: 20px; padding-left: 20px; } 
+.nav-sidebar > .active > a, .nav-sidebar > .active > a:hover, .nav-sidebar > .active > a:focus {color: #fff; background-color: #428bca; }
+/*
+ * Main content
+ */
+.main {padding: 20px; }
+@media (min-width: 768px) {.main {padding-right: 40px; padding-left: 40px;}} 
+.main .page-header {margin-top: 0;}
+/*
+ * Placeholder dashboard ideas
+ */
+.placeholders {margin-bottom: 30px; text-align: center; }
+.placeholders h4 {margin-bottom: 0; }
+.placeholder {margin-bottom: 20px; }
+.placeholder img {display: inline-block; border-radius: 50%; }
+// .nav-tabs {padding-left: 80px; }
+.btn-primary {padding-top: 10px; }
+#saved-time {font-style: italic; font-family: Georgia,Serif; position: absolute; right: 125px; top: 28px; color: rgba(0, 0, 0, 0.5); }
+ul {list-style-type: none; } 
+#myModalLabel {font-weight: bold;}
+.modal-header {border-bottom: 0px; padding-bottom: inherit; }
+
+// Books tab css
+.books-li {width: 100%; column-count: 4; column-gap: 25%;}
+.books-li ul {padding-left: 50px;}
+.books-li ul li a{color: #0b63bf !important;}
+.books-li ul li a.link-active {font-weight: bold !important;background-color:#0b82ff; color: #ffffff !important;padding: 4px 4px 4px 4px;margin-left: -5px;}
+.chapter-no ul li a.link-active {font-weight: bold !important; background-color: rgba(11, 99, 191, 0.8) !important; color: white !important;}
+// chapter tab css
+.chapter-no{width: 100%; min-height: 485px; padding: 20px 0 0 10px;}
+.chapter-no ul {margin: 0; padding: 0; float: left; width: 100%;}
+.chapter-no ul li {margin: 5px 0; padding: 0; float: left; text-align: center; width: 8%;}
+.chapter-no ul li a:focus {background-color: #ccc !important;}
+.chapter-no ul li a:hover {text-decoration: none;}
+.chapter-no ul li a {color: #0b63bf !important;}
+.chapter-no li a {font-size: inherit; width: 42px; display: inline-block; background-color: #f5f5f5 !important;}
+
+// .mdl-tabs__tab-bar a {text-decoration: none;}
+#bookdata{padding-top: 20px;}
+.translation {text-decoration: underline; font-weight: bold;}
+// slider css
+.slider.slider-horizontal {width: 90px !important;height: 20px !important;}
+//font button css
+.font-button:focus {background-color: #f8f8f8;color: #0b82ff;}
+.font-button:active {background-color: #f8f8f8;}
+.font-button {background-color: #f8f8f8; border: none; font-weight: bold; color: #0b82ff; font-size: 15px; padding-bottom: 10px; }
+// language select dropdown
+.mdl-menu__item {height: 30px !important; line-height: 30px !important; } 
+.font-button:hover {background-color: #f8f8f8; color: #0b82ff; } 
+.plus {font-size: 20px;}
+#save-btn {padding: 8px 26px 8px 26px; color: #fff; font-weight: 600; background-color: #0b82ff; border-color: #0b82ff;}
+.btn-success {background-color: #0b82ff; }
+button li {list-style-type: none; color: #0b82ff; font-weight: bold; } 
+button .caret { padding-bottom: 3px;}
+#book-chapter-btn {border-bottom-right-radius: 0; border-top-right-radius: 0; color: #0b82ff; font-weight: bold; }
+#chapterBtn {color: #0b82ff; border-bottom-left-radius: 0px; border-top-left-radius: 0px ; font-weight: bold; margin-left: -2px; }
+.mdl-textfield__label:after {bottom: 13px !important;}
+.heading {font-size: 20px; font-weight: bold;}
+.form-group {margin-left: 10px;}
+.mdl-switch.is-upgraded {padding-left: 46px !important;}
+.mdl-switch__track {background:#03a9f4 !important;}
+.mdl-switch.is-checked .mdl-switch__thumb {background:#fafafa !important;}
+.mdl-switch__thumb {background: #03a9f4 !important;}
+.mdl-switch.is-checked .mdl-switch__track {background: #295482 !important;}
+.mdl-radio__label {font-weight: 100;}
+// settings tab css
+// div.tabs a:focus, .active {background-color: #fff !important; border-right: 1px solid #fff;} 
+*{box-sizing: border-box}
+body{font-family: "Lato", sans-serif;}
+/* Style the tab */
+// div.tabs {float: left; background-color: rgba(241, 241, 241, 0.52);; width: 30%; height: 345px; padding-top: 28px; margin-top: 21px;}
+// /* Style the links inside the tab */
+// div.tabs a {display: block; color: black; padding: 22px 16px; text-decoration: none; transition: 0.3s; font-size: 17px;}
+// /* Change background color of links on hover */
+// div.tabs a:hover {background-color: #ddd; color: rgba(11,130,255,1);}
+// /* Create an active/current tablink class */
+// div.tabs a:focus, .active {background-color: #ccc; color: rgba(11,130,255,1);}
+/* Style the tab content */
+.tabcontent {float: left; padding: 23px 0px 0px 10px; width: 70%; border-left: none; height: 380px;} 
+.ref-drop-down {background-color: rgb(11, 130, 255); color: #ffffff; font-weight: bold; width: 166px; border-radius: 6px; height: 34px; padding-left: 9px;}
+.lang-code {position:absolute; width:294px; height: 100px; display:none; margin-top:-20px; border:solid 1px #dedede; border-top:0px; overflow-x:auto; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; -moz-border-bottom-right-radius: 6px; -moz-border-bottom-left-radius: 6px; box-shadow: 0px 0px 5px #999; border-width: 3px 1px 1px; border-style: solid; background-color: rgb(222, 213, 213); color: rgb(11, 130, 255); z-index: 1;}
+#language-settings .lang-code {margin-top: 0px !important;}
+.col-ref{margin-top: 10px;}
+@media (max-width: 768px) {.layout {display: none; } #saved-time {display: none; }}
+@media (max-width: 1050px) { #saved-time {display: none; }}
+@media (max-width: 765px) {#bookBtn {margin-left: 0px !important;}}
+.import {color: transparent !important; text-shadow: 0 0 0 #808080 !important; /*&:focus {outline: none; }*/} 
+.img-circle {margin-top: 55px; margin-left:30px; border: 5px solid #0b82ff;}
+.col-xs-6 h3 {margin-top:79px; margin-bottom:0; font-size:30px}
+.col-xs-6 p {margin: 0;}
+// #input-verses span {font-size: 14px;font-family: "Helvetica","Arial",sans-serif; font-weight: 400;}
+.verse-num {font-size: 10px; font-weight: bold;} 
+// @media screen and (max-width: 2880px) {.col-fixed{min-height: 1690px;}}
+// @media screen and (max-width: 1280px) {.col-fixed{min-height: 765px;}}
+// // @media (min-width: 1440px) {.col-fixed{min-height: 985px;}}
+
+// #input-verse div span{direction: rtl;}
+@media screen and (max-width: 760px) {.rmvflex{display: block !important;}}
+//react-css
+#tab-settings .modal-content {width: 880px; height: 500px}
+// #tab-about .modal-body {height: 350px; overflow-y: scroll;}
+#tab-settings label {color: #03a9f4;}
+#tab-settings .modal-dialog {width: 800px}
+.nav-stacked li {background-color: #f8f8f8;}     
+.nav-tabs > li {float: none; margin-bottom: -1px; width: 100px; margin: 0 auto; display: inline-block;}
+.nav-stacked li a {height: 70px; font-size: 20px; text-align: center; padding-top: 22px;}
+.nav-stacked li.active a {background-color: #fff !important; color: #03a9f4 !important; border-left: 3px solid #0b82ff; }
+.nav-stacked li a:hover {background-color: #ddd !important; color: #0b82ff !important;}
+.nav-stacked li a {color: black;}
+.nav-tabs {font-size: 15px; text-align: center;}
+// .nav-tabs li.active a {color: white !important; font-weight: bold; background-color: #0b82ff !important;}
+.nav-tabs li.active a {color: #0b82ff !important; font-weight: bold; background-color: #fff !important; border-bottom: #0b82ff 3px solid !important; border-top: none; border: 0;}
+.nav-tabs > li > a {color: black; transition: all 0.5s ease 0s !important;}
+.nav-tabs {border-bottom: 1px solid #0b82ff;}
+.nav-tabs li a:hover {background-color: #f8f8f8; }
+.nav-tabs > li.active > a:focus {border: none;}
+#tab-books .modal-content {width: 725px !important;}
+#tab-search label {color: #03a9f4;}
+.parentdiv {width: 100%; float: left};
+.layoutx {width: 50%; float: left;}
+.layout2x {width: 33.33%; float: left;}
+.layout3x {width: 25%; float: left;}
+
+[data-tip] {
+  position:relative;
+
+}
+[data-tip]:before {
+  content:'';
+  /* hides the tooltip when not hovered */
+  display:none;
+  content:'';
+  border-left: 10px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 10px solid #1a1a1a;
+  position: absolute;
+  top: 30px;
+  left: 175px;
+  z-index:8;
+  font-size:0;
+  line-height:0;
+  width:0;
+  height:0;
+}
+[data-tip]:after {
+  display:none;
+    content: attr(data-tip);
+    position: absolute;
+    top: 0px;
+    left: 185px;
+    padding: 5px 8px;
+    background: #ffffff;
+    color: rgba(26, 26, 26, 0.65);
+    font-style: italic;
+    font-weight: 800;
+    z-index: 9;
+    font-size: 0.75em;
+    height: 65px;
+    line-height: 18px;
+    width: 180px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    word-wrap: normal;
+    border: #0b82ff solid 1px;
+}
+[data-tip]:hover:before,
+[data-tip]:hover:after {
+  display:block;
+}

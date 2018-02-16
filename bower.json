@@ -1,0 +1,21 @@
+{
+  "name": "bower_bconn",
+  "version": "1.0.0",
+  "authors": [
+    "Arpit Jacob <arpit.jacob@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "bootstrap-sass-official#^3.3.7"
+  },
+  "description": "",
+  "main": "",
+  "homepage": ""
+}
