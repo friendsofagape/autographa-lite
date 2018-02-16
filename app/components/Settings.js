@@ -89,7 +89,7 @@ class SettingsModal extends React.Component {
           Object.keys(response.rows).map((index, value) => {
             if (response.rows) {
               if (!filteredResults.hasOwnProperty(response.rows[index].doc['lang_code'])) {
-                filteredResults[response.rows[index].doc['lang_code']] = response.rows[index].doc['name']; // 0 duplicates
+                filteredResults[response.rows[index].doc['lang_code']] = response.rows[index].doc['name'];
               } else {
                 existingValue = filteredResults[response.rows[index].doc['lang_code']]
                 filteredResults[response.rows[index].doc['lang_code']] = (existingValue + " , " + response.rows[index].doc['name']);
@@ -131,14 +131,12 @@ class SettingsModal extends React.Component {
         this.setState({});
   }
 
-  // validation target settings
   target_setting = () => {
     const {langCodeValue, langVersion, folderPath} = this.state.settingData;
     var langCode = langCodeValue,
         version = langVersion,
         path = folderPath,
         isValid = true;
-    console.log(langCode);
     if (langCode === null || langCode === "") {
         this.setState({message: 'The Bible language code is required.', Details: 'failure' });
         setTimeout(() => {
@@ -146,7 +144,6 @@ class SettingsModal extends React.Component {
         }, 2000);
         isValid = false;
     }else if(langCode.match(/^\d/)) {
-        console.log(langCode.match(/^\d/));
         this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
         setTimeout(() => {
           this.setState({Details: 'hidemessage'})
@@ -226,7 +223,6 @@ class SettingsModal extends React.Component {
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.setState({folderPathImport: selectedDir});
-          // this.setState({});
         }
     });
   }
@@ -263,8 +259,6 @@ class SettingsModal extends React.Component {
     let inputPath = this.state.folderPathImport;
     var files = fs.readdirSync(inputPath[0]);
     Promise.map(files, function(file){
-      console.log('Hello');
-      debugger;
       var filePath = path.join(inputPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
@@ -306,7 +300,7 @@ class SettingsModal extends React.Component {
 
     }
     return isValid;
-  } //validation reference settings
+  }
 
   importReference = () => {
     if (this.reference_setting() == false)
