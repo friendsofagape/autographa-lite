@@ -142,23 +142,35 @@ class SettingsModal extends React.Component {
     if (langCode === null || langCode === "") {
         this.setState({message: 'The Bible language code is required.', Details: 'failure' });
         setTimeout(() => {
-          this.setState({Details: 'failure'})
+          this.setState({Details: 'hidemessage'})
         }, 2000);
         isValid = false;
     }else if(langCode.match(/^\d/)) {
         console.log(langCode.match(/^\d/));
         this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
+        setTimeout(() => {
+          this.setState({Details: 'hidemessage'})
+        }, 2000);        
         isValid = false;
     }
     else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
         this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
+        setTimeout(() => {
+          this.setState({Details: 'hidemessage'})
+        }, 2000);        
         isValid = false;
     }
     else if (version === null || version === "") {
         this.setState({ message:'The Bible version is required.', Details: 'failure' });
+        setTimeout(() => {
+          this.setState({Details: 'hidemessage'})
+        }, 2000);      
         isValid = false;
     } else if (path === null || path === "") {
-      this.setState({message: 'The Bible path is required.', Details: 'failure'});
+        this.setState({message: 'The Bible path is required.', Details: 'failure'});
+        setTimeout(() => {
+          this.setState({Details: 'hidemessage'})
+        }, 2000);
         isValid = false;
     } else {
         isValid = true;
@@ -535,10 +547,9 @@ class SettingsModal extends React.Component {
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
                           />
+                        <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label="Import" primary={true} onClick={this.importTranslation}/>
                         </div>
-                      <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label="Import" primary={true} onClick={this.importTranslation}/>
                       </Tab.Pane>
-
                       <Tab.Pane eventKey="third">
                           <div>
                             <label>Bible name</label>
@@ -593,9 +604,8 @@ class SettingsModal extends React.Component {
                               onClick={this.openFileDialogRefSetting}
                             />
                           </div>
-                       	<RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
+                       	  <RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
                       </Tab.Pane>
-
                       <Tab.Pane eventKey="fourth">
                         <div style={{overflowY: "scroll", maxHeight: "343px"}}>
                           <table className="table table-bordered table-hover table-striped">
