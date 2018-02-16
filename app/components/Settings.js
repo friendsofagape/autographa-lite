@@ -226,7 +226,7 @@ class SettingsModal extends React.Component {
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.setState({folderPathImport: selectedDir});
-          this.setState({});
+          // this.setState({});
         }
     });
   }
@@ -244,11 +244,28 @@ class SettingsModal extends React.Component {
     });
   }
 
-  importTranslation = (event) => {
-    const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
-    var files = fs.readdirSync(folderPath[0]);
+  import_sync_setting = () => {
+    let targetImportPath = this.state.folderPathImport;
+    let isValid = true;
+    if (targetImportPath === undefined ||targetImportPath === null || targetImportPath === "") {
+      this.setState({message: 'The Bible path is required.', Details: 'failure' });
+      setTimeout(() => {
+        this.setState({Details: 'hidemessage'})
+      }, 2000);
+      isValid = false;
+    }
+    return isValid;
+  }
+
+  importTranslation = () => {
+    if (this.import_sync_setting() == false) return;
+    const {langCode, langVersion} = this.state.settingData;
+    let inputPath = this.state.folderPathImport;
+    var files = fs.readdirSync(inputPath[0]);
     Promise.map(files, function(file){
-      var filePath = path.join(folderPath[0], file);
+      console.log('Hello');
+      debugger;
+      var filePath = path.join(inputPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
           lang: langCode.toLowerCase(),
@@ -550,6 +567,7 @@ class SettingsModal extends React.Component {
                         <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label="Import" primary={true} onClick={this.importTranslation}/>
                         </div>
                       </Tab.Pane>
+
                       <Tab.Pane eventKey="third">
                           <div>
                             <label>Bible name</label>
@@ -604,8 +622,9 @@ class SettingsModal extends React.Component {
                               onClick={this.openFileDialogRefSetting}
                             />
                           </div>
-                       	  <RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
+                       	<RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
                       </Tab.Pane>
+
                       <Tab.Pane eventKey="fourth">
                         <div style={{overflowY: "scroll", maxHeight: "343px"}}>
                           <table className="table table-bordered table-hover table-striped">
