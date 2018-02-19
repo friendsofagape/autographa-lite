@@ -73,6 +73,7 @@
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-0": "^6.16.0",
     "electron": "1.8.2",
+    "electron-react-devtools": "^0.5.3",
     "electron-rebuild": "^1.7.3",
     "electron-winstaller": "^2.5.1",
     "gulp": "^3.9.1",
