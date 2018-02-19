@@ -1,4 +1,3 @@
-const i18n = new(require('../../translations/i18n'));
 const path = require('path');
 import swal from 'sweetalert';
 var fs = require("fs");

@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
-import { observer } from "mobx-react"
-import TodoStore from "./TodoStore"
+import { observer } from "mobx-react";
+import TodoStore from "./TodoStore";
+import { FormattedMessage } from 'react-intl';
 const Constant = require("../util/constants");
 
 
@@ -91,8 +92,9 @@ class Footer extends React.Component {
                     </div>
                     <span id="saved-time"></span>
                         <ul style={{marginRight: "30px", float: "right"}} className="nav navbar-nav navbar-right">
-                            
-                          <li><a id="save-btn" data-toggle="tooltip" data-placement="top" title="Save changes" className="btn btn-success btn-save navbar-btn navbar-right" href="#" role="button" onClick={this.state.onSave}>Save</a></li>
+                            <li>
+                                <a id="save-btn" data-toggle="tooltip" data-placement="top" title="Save changes" className="btn btn-success btn-save navbar-btn navbar-right" href="#" role="button" onClick={this.state.onSave}><FormattedMessage id="btn-save" /></a>
+                            </li>
                         </ul>
                 </div>
             </div>

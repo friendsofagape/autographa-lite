@@ -37,6 +37,12 @@ i18n.prototype.isRtl = function(){
 	return this.getLocale().then((res) => rtlDetect.isRtlLang(res));
 }
 
+i18n.prototype.currentLocale = function() {
+	return loadedLanguage.then(function(res){
+		return res['0']
+	})
+}
+
 i18n.prototype.__ = function(phrase) {
 	return loadedLanguage.then(function(res){
 		let translation = res[phrase]

@@ -32,7 +32,8 @@ class SettingsModal extends React.Component {
       bibleReference: true,
       visibleList: true,
       myBible: '',
-      Details: ''
+      Details: '',
+      appLang: 'en'
     };
 
     this.loadSetting();
@@ -448,7 +449,37 @@ class SettingsModal extends React.Component {
    });
   }
 
+   changeLangauge = (event) => {
+    console.log(event.target.value);
+    this.setState({appLang: event.target.value});
+  }
 
+
+  saveAppLanguage = (e) => {
+    const _this = this;
+    refDb.get('app_locale').then(function(doc) {
+        // console.log(doc)
+        console.log(_this.state.appLang)
+            doc.appLang = _this.state.appLang;
+            console.log(doc)
+            refDb.put(doc);
+            // swal("dynamic-msg-save-language");
+        }).catch(function(err) {
+            if (err.message === 'missing') {
+                var locale = {
+                    _id: 'app_locale',
+                    appLang: $("#localeList").val()
+                };
+                refDb.put(locale).then(function(res) {
+                    swal("dynamic-msg-save-language"); 
+                }).catch(function(internalErr) {
+                    swal("dynamic-msg-went-wrong");
+                });
+            } 
+        });
+  }
+
+ 
   render(){
     var errorStyle = {
       margin: 'auto',
@@ -496,6 +527,9 @@ class SettingsModal extends React.Component {
                     </NavItem>
                     <NavItem eventKey="fourth">
                       Manage Reference Texts
+                    </NavItem>
+                    <NavItem eventKey="fifth">
+                      App Language
                     </NavItem>
                   </Nav>
                 </Col>
@@ -720,6 +754,23 @@ class SettingsModal extends React.Component {
                           </table>
                         </div>
                       </Tab.Pane>
+                      <Tab.Pane eventKey="fifth" >
+                        <div id="app-lang-setting" className="tabcontent">
+                            <div className="form-group">
+                                <div className="mdl-selectfield mdl-js-selectfield">
+                                    <label id="language-select" className="mdl-selectfield__label">Select the language to setup the application in:</label><br/>
+                                    <select className="mdl-selectfield__select" id="localeList" onChange = {this.changeLangauge}>
+                                        <option value="ar">Arabic</option>
+                                        <option value="en">English</option>
+                                        <option value="hi">Hindi</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="es">Spanish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}>Save</button>
+                        </div>
+                    </Tab.Pane>
                   </Tab.Content>
                 </Col>
               </Row>

@@ -1,4 +1,4 @@
-{
+[{
 	
 	"label-translation": "अनुवाद",	
 	"app-name-Autographa-Lite" : "औटोग्रफा लाईट",
@@ -167,4 +167,4 @@
 	"book-3-john" : "3 युहत्रा",
 	"book-jude" : "यहूदा",
 	"book-revelation" : "प्रकाशितवाक्य"
-}
+}]

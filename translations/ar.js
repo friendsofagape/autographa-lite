@@ -1,4 +1,4 @@
-{
+[{
 	
 	"label-translation": "ترجمة",	
 	"app-name-Autographa-Lite" : "أوتوغرافا ليت",
@@ -167,4 +167,4 @@
 	"book-3-john" : "3 يوحنا",
 	"book-jude" : "يهوذا",
 	"book-revelation" : "رؤيا"
-}
+}]
