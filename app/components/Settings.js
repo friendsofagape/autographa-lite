@@ -788,7 +788,7 @@ class SettingsModal extends React.Component {
                             <div className="form-group">
                                 <div className="mdl-selectfield mdl-js-selectfield">
                                     <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
-                                    <select className="mdl-selectfield__select" id="localeList" onChange = {this.changeLangauge}>
+                                    <select className="mdl-selectfield__select" id="localeList" value = {TodoStore.appLang} onChange = {this.changeLangauge}>
                                         <option value="ar">Arabic</option>
                                         <option value="en">English</option>
                                         <option value="hi">Hindi</option>
