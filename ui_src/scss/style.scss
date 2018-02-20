@@ -150,6 +150,8 @@ body{font-family: "Lato", sans-serif;}
 .col-xs-6 p {margin: 0;}
 // #input-verses span {font-size: 14px;font-family: "Helvetica","Arial",sans-serif; font-weight: 400;}
 .verse-num {font-size: 10px; font-weight: bold;} 
+.rtl div span {margin-left: 10px; padding-right: 0px !important;}
+.rtl .verse-num{font-size: 12px;}
 // @media screen and (max-width: 2880px) {.col-fixed{min-height: 1690px;}}
 // @media screen and (max-width: 1280px) {.col-fixed{min-height: 765px;}}
 // // @media (min-width: 1440px) {.col-fixed{min-height: 985px;}}

@@ -7,9 +7,20 @@ const { Modal, Button, Col, Tabs, Tab } = require('react-bootstrap/lib');
 const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const session = require('electron').remote.session;
+const i18n = new(require('../../translations/i18n'));
+
+
 
 @observer
 class ReferencePanel extends React.Component {
+
+    constructor(props){
+        super(props);
+        i18n.isRtl().then((res) => {
+            if(res)
+                TodoStore.scriptDirection = "rtl"
+        });
+    }
 
     highlightRef(obj) {
         var content = ReactDOM.findDOMNode(this);
@@ -50,7 +61,7 @@ class ReferencePanel extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div id="input-verses" className="col-12 col-ref verse-input">{verseGroup}</div>
+                    <div id="input-verses" className={`col-12 col-ref verse-input ${TodoStore.scriptDirection}`} dir={TodoStore.scriptDirection}>{verseGroup}</div>
                 </div>
             </div>
         ) 
