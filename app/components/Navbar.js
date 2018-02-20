@@ -15,7 +15,9 @@ const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const injectTapEventPlugin = require("react-tap-event-plugin");
 import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
-import Reference from "./Reference"
+import Reference from "./Reference";
+import { FormattedMessage } from 'react-intl';
+
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 
@@ -595,14 +597,14 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span>OFF</span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
                                 <label style={{marginTop:"17px"}} className="mdl-switch mdl-js-switch mdl-js-ripple-effect" htmlFor="switch-2" id="switchLable" data-toggle='tooltip' data-placement='bottom' title="Compare mode">
                                     <input type="checkbox" id="switch-2" className="mdl-switch__input check-diff"/>
                                     <span className="mdl-switch__label"></span>
                                 </label>                               
                             </li>
-                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span>ON</span></li>
+                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
                             <li>
                                 <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title="Find and replace" id="searchText"><i className="fa fa-search fa-2x"></i></a>
                             </li>

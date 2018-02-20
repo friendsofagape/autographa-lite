@@ -17,6 +17,8 @@ const session = require('electron').remote.session;
 const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
+import { FormattedMessage } from 'react-intl';
+
 
 @observer
 class SettingsModal extends React.Component {
@@ -517,19 +519,19 @@ class SettingsModal extends React.Component {
                 <Col sm={4}>
                   <Nav bsStyle="pills" stacked>
                     <NavItem eventKey="first">
-                      Translation Details
+                      <FormattedMessage id="label-translation-details" />
                     </NavItem>
                     <NavItem eventKey="second">
-                      Import Translation
+                      <FormattedMessage id="label-import-translation" />
                     </NavItem>
                     <NavItem eventKey="third">
-                      Import Reference Text
+                      <FormattedMessage id="label-import-ref-text" />
                     </NavItem>
                     <NavItem eventKey="fourth">
-                      Manage Reference Texts
+                      <FormattedMessage id="label-manage-ref-texts" />
                     </NavItem>
                     <NavItem eventKey="fifth">
-                      App Language
+                    <FormattedMessage id="label-language" />
                     </NavItem>
                   </Nav>
                 </Col>
@@ -537,7 +539,7 @@ class SettingsModal extends React.Component {
                   <Tab.Content animation>
                       <Tab.Pane eventKey="first" >
                         <div className="form-group" data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
-                          <label>Language Code</label>
+                          <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField 
                             hintText="eng"
@@ -559,7 +561,7 @@ class SettingsModal extends React.Component {
                           </ul>
                         </div>
                         <div className="form-group">
-                          <label>Version</label>
+                          <label><FormattedMessage id="label-version" /></label>
                           <br />
                           <TextField
                             hintText="NET-S3"
@@ -569,46 +571,63 @@ class SettingsModal extends React.Component {
                           />
                         </div>
                         <div className="form-group">
-                          <label>Path to Folder Location</label>
+                          <label><FormattedMessage id="label-export-folder-location" /></label>
                           <br />
-                          <TextField
-                            hintText="Path of folder containing USFM files"
-                            onChange={this.onChange.bind(this)}
-                            value={folderPath || ""}
-                            name="folderPath"
-                            onClick={this.openFileDialogSettingData}
-                          />
+                          <FormattedMessage id="placeholder-path-of-usfm-files">
+                            {(message) => <TextField
+                                hintText={message}
+                                onChange={this.onChange.bind(this)}
+                                value={folderPath || ""}
+                                name="folderPath"
+                                onClick={this.openFileDialogSettingData}
+                            />}
+                          </FormattedMessage>
                         </div>
-                        <RaisedButton label="Save" primary={true} onClick={this.saveSetting}/>  
+                        <FormattedMessage id="btn-save" >
+                          { (message)=>
+                            <RaisedButton label={message} primary={true} onClick={this.saveSetting}/>  
+                          }
+                        </FormattedMessage>
                       </Tab.Pane>
                       <Tab.Pane eventKey="second">
                         <div className="form-group">
-                          <label>Folder Location</label>
+                          <label><FormattedMessage id="label-folder-location" /></label>
                           <br />
-                          <TextField
-                            hintText="Path of folder containing USFM files" 
+                          <FormattedMessage
+                          id="placeholder-path-of-usfm-files"
+                          >
+                            {(message) => <TextField
+                            hintText={message}
                             onChange={this.onChange.bind(this)}
                             value={this.state.folderPathImport}
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
-                          />
-                        <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label="Import" primary={true} onClick={this.importTranslation}/>
+                          />}
+                        </FormattedMessage>
+                        <FormattedMessage id="btn-import" >
+                          {(message)=>
+                            <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label={message} primary={true} onClick={this.importTranslation}/>
+                          }
+                        </FormattedMessage>
                         </div>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="third">
                           <div>
-                            <label>Bible name</label>
+                            <label><FormattedMessage id="label-bible-name" /></label>
                             <br />
-                            <TextField 
-                              hintText="New English Translation"
-                              onChange={this.onReferenceChange.bind(this)}
-                              value={bibleName || ""}
-                              name="bibleName"
-                            />
+                            <FormattedMessage id="placeholder-eng-translation">
+                              {(message) => <TextField
+                                  hintText={message}
+                                  onChange={this.onReferenceChange.bind(this)}
+                                  value={bibleName || ""}
+                                  name="bibleName"
+                                  
+                              />}
+                            </FormattedMessage>
                           </div>
                           <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
-                            <label>Language Code</label>
+                            <label><FormattedMessage id="label-language-code" /></label>
                             <br />
                             <TextField
                               hintText="eng"
@@ -630,7 +649,7 @@ class SettingsModal extends React.Component {
                           </ul>
                           </div>
                           <div>
-                            <label>Version</label>
+                            <label><FormattedMessage id="label-version" /></label>
                             <br />
                             <TextField
                               hintText="NET-S3"
@@ -642,15 +661,23 @@ class SettingsModal extends React.Component {
                           <div>
                             <label>Folder Location</label>
                             <br />
-                            <TextField
-                              hintText="Path of folder containing USFM files"
-                              onChange={this.onReferenceChange.bind(this)}
-                              value={refFolderPath || ""}
-                              ref="refFolderPath"
-                              onClick={this.openFileDialogRefSetting}
-                            />
+                            <FormattedMessage
+                              id="placeholder-path-of-usfm-files"
+                              >
+                                {(message) => <TextField
+                                hintText={message}
+                                onChange={this.onReferenceChange.bind(this)}
+                                value={refFolderPath || ""}
+                                ref="refFolderPath"
+                                onClick={this.openFileDialogRefSetting}
+                              />}
+                            </FormattedMessage>
                           </div>
-                       	<RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
+                           <FormattedMessage id="btn-import">
+                              {(message) => 
+                                <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.importReference}/>
+                              }
+                            </FormattedMessage>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="fourth">
@@ -659,9 +686,9 @@ class SettingsModal extends React.Component {
                             <thead>
                               <tr>
                                 <th>Name</th>
-                                <th>Language Code</th>
-                                <th>Version</th>
-                                <th>Action</th>
+                                <th><FormattedMessage id="label-language-code" /></th>
+                                <th><FormattedMessage id="label-version" /></th>
+                                <th><FormattedMessage id="label-action" /></th>
                               </tr>
                             </thead>
                             <tbody id="reference-list">
@@ -692,7 +719,7 @@ class SettingsModal extends React.Component {
                                                       className="edit-ref"
                                                       data-rename={ref.ref_name}
                                                       value={this.state.myBible}
-                                                      onClick={this.onReferenceSave.bind(this)}>Save
+                                                      onClick={this.onReferenceSave.bind(this)}><FormattedMessage id="btn-save" />
                                                     </a>
                                                     <span>|</span>
                                                     <a
@@ -758,7 +785,7 @@ class SettingsModal extends React.Component {
                         <div id="app-lang-setting" className="tabcontent">
                             <div className="form-group">
                                 <div className="mdl-selectfield mdl-js-selectfield">
-                                    <label id="language-select" className="mdl-selectfield__label">Select the language to setup the application in:</label><br/>
+                                    <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
                                     <select className="mdl-selectfield__select" id="localeList" onChange = {this.changeLangauge}>
                                         <option value="ar">Arabic</option>
                                         <option value="en">English</option>
@@ -768,7 +795,7 @@ class SettingsModal extends React.Component {
                                     </select>
                                 </div>
                             </div>
-                            <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}>Save</button>
+                            <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                         </div>
                     </Tab.Pane>
                   </Tab.Content>
