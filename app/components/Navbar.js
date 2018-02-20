@@ -599,14 +599,23 @@ class Navbar extends React.Component {
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
                             <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
-                                <label style={{marginTop:"17px"}} className="mdl-switch mdl-js-switch mdl-js-ripple-effect" htmlFor="switch-2" id="switchLable" data-toggle='tooltip' data-placement='bottom' title="Compare mode">
-                                    <input type="checkbox" id="switch-2" className="mdl-switch__input check-diff"/>
-                                    <span className="mdl-switch__label"></span>
-                                </label>                               
+
+                                <FormattedMessage id="tooltip-compare-mode">
+                                    {(message) =>
+                                    <label style={{marginTop:"17px"}} className="mdl-switch mdl-js-switch mdl-js-ripple-effect" htmlFor="switch-2" id="switchLable" data-toggle='tooltip' data-placement='bottom' title={message}>
+                                        <input type="checkbox" id="switch-2" className="mdl-switch__input check-diff"/>
+                                        <span className="mdl-switch__label"></span>
+                                    </label>}
+                                </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
                             <li>
-                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title="Find and replace" id="searchText"><i className="fa fa-search fa-2x"></i></a>
+                                <FormattedMessage id="tooltip-find-and-replace">
+                                {(message) =>
+                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText">
+                                <i className="fa fa-search fa-2x"></i>
+                                </a>}
+                                </FormattedMessage>
                             </li>
                             <li>
                                 <a href="#" className="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="fa fa-cloud-download fa-2x"></i>
@@ -621,11 +630,17 @@ class Navbar extends React.Component {
                                 </ul>
                             </li>
                             <li>
-                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title="About" id="btnAbout"><i className="fa fa-info fa-2x"></i></a>
+                                <FormattedMessage id="tooltip-about" >
+                                {(message) =>
+                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title={message} id="btnAbout"><i className="fa fa-info fa-2x"></i></a>}
+                                </FormattedMessage>
                             </li>
                             <li>
-                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title="Settings"><i className="fa fa-cog fa-2x"></i>
-                                </a>
+                                <FormattedMessage id="tooltip-settings" >
+                                {(message) =>
+                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message}><i className="fa fa-cog fa-2x"></i>
+                                </a>}
+                                </FormattedMessage>
                             </li>
                         </ul>
                     </div>
