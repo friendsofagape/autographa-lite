@@ -451,8 +451,7 @@ class SettingsModal extends React.Component {
    });
   }
 
-   changeLangauge = (event) => {
-    console.log(event.target.value);
+  changeLangauge = (event) => {
     this.setState({appLang: event.target.value});
   }
 
@@ -460,20 +459,21 @@ class SettingsModal extends React.Component {
   saveAppLanguage = (e) => {
     const _this = this;
     refDb.get('app_locale').then(function(doc) {
-        // console.log(doc)
-        console.log(_this.state.appLang)
             doc.appLang = _this.state.appLang;
-            console.log(doc)
             refDb.put(doc);
-            // swal("dynamic-msg-save-language");
+            _this.setState({message: 'Successfully saved changes. Restart the application for the changes to take effect.', Details: 'success' });
+            setTimeout(() => {
+              _this.setState({Details: 'hidemessage'})
+            }, 2000);
         }).catch(function(err) {
             if (err.message === 'missing') {
                 var locale = {
                     _id: 'app_locale',
                     appLang: $("#localeList").val()
                 };
+                console.log("Save")
                 refDb.put(locale).then(function(res) {
-                    swal("dynamic-msg-save-language"); 
+                  swal("Title", "dynamic-msg-save-language", "success"); 
                 }).catch(function(internalErr) {
                     swal("dynamic-msg-went-wrong");
                 });
@@ -505,7 +505,7 @@ class SettingsModal extends React.Component {
     return (  
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
+          <Modal.Title><FormattedMessage id="modal-title-setting" /></Modal.Title>
           <div className={"alert " + (this.state.Details === 'success' ? 'alert-success msg' : 'invisible')}>
             <span>{this.state.message}</span>
           </div>
@@ -574,13 +574,15 @@ class SettingsModal extends React.Component {
                           <label><FormattedMessage id="label-export-folder-location" /></label>
                           <br />
                           <FormattedMessage id="placeholder-path-of-usfm-files">
-                            {(message) => <TextField
+                            {(message) => 
+                              <TextField
                                 hintText={message}
                                 onChange={this.onChange.bind(this)}
                                 value={folderPath || ""}
                                 name="folderPath"
                                 onClick={this.openFileDialogSettingData}
-                            />}
+                              />
+                            }
                           </FormattedMessage>
                         </div>
                         <FormattedMessage id="btn-save" >
@@ -685,10 +687,10 @@ class SettingsModal extends React.Component {
                           <table className="table table-bordered table-hover table-striped">
                             <thead>
                               <tr>
-                                <th>Name</th>
+                                <th><FormattedMessage id="tbl-header-name" /></th>
                                 <th><FormattedMessage id="label-language-code" /></th>
                                 <th><FormattedMessage id="label-version" /></th>
-                                <th><FormattedMessage id="label-action" /></th>
+                                <th><FormattedMessage id="tbl-header-action" /></th>
                               </tr>
                             </thead>
                             <tbody id="reference-list">
