@@ -33,9 +33,10 @@ class SettingsModal extends React.Component {
       refListEdit: [],
       bibleReference: true,
       visibleList: true,
-      myBible: '',
-      Details: '',
-      appLang: 'en'
+      myBible: "",
+      appLang: "en",
+      message: "",
+      hideAlert: "hidemessage"
     };
 
     this.loadSetting();
@@ -134,6 +135,14 @@ class SettingsModal extends React.Component {
         this.setState({});
   }
 
+  setMessage = (msgid, isValid) => {
+     this.setState({message: msgid, hideAlert: 'failure' });
+        setTimeout(() => {
+          this.setState({hideAlert: 'hidemessage'})
+        }, 2000);
+        return isValid;
+  }
+
   target_setting = () => {
     const {langCodeValue, langVersion, folderPath} = this.state.settingData;
     var langCode = langCodeValue,
@@ -141,35 +150,31 @@ class SettingsModal extends React.Component {
         path = folderPath,
         isValid = true;
     if (langCode === null || langCode === "") {
-        this.setState({message: 'The Bible language code is required.', Details: 'failure' });
-        setTimeout(() => {
-          this.setState({Details: 'hidemessage'})
-        }, 2000);
-        isValid = false;
+       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     }else if(langCode.match(/^\d/)) {
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
+        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', hideAlert: 'failure'});
         setTimeout(() => {
-          this.setState({Details: 'hidemessage'})
+          this.setState({hideAlert: 'hidemessage'})
         }, 2000);        
         isValid = false;
     }
     else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
+        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', hideAlert: 'failure'});
         setTimeout(() => {
-          this.setState({Details: 'hidemessage'})
+          this.setState({hideAlert: 'hidemessage'})
         }, 2000);        
         isValid = false;
     }
     else if (version === null || version === "") {
-        this.setState({ message:'The Bible version is required.', Details: 'failure' });
+        this.setState({ message:'The Bible version is required.', hideAlert: 'failure' });
         setTimeout(() => {
-          this.setState({Details: 'hidemessage'})
+          this.setState({hideAlert: 'hidemessage'})
         }, 2000);      
         isValid = false;
     } else if (path === null || path === "") {
-        this.setState({message: 'The Bible path is required.', Details: 'failure'});
+        this.setState({message: 'The Bible path is required.', hideAlert: 'failure'});
         setTimeout(() => {
-          this.setState({Details: 'hidemessage'})
+          this.setState({hideAlert: 'hidemessage'})
         }, 2000);
         isValid = false;
     } else {
@@ -247,9 +252,9 @@ class SettingsModal extends React.Component {
     let targetImportPath = this.state.folderPathImport;
     let isValid = true;
     if (targetImportPath === undefined ||targetImportPath === null || targetImportPath === "") {
-      this.setState({message: 'The Bible path is required.', Details: 'failure' });
+      this.setState({message: 'The Bible path is required.', hideAlert: 'failure' });
       setTimeout(() => {
-        this.setState({Details: 'hidemessage'})
+        this.setState({hideAlert: 'hidemessage'})
       }, 2000);
       isValid = false;
     }
@@ -452,26 +457,24 @@ class SettingsModal extends React.Component {
   }
 
   changeLangauge = (event) => {
-    this.setState({appLang: event.target.value});
+    TodoStore.appLang = event.target.value;
   }
 
 
   saveAppLanguage = (e) => {
-    const _this = this;
-    refDb.get('app_locale').then(function(doc) {
-            doc.appLang = _this.state.appLang;
+    refDb.get('app_locale').then((doc) => {
+            doc.appLang = TodoStore.appLang;
             refDb.put(doc);
-            _this.setState({message: 'Successfully saved changes. Restart the application for the changes to take effect.', Details: 'success' });
+            this.setState({message: 'dynamic-msg-save-language', hideAlert: 'success' });
             setTimeout(() => {
-              _this.setState({Details: 'hidemessage'})
+              this.setState({hideAlert: 'hidemessage'})
             }, 2000);
-        }).catch(function(err) {
+        }).catch((err) => {
             if (err.message === 'missing') {
                 var locale = {
                     _id: 'app_locale',
-                    appLang: $("#localeList").val()
+                    appLang: TodoStore.appLang
                 };
-                console.log("Save")
                 refDb.put(locale).then(function(res) {
                   swal("Title", "dynamic-msg-save-language", "success"); 
                 }).catch(function(internalErr) {
@@ -506,11 +509,8 @@ class SettingsModal extends React.Component {
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
           <Modal.Title><FormattedMessage id="modal-title-setting" /></Modal.Title>
-          <div className={"alert " + (this.state.Details === 'success' ? 'alert-success msg' : 'invisible')}>
-            <span>{this.state.message}</span>
-          </div>
-          <div className={"alert " + (this.state.Details === 'failure' ? 'alert-danger msg': 'invisible')}>
-            <span>{this.state.message}</span>
+          <div className={"alert " + (this.state.hideAlert != 'hidemessage' ? (this.state.hideAlert === 'success' ? 'alert-success msg' : 'alert-danger msg') : 'invisible')}>
+            <span>{this.state.message ? <FormattedMessage id={this.state.message}/ > : ""}</span>
           </div>
         </Modal.Header>
           <Modal.Body>
@@ -519,7 +519,7 @@ class SettingsModal extends React.Component {
                 <Col sm={4}>
                   <Nav bsStyle="pills" stacked>
                     <NavItem eventKey="first">
-                      <FormattedMessage id="label-translation-details" />
+                      <FormattedMessage id="label-translation-hideAlert" />
                     </NavItem>
                     <NavItem eventKey="second">
                       <FormattedMessage id="label-import-translation" />
