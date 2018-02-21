@@ -136,11 +136,11 @@ class SettingsModal extends React.Component {
   }
 
   setMessage = (msgid, isValid) => {
-     this.setState({message: msgid, hideAlert: 'failure' });
-        setTimeout(() => {
-          this.setState({hideAlert: 'hidemessage'})
-        }, 2000);
-        return isValid;
+    this.setState({ message: msgid, hideAlert: 'failure' });
+    setTimeout(() => {
+      this.setState({hideAlert: 'hidemessage'})
+    }, 2000);
+    return isValid;
   }
 
   target_setting = () => {
@@ -150,33 +150,17 @@ class SettingsModal extends React.Component {
         path = folderPath,
         isValid = true;
     if (langCode === null || langCode === "") {
-       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
-    }else if(langCode.match(/^\d/)) {
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', hideAlert: 'failure'});
-        setTimeout(() => {
-          this.setState({hideAlert: 'hidemessage'})
-        }, 2000);        
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
+    }else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
     }
     else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', hideAlert: 'failure'});
-        setTimeout(() => {
-          this.setState({hideAlert: 'hidemessage'})
-        }, 2000);        
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
     }
     else if (version === null || version === "") {
-        this.setState({ message:'The Bible version is required.', hideAlert: 'failure' });
-        setTimeout(() => {
-          this.setState({hideAlert: 'hidemessage'})
-        }, 2000);      
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
-        this.setState({message: 'The Bible path is required.', hideAlert: 'failure'});
-        setTimeout(() => {
-          this.setState({hideAlert: 'hidemessage'})
-        }, 2000);
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
         isValid = true;
     }
@@ -252,11 +236,7 @@ class SettingsModal extends React.Component {
     let targetImportPath = this.state.folderPathImport;
     let isValid = true;
     if (targetImportPath === undefined ||targetImportPath === null || targetImportPath === "") {
-      this.setState({message: 'The Bible path is required.', hideAlert: 'failure' });
-      setTimeout(() => {
-        this.setState({hideAlert: 'hidemessage'})
-      }, 2000);
-      isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     }
     return isValid;
   }
@@ -292,17 +272,13 @@ class SettingsModal extends React.Component {
         path = refFolderPath,
         isValid = true;
     if (name == "") {
-        swal("Error", "The Bible name is required.", "error");
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-name-validation', false);
     } else if (langCode === null || langCode === "") {
-        swal("Error", "The Bible language code is required.", "error");
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     }else if (version === null || version === "") {
-      swal("Error", "The Bible version is required.", "error")
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
-        swal("Error", "The Bible path is required.", "error")
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
         isValid = true;
 
@@ -519,7 +495,7 @@ class SettingsModal extends React.Component {
                 <Col sm={4}>
                   <Nav bsStyle="pills" stacked>
                     <NavItem eventKey="first">
-                      <FormattedMessage id="label-translation-hideAlert" />
+                      <FormattedMessage id="label-translation-details" />
                     </NavItem>
                     <NavItem eventKey="second">
                       <FormattedMessage id="label-import-translation" />
