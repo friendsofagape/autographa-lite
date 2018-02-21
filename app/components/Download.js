@@ -11,6 +11,7 @@ const { Tabs, Tab, Modal, Button, Col, Row, ControlLabel,Grid, Radio, FormGroup 
 const session = require('electron').remote.session;
 const constants = require("../util/constants");
 let bibUtil = require("../util/json_to_usfm.js");
+import { FormattedMessage } from 'react-intl';
 
 @observer
 class DownloadModal extends React.Component {
@@ -23,7 +24,7 @@ class DownloadModal extends React.Component {
         };
     }
 
-    onChange = (e) => {
+    onChange = (e) => { 
         this.setState({[e.target.name]: e.target.value})
     }
   
@@ -59,7 +60,7 @@ class DownloadModal extends React.Component {
         return ( 
             <Modal show={TodoStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
                 <Modal.Header closeButton>
-                    <Modal.Title id="export-heading">Export as USFM</Modal.Title>
+                    <Modal.Title id="export-heading"><FormattedMessage id="tooltip-export-usfm" /></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                 <div className="row">
@@ -117,7 +118,11 @@ class DownloadModal extends React.Component {
                 </div>
                 </Modal.Body>
                 <Modal.Footer>
-                <RaisedButton style={{float: "right"}} label="Export" primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                <FormattedMessage id="btn-export">
+                {(message) =>
+                  <RaisedButton style={{float: "right"}} label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                }
+                </FormattedMessage>
                 </Modal.Footer>
             </Modal>
         )
