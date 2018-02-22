@@ -16,30 +16,31 @@ const Nav = require('react-bootstrap/lib/Nav');
 const NavItem = require('react-bootstrap/lib/NavItem');
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import TodoStore from "./TodoStore"
-
+import TodoStore from "./TodoStore" 
+import { FormattedMessage } from 'react-intl';
 
 var AboutUsModel = function(props) {
     let closeAboutUs = () => TodoStore.showModalAboutUs = false
     return (  
     <Modal show={props.show} onHide={closeAboutUs} id="tab-about">
         <Modal.Header closeButton>
-            <Modal.Title>About</Modal.Title>
+            <Modal.Title><FormattedMessage id="tooltip-about" /></Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                <Tab eventKey={1} title="Overview"><div className="row">
-                    <div className="col-xs-6">
+                <Tab eventKey={1} title={<FormattedMessage id="label-overview-tab"/>}>
+                    <div className="row">
+                        <div className="col-xs-6">
                             <img src="../assets/images/autographa_lite_large.png" className="img-circle" alt="Cinque Terre" width="215" height="200" />
                         </div>
                         <div className="col-xs-6">
-                            <h3>Autographa Lite</h3>
-                            <p>Version 0.1</p>
-                            <p>Source code hosted at: https://github.com/Bridgeconn/autographa-lite</p>
+                            <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>
+                            <p><FormattedMessage id="label-version" /> <span>0.1</span></p>
+                            <p><FormattedMessage id="label-hosted-url" />: https://github.com/Bridgeconn/autographa-lite</p>
                         </div>
                     </div>
                 </Tab>
-                <Tab eventKey={2} title="License">
+                <Tab eventKey={2} title={<FormattedMessage id="label-license-tab"/>}>
                     <div style={{overflowY: "scroll", height: "255px"}}>
                         <h4> The MIT License (MIT)</h4>
                         <p>Released in 2017 by Friends of Agape (www.friendsofagape.org) in partnership with RUN Ministries (www.runministries.org). </p>
@@ -54,7 +55,5 @@ var AboutUsModel = function(props) {
     </Modal>
     )
 }
-
-
 
 module.exports = AboutUsModel
