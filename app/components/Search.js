@@ -23,7 +23,7 @@ import Checkbox from 'material-ui/Checkbox';
 import { observer } from "mobx-react"
 import TodoStore from "./TodoStore";
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
-
+import { FormattedMessage } from 'react-intl';
 
 @observer
 class SearchModal extends React.Component {
@@ -48,6 +48,7 @@ constructor(props) {
     handleReplaceChange(event) {
       TodoStore.replaceValue = event.target.value
     }
+    
     replaceContentAndSave(){
       var newContent;
       const searchValue = TodoStore.searchValue;
@@ -81,39 +82,48 @@ constructor(props) {
   return (  
     <Modal show={TodoStore.showModalSearch} onHide={closeSearch} id="tab-search">
         <Modal.Header closeButton>
-            <Modal.Title>Search and Replace</Modal.Title>
+            <Modal.Title><FormattedMessage id="label-find-replace" /></Modal.Title>
           </Modal.Header>
           <Modal.Body>
                     <FormGroup >
                       <RadioButtonGroup name="SearchAndReplace" style={{display: "flex", marginBottom:"2%"}}>
                         <RadioButton
                         value="chapter"
-                        label="Current Chapter"
+                        label={<FormattedMessage id="label-current-chapter" />}
                         style={{width: "40%"}}
                         />
+
                         <RadioButton
                         value="book"
-                        label="Whole Book"
+                        label={<FormattedMessage id="label-current-book" />}
                         style={{width: "40%"}}
                         />
                       </RadioButtonGroup>
                     </FormGroup>
                     <div>
-                        <label>Find</label><br />
-                        <TextField
-                          style={{marginTop: "-12px"}}
-                          hintText="Find"
-                          value={TodoStore.searchValue}
-                          onChange={this.handleFindChange.bind(this)}
-                        />
+                        <label><FormattedMessage id="label-find" /></label><br />
+                        <FormattedMessage id="placeholder-search-text">
+                        {(message) =>
+                          <TextField
+                            style={{marginTop: "-12px"}}
+                            hintText={message}
+                            value={TodoStore.searchValue}
+                            onChange={this.handleFindChange.bind(this)}
+                          />
+                        }
+                        </FormattedMessage>
                         <br />
-                        <label>Replace With</label><br />
-                        <TextField
-                          style={{marginTop: "-12px"}}
-                          hintText="Replacement"
-                          value={TodoStore.replaceValue}
-                          onChange={this.handleReplaceChange.bind(this)}
-                        />
+                        <label><FormattedMessage id="label-replace-with" /></label><br />
+                        <FormattedMessage id="placeholder-replace-text">
+                        {(message) =>
+                          <TextField
+                            style={{marginTop: "-12px"}}
+                            hintText={message}
+                            value={TodoStore.replaceValue}
+                            onChange={this.handleReplaceChange.bind(this)}
+                          />
+                        }
+                        </FormattedMessage>
                         <br />
                     </div>
             {/*<div>
@@ -124,7 +134,11 @@ constructor(props) {
             </div>*/}
           </Modal.Body>
           <Modal.Footer>
-            <RaisedButton style={{float: "right"}} label="Make Changes" primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
+          <FormattedMessage id="btn-replace" >
+          {(message) =>
+            <RaisedButton style={{float: "right"}} label={message} primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
+          }
+          </FormattedMessage>
           </Modal.Footer>
     </Modal>
   )
