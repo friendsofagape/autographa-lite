@@ -48,7 +48,6 @@ constructor(props) {
     handleReplaceChange(event) {
       TodoStore.replaceValue = event.target.value
     }
-    
     replaceContentAndSave(){
       var newContent;
       const searchValue = TodoStore.searchValue;
@@ -92,7 +91,6 @@ constructor(props) {
                         label={<FormattedMessage id="label-current-chapter" />}
                         style={{width: "40%"}}
                         />
-
                         <RadioButton
                         value="book"
                         label={<FormattedMessage id="label-current-book" />}
@@ -102,28 +100,20 @@ constructor(props) {
                     </FormGroup>
                     <div>
                         <label><FormattedMessage id="label-find" /></label><br />
-                        <FormattedMessage id="placeholder-search-text">
-                        {(message) =>
-                          <TextField
-                            style={{marginTop: "-12px"}}
-                            hintText={message}
-                            value={TodoStore.searchValue}
-                            onChange={this.handleFindChange.bind(this)}
-                          />
-                        }
-                        </FormattedMessage>
+                        <TextField
+                          style={{marginTop: "-12px"}}
+                          hintText={<FormattedMessage id="placeholder-search-text" />}
+                          value={TodoStore.searchValue}
+                          onChange={this.handleFindChange.bind(this)}
+                        />
                         <br />
                         <label><FormattedMessage id="label-replace-with" /></label><br />
-                        <FormattedMessage id="placeholder-replace-text">
-                        {(message) =>
-                          <TextField
-                            style={{marginTop: "-12px"}}
-                            hintText={message}
-                            value={TodoStore.replaceValue}
-                            onChange={this.handleReplaceChange.bind(this)}
-                          />
-                        }
-                        </FormattedMessage>
+                        <TextField
+                          style={{marginTop: "-12px"}}
+                          hintText={<FormattedMessage id="placeholder-replace-text" />}
+                          value={TodoStore.replaceValue}
+                          onChange={this.handleReplaceChange.bind(this)}
+                        />
                         <br />
                     </div>
             {/*<div>
@@ -134,11 +124,7 @@ constructor(props) {
             </div>*/}
           </Modal.Body>
           <Modal.Footer>
-          <FormattedMessage id="btn-replace" >
-          {(message) =>
-            <RaisedButton style={{float: "right"}} label={message} primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
-          }
-          </FormattedMessage>
+            <RaisedButton style={{float: "right"}} label={<FormattedMessage id="btn-save-changes" />} primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
           </Modal.Footer>
     </Modal>
   )
