@@ -10,10 +10,6 @@ import React from 'react';
 import  NavBar  from '../components/Navbar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { IntlProvider, addLocaleData } from 'react-intl';
-import en from 'react-intl/locale-data/en';
-import es from 'react-intl/locale-data/es';
-import fr from 'react-intl/locale-data/fr';
-import it from 'react-intl/locale-data/it';
 import { observer } from "mobx-react";
 import TodoStore from "../components/TodoStore";
 const i18n = new(require('../../translations/i18n'));
@@ -39,9 +35,7 @@ class Page extends React.Component {
 	constructor(){
 		super()
 	    this.state = {appLang: ''}
-	}
-	componentWillMount(){
-		i18n.getLocale().then((lang) => {
+	    i18n.getLocale().then((lang) => {
 			TodoStore.appLang = lang;
 	    });
 	    i18n.currentLocale().then((res) =>{
@@ -50,7 +44,7 @@ class Page extends React.Component {
 	}
 
 	render(){
-		if (!TodoStore.appLang && !TodoStore.currrentTrans) {
+		if (!TodoStore.appLang && TodoStore.currentTrans && Object.keys(TodoStore.currrentTrans).length === 0) {
 			return null;
 		}
 	    return (
