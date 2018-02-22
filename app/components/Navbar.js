@@ -622,10 +622,10 @@ class Navbar extends React.Component {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;" id="export-usfm">USFM</a>
+                                        <a onClick={() => this.openpopupDownload()} href="javascript:;">USFM</a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;" id="print-pdf">HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;">HTML</a>
                                     </li>
                                 </ul>
                             </li>
