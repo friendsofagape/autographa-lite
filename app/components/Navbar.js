@@ -475,7 +475,7 @@ class Navbar extends React.Component {
         const test = (TodoStore.activeTab == 1);
         var chapterList = [];
         for(var i=0; i<TodoStore.bookChapter["chapterLength"]; i++){
-        chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == TodoStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, TodoStore.bookChapter["bookId"]) } >{i+1}</a></li> );
+            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == TodoStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, TodoStore.bookChapter["bookId"]) } >{(i+1).toLocaleString(TodoStore.appLang)}</a></li> );
         }
         return (
             <div>
@@ -590,7 +590,7 @@ class Navbar extends React.Component {
                                     <a onClick={() => this.openpopupBooks(1)} href="#" className="btn btn-default" data-toggle="tooltip"data-placement="bottom" title="Select Book"  id="book-chapter-btn">{bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
-                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{TodoStore.chapterId}
+                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(TodoStore.chapterId).toLocaleString(TodoStore.appLang)}
                                         </a>
                                     </span>
                                 </div>                               
