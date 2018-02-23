@@ -600,7 +600,7 @@ class Navbar extends React.Component {
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
                             <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
-                            <li tyle={{padding: "17px 5px 0 0"}}>
+                            <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
                                     {(message) =>
