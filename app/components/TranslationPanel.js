@@ -10,8 +10,7 @@ const Tab = require('react-bootstrap/lib/Tab');
 const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const session =  require('electron').remote.session;
-import { dialog } from 'electron';
-import { remote } from 'electron';
+import { dialog, remote } from 'electron';
 import { observer } from "mobx-react"
 import TodoStore from "./TodoStore"
 import Reference from "./Reference"

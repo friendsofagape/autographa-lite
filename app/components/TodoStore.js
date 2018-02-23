@@ -47,8 +47,8 @@ export class TodoStore {
   // @observable currentValue = 14
   @observable fontSize = 14
   @observable aId =''
-  @observable appLang = ''
-  @observable currentTrans = ''
+  @observable appLang = 'en'
+  @observable currentTrans = {}
   @observable scriptDirection = "ltr"
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 

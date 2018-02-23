@@ -17,6 +17,8 @@ import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
 import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
+import { Toggle } from 'material-ui';
+
 
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
@@ -598,14 +600,15 @@ class Navbar extends React.Component {
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
                             <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
-                            <li>
+                            <li tyle={{padding: "17px 5px 0 0"}}>
 
                                 <FormattedMessage id="tooltip-compare-mode">
                                     {(message) =>
-                                    <label style={{marginTop:"17px"}} className="mdl-switch mdl-js-switch mdl-js-ripple-effect" htmlFor="switch-2" id="switchLable" data-toggle='tooltip' data-placement='bottom' title={message}>
-                                        <input type="checkbox" id="switch-2" className="mdl-switch__input check-diff"/>
-                                        <span className="mdl-switch__label"></span>
-                                    </label>}
+                                        <Toggle
+                                          defaultToggled={true}
+                                          style={{marginTop:"17px"}}
+                                        />
+                                    }
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
