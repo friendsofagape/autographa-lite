@@ -48,15 +48,22 @@ constructor(props) {
     handleReplaceChange(event) {
       TodoStore.replaceValue = event.target.value
     }
+
     replaceContentAndSave(){
       var newContent;
+      let replaceCount;
+      let allChapterReplaceCount = [];
       const searchValue = TodoStore.searchValue;
       const replaceValue = TodoStore.replaceValue;
       var oldContent = TodoStore.translationContent;
-      for (var i = 0; i < TodoStore.verses.length; i++) {
-        if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {                  
-            newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
-            oldContent[i] = newContent;
+
+      for (var i = 0; i < TodoStore.verses.length; i++) {      
+        if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {
+          newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
+          oldContent[i] = newContent;
+          var totalReplacedWord = newContent.match(new RegExp(this.searchRegExp(replaceValue), 'g')).length;
+          allChapterReplaceCount.push(totalReplacedWord);
+          replaceCount = allChapterReplaceCount.reduce((a,b) => a+b, 0);
         }
       }
       db.get(TodoStore.bookId).then((doc) => {
@@ -69,7 +76,11 @@ constructor(props) {
           if (err) {
               console.log(err);
           } else {
-           window.location.reload();
+            TodoStore.showModalSearch = false;
+            swal('Replaced Information', `Book: ${Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]}
+                                          Total word replaced: ${replaceCount} `, 'success');
+            replaceCount = 0;
+            allChapterReplaceCount = [];
           }
         });
     })
@@ -124,7 +135,12 @@ constructor(props) {
             </div>*/}
           </Modal.Body>
           <Modal.Footer>
-            <RaisedButton style={{float: "right"}} label={<FormattedMessage id="btn-save-changes" />} primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
+            <RaisedButton
+              style={{float: "right"}}
+              label={<FormattedMessage id="btn-save-changes" />}
+              primary={true}
+              onClick={this.replaceContentAndSave.bind(this)}
+            />
           </Modal.Footer>
     </Modal>
   )
