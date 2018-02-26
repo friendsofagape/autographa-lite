@@ -8,6 +8,7 @@ import TodoStore from "./TodoStore";
 import ReferencePanel from './ReferencePanel';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
@@ -36,11 +37,20 @@ class SettingsModal extends React.Component {
       myBible: "",
       appLang: "en",
       message: "",
-      hideAlert: "hidemessage"
+      hideAlert: "hidemessage",
     };
+    db.get('targetBible').then((doc) => {
+        if(doc.langScript.toUpperCase() == "RTL"){
+            TodoStore.scriptDirection = "RTL"
+        }else{
+          TodoStore.scriptDirection = "LTR"
+        }
+    }, (err) => {
+    })
 
     this.loadSetting();
     this.loadReference();
+
   }
 
   loadSetting = () => {
@@ -170,27 +180,26 @@ class SettingsModal extends React.Component {
   saveSetting = () => {
     if (this.target_setting() == false) return;
     const {langCodeValue, langVersion, folderPath} = this.state.settingData;
+     const settingData = { 
+        _id: 'targetBible',
+        targetLang: langCodeValue,
+        targetVersion: langVersion,
+        targetPath: folderPath,
+        langScript: TodoStore.scriptDirection.toUpperCase()
+    }
     db.get('targetBible').then((doc) => {
-        db.put({
-            _id: 'targetBible',
-            _rev: doc._rev,
-            targetLang: langCodeValue,
-            targetVersion: langVersion,
-            targetPath: folderPath
-        }).then(function(e) {
+        settingData._rev = doc._rev;
+        db.put(settingData).then((res) => {
           swal("Translation Data", "Successfully saved data in database", "success");
+            // alert_message(".alert-success", "dynamic-msg-saved-trans");
         });
-    }, (err) =>  {
-        db.put({
-            _id: 'targetBible',
-            targetLang: langCodeValue,
-            targetVersion: langVersion,
-            targetPath: folderPath
-        }).then((res) => {
+    }, (err) => {
+        db.put(settingData).then((res) => {
           swal("Translation Data", "Successfully saved data in database", "success");
         }, (err) => {
           swal("Translation Data", "Oops....", "error");
-        })
+                      
+        });
     });
   }
 
@@ -460,6 +469,11 @@ class SettingsModal extends React.Component {
         });
   }
 
+  onChangeScriptDir = (value) => {
+    TodoStore.scriptDirection = value;
+
+  }
+
  
   render(){
     var errorStyle = {
@@ -561,11 +575,27 @@ class SettingsModal extends React.Component {
                             }
                           </FormattedMessage>
                         </div>
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                              <label style={{"marginTop": "-24px", "marginLeft": "10px", "fontSize": "12px"}} className="mdl-textfield__label"  id="label-script-dir"><FormattedMessage id="label-script-direction" /></label>
+                              <RadioButtonGroup valueSelected={TodoStore.scriptDirection} name="scriptDir" style={{display: "flex", marginBottom:"2%"}} onChange={(event, value) => this.onChangeScriptDir(value)}>
+                                <RadioButton
+                                value="LTR"
+                                label={<FormattedMessage id="label-rtl" />}
+                                style={{width: "70%", marginLeft:"5px"}} 
+                                />
+                                <RadioButton
+                                value="RTL"
+                                label={<FormattedMessage id="label-ltr" />}
+                                style={{width: "70%"}}
+                                />
+                              </RadioButtonGroup>
+                        </div>
                         <FormattedMessage id="btn-save" >
                           { (message)=>
                             <RaisedButton label={message} primary={true} onClick={this.saveSetting}/>  
                           }
                         </FormattedMessage>
+                        
                       </Tab.Pane>
                       <Tab.Pane eventKey="second">
                         <div className="form-group">
