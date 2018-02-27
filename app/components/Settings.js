@@ -27,7 +27,7 @@ class SettingsModal extends React.Component {
     super(props);
 
     this.state = {
-      settingData: {langCodeValue: "", langCode: "", langVersion: "", folderPath: ""},
+      settingData: {langCodeValue: "eng", langCode: "", langVersion: "", folderPath: ""},
       refSetting: {bibleName: "", refLangCodeValue: "", refLangCode: "", refVersion: "", refFolderPath: ""},
       folderPathImport: "",
       refList: [],
@@ -56,7 +56,6 @@ class SettingsModal extends React.Component {
   loadSetting = () => {
     const settingData = this.state.settingData;
     db.get('targetBible').then((doc) =>{
-      console.log(doc)
       settingData.langCode = doc.targetLang;
       settingData.langVersion = doc.targetVersion;
       settingData.folderPath = doc.targetPath;
@@ -85,7 +84,6 @@ class SettingsModal extends React.Component {
   }
 
   onChangeList = (event) => {
-    console.log(event.target.value);
     let settingData = Object.assign({}, this.state.settingData);
         settingData.langCode = event.target.value;
         this.setState({ settingData, visibleList: true });
@@ -161,7 +159,7 @@ class SettingsModal extends React.Component {
         version = langVersion,
         path = folderPath,
         isValid = true;
-    if (langCode === null || langCode === "") {
+    if (langCode === null || langCode == "") {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     }else if(langCode.match(/^\d/)) {      
       isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
@@ -498,7 +496,11 @@ class SettingsModal extends React.Component {
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
           <Modal.Title><FormattedMessage id="modal-title-setting" /></Modal.Title>
-          <div className={"alert " + (this.state.hideAlert != 'hidemessage' ? (this.state.hideAlert === 'success' ? 'alert-success msg' : 'alert-danger msg') : 'invisible')}>
+          <div
+            className={"alert " + (this.state.hideAlert != 'hidemessage' ?
+              (this.state.hideAlert === 'success' ? 'alert-success msg' : 'alert-danger msg'): 'invisible')
+            }
+          >
             <span>{this.state.message ? <FormattedMessage id={this.state.message}/ > : ""}</span>
           </div>
         </Modal.Header>
