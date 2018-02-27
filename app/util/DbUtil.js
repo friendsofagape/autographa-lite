@@ -53,6 +53,7 @@ module.exports = {
 		    const refEnUlbJson = require(`${__dirname}/../lib/eng_ulb.json`),
 			  refEnUdbJson = require(`${__dirname}/../lib/eng_udb.json`),
 			  refHiUlbJson = require(`${__dirname}/../lib/hin_ulb.json`),
+			  refArbVdtJson = require(`${__dirname}/../lib/arb_vdt.json`),
 			  chunksJson = require(`${__dirname}/../lib/chunks.json`),
 			  refsConfigJson = require(`${__dirname}/../lib/refs_config.json`);
 
@@ -68,6 +69,9 @@ module.exports = {
 			})
 			.then(function (response) {
 			    return refDb.bulkDocs(refHiUlbJson);
+			})
+			.then(function (response) {
+			    return refDb.bulkDocs(refArbVdtJson);
 			})
 			.then(function (response) {
 			    refDb.close();
