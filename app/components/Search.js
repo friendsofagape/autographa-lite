@@ -95,7 +95,7 @@ class SearchModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <FormGroup >
-            <RadioButtonGroup onChange={this.handleFindChange.bind(this)} name="SearchAndReplace" style={{display: "flex", marginBottom:"2%"}}>
+            <RadioButtonGroup valueSelected="chapter" onChange={this.handleFindChange.bind(this)} name="SearchAndReplace" style={{display: "flex", marginBottom:"2%"}}>
               <RadioButton
                 value="chapter"
                 label={<FormattedMessage id="label-current-chapter" />}
