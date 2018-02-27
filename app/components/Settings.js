@@ -56,6 +56,7 @@ class SettingsModal extends React.Component {
   loadSetting = () => {
     const settingData = this.state.settingData;
     db.get('targetBible').then((doc) =>{
+      console.log(doc)
       settingData.langCode = doc.targetLang;
       settingData.langVersion = doc.targetVersion;
       settingData.folderPath = doc.targetPath;
@@ -84,6 +85,7 @@ class SettingsModal extends React.Component {
   }
 
   onChangeList = (event) => {
+    console.log(event.target.value);
     let settingData = Object.assign({}, this.state.settingData);
         settingData.langCode = event.target.value;
         this.setState({ settingData, visibleList: true });
@@ -445,36 +447,33 @@ class SettingsModal extends React.Component {
     TodoStore.appLang = event.target.value;
   }
 
-
   saveAppLanguage = (e) => {
     refDb.get('app_locale').then((doc) => {
-            doc.appLang = TodoStore.appLang;
-            refDb.put(doc);
-            this.setState({message: 'dynamic-msg-save-language', hideAlert: 'success' });
-            setTimeout(() => {
-              this.setState({hideAlert: 'hidemessage'})
-            }, 2000);
-        }).catch((err) => {
-            if (err.message === 'missing') {
-                var locale = {
-                    _id: 'app_locale',
-                    appLang: TodoStore.appLang
-                };
-                refDb.put(locale).then(function(res) {
-                  swal("Title", "dynamic-msg-save-language", "success"); 
-                }).catch(function(internalErr) {
-                    swal("dynamic-msg-went-wrong");
-                });
-            } 
+      doc.appLang = TodoStore.appLang;
+      refDb.put(doc);
+      this.setState({message: 'dynamic-msg-save-language', hideAlert: 'success' });
+      setTimeout(() => {
+        this.setState({hideAlert: 'hidemessage'})
+      }, 2000);
+    }).catch((err) => {
+      if (err.message === 'missing') {
+        var locale = {
+            _id: 'app_locale',
+            appLang: TodoStore.appLang
+        };
+        refDb.put(locale).then(function(res) {
+          swal("Title", "dynamic-msg-save-language", "success"); 
+        }).catch(function(internalErr) {
+            swal("dynamic-msg-went-wrong");
         });
+      } 
+    });
   }
 
   onChangeScriptDir = (value) => {
     TodoStore.scriptDirection = value;
-
   }
 
- 
   render(){
     var errorStyle = {
       margin: 'auto',
@@ -528,7 +527,7 @@ class SettingsModal extends React.Component {
                 <Col sm={8}>
                   <Tab.Content animation>
                       <Tab.Pane eventKey="first" >
-                        <div className="form-group" data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
                           <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField 
@@ -550,7 +549,7 @@ class SettingsModal extends React.Component {
                             }
                           </ul>
                         </div>
-                        <div className="form-group">
+                        <div>
                           <label><FormattedMessage id="label-version" /></label>
                           <br />
                           <TextField
@@ -560,7 +559,7 @@ class SettingsModal extends React.Component {
                             name="langVersion"
                           />
                         </div>
-                        <div className="form-group">
+                        <div>
                           <label><FormattedMessage id="label-export-folder-location" /></label>
                           <br />
                           <FormattedMessage id="placeholder-path-of-usfm-files">
@@ -574,36 +573,40 @@ class SettingsModal extends React.Component {
                               />
                             }
                           </FormattedMessage>
-                        </div>
+                        </div> 
                         <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                              <label style={{"marginTop": "-24px", "marginLeft": "10px", "fontSize": "12px"}} className="mdl-textfield__label"  id="label-script-dir"><FormattedMessage id="label-script-direction" /></label>
-                              <RadioButtonGroup valueSelected={TodoStore.scriptDirection} name="scriptDir" style={{display: "flex", marginBottom:"2%"}} onChange={(event, value) => this.onChangeScriptDir(value)}>
-                                <RadioButton
-                                value="LTR"
-                                label={<FormattedMessage id="label-rtl" />}
-                                style={{width: "70%", marginLeft:"5px"}} 
-                                />
-                                <RadioButton
-                                value="RTL"
-                                label={<FormattedMessage id="label-ltr" />}
-                                style={{width: "70%"}}
-                                />
-                              </RadioButtonGroup>
+                          <label
+                            style={{"marginTop": "-24px", "fontSize": "14px"}}
+                            className="mdl-textfield__label"
+                            id="label-script-dir"
+                          >
+                          <FormattedMessage id="label-script-direction" />
+                          </label>
+                          <RadioButtonGroup valueSelected={TodoStore.scriptDirection} name="scriptDir" style={{display: "flex", marginBottom:"6%"}} onChange={(event, value) => this.onChangeScriptDir(value)}>
+                            <RadioButton
+                            value="LTR"
+                            label={<FormattedMessage id="label-rtl" />}
+                            style={{width: "70%"}} 
+                            />
+                            <RadioButton
+                            value="RTL"
+                            label={<FormattedMessage id="label-ltr" />}
+                            style={{width: "70%"}}
+                            />
+                          </RadioButtonGroup>
                         </div>
                         <FormattedMessage id="btn-save" >
                           { (message)=>
-                            <RaisedButton label={message} primary={true} onClick={this.saveSetting}/>  
+                            <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.saveSetting}/>  
                           }
                         </FormattedMessage>
-                        
                       </Tab.Pane>
+
                       <Tab.Pane eventKey="second">
                         <div className="form-group">
                           <label><FormattedMessage id="label-folder-location" /></label>
                           <br />
-                          <FormattedMessage
-                          id="placeholder-path-of-usfm-files"
-                          >
+                          <FormattedMessage id="placeholder-path-of-usfm-files">
                             {(message) => <TextField
                             hintText={message}
                             onChange={this.onChange.bind(this)}
@@ -611,40 +614,40 @@ class SettingsModal extends React.Component {
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
                           />}
-                        </FormattedMessage>
-                        <FormattedMessage id="btn-import" >
-                          {(message)=>
-                            <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label={message} primary={true} onClick={this.importTranslation}/>
-                          }
-                        </FormattedMessage>
+                          </FormattedMessage>
+                          <FormattedMessage id="btn-import" >
+                            {(message)=>
+                              <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label={message} primary={true} onClick={this.importTranslation}/>
+                            }
+                          </FormattedMessage>
                         </div>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="third">
-                          <div>
-                            <label><FormattedMessage id="label-bible-name" /></label>
-                            <br />
-                            <FormattedMessage id="placeholder-eng-translation">
-                              {(message) => <TextField
-                                  hintText={message}
-                                  onChange={this.onReferenceChange.bind(this)}
-                                  value={bibleName || ""}
-                                  name="bibleName"
-                                  
-                              />}
-                            </FormattedMessage>
-                          </div>
-                          <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
-                            <label><FormattedMessage id="label-language-code" /></label>
-                            <br />
-                            <TextField
-                              hintText="eng"
-                              onChange={this.onReferenceChangeList.bind(this)}
-                              value={refLangCode || ""}
-                              name="refLangCode"
-                            />
-                          </div>
-                          <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
+                        <div>
+                          <label><FormattedMessage id="label-bible-name" /></label>
+                          <br />
+                          <FormattedMessage id="placeholder-eng-translation">
+                            {(message) => <TextField
+                                hintText={message}
+                                onChange={this.onReferenceChange.bind(this)}
+                                value={bibleName || ""}
+                                name="bibleName"
+                                
+                            />}
+                          </FormattedMessage>
+                        </div>
+                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                          <label><FormattedMessage id="label-language-code" /></label>
+                          <br />
+                          <TextField
+                            hintText="eng"
+                            onChange={this.onReferenceChangeList.bind(this)}
+                            value={refLangCode || ""}
+                            name="refLangCode"
+                          />
+                        </div>
+                        <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
                           <ul>
                             {
                               (listCode != null) ? (
@@ -655,37 +658,37 @@ class SettingsModal extends React.Component {
                                 ) : (<li></li>)
                             }
                           </ul>
-                          </div>
-                          <div>
-                            <label><FormattedMessage id="label-version" /></label>
-                            <br />
-                            <TextField
-                              hintText="NET-S3"
+                        </div>
+                        <div>
+                          <label><FormattedMessage id="label-version" /></label>
+                          <br />
+                          <TextField
+                            hintText="NET-S3"
+                            onChange={this.onReferenceChange.bind(this)}
+                            value={refVersion || ""}
+                            name="refVersion"
+                          />
+                        </div>
+                        <div>
+                          <label>Folder Location</label>
+                          <br />
+                          <FormattedMessage
+                            id="placeholder-path-of-usfm-files"
+                            >
+                              {(message) => <TextField
+                              hintText={message}
                               onChange={this.onReferenceChange.bind(this)}
-                              value={refVersion || ""}
-                              name="refVersion"
-                            />
-                          </div>
-                          <div>
-                            <label>Folder Location</label>
-                            <br />
-                            <FormattedMessage
-                              id="placeholder-path-of-usfm-files"
-                              >
-                                {(message) => <TextField
-                                hintText={message}
-                                onChange={this.onReferenceChange.bind(this)}
-                                value={refFolderPath || ""}
-                                ref="refFolderPath"
-                                onClick={this.openFileDialogRefSetting}
-                              />}
-                            </FormattedMessage>
-                          </div>
-                           <FormattedMessage id="btn-import">
-                              {(message) => 
-                                <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.importReference}/>
-                              }
-                            </FormattedMessage>
+                              value={refFolderPath || ""}
+                              ref="refFolderPath"
+                              onClick={this.openFileDialogRefSetting}
+                            />}
+                          </FormattedMessage>
+                        </div>
+                        <FormattedMessage id="btn-import">
+                          {(message) => 
+                            <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.importReference}/>
+                          }
+                        </FormattedMessage>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="fourth">
@@ -789,6 +792,7 @@ class SettingsModal extends React.Component {
                           </table>
                         </div>
                       </Tab.Pane>
+
                       <Tab.Pane eventKey="fifth" >
                         <div id="app-lang-setting" className="tabcontent">
                             <div className="form-group">
@@ -805,7 +809,7 @@ class SettingsModal extends React.Component {
                             </div>
                             <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                         </div>
-                    </Tab.Pane>
+                      </Tab.Pane>
                   </Tab.Content>
                 </Col>
               </Row>
