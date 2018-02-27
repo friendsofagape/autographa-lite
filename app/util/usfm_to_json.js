@@ -110,7 +110,6 @@ module.exports = {
 		    }
 		}
 		db.get(i.toString()).then(function (doc) {
-			debugger;
 		    for(i=0; i<doc.chapters.length; i++) {
 			for(j=0; j<book.chapters.length; j++) {
 			    if(book.chapters[j].chapter === doc.chapters[i].chapter) {
