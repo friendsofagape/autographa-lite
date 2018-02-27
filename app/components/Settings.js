@@ -27,7 +27,7 @@ class SettingsModal extends React.Component {
     super(props);
 
     this.state = {
-      settingData: {langCodeValue: "eng", langCode: "", langVersion: "", folderPath: ""},
+      settingData: {langCodeValue: "", langCode: "", langVersion: "", folderPath: ""},
       refSetting: {bibleName: "", refLangCodeValue: "", refLangCode: "", refVersion: "", refFolderPath: ""},
       folderPathImport: "",
       refList: [],
@@ -154,31 +154,31 @@ class SettingsModal extends React.Component {
   }
 
   target_setting = () => {
-    const {langCodeValue, langVersion, folderPath} = this.state.settingData;
-    var langCode = langCodeValue,
-        version = langVersion,
-        path = folderPath,
-        isValid = true;
-    if (langCode === null || langCode == "") {
+    const {langCode, langCodeValue, langVersion, folderPath} = this.state.settingData;
+    // var langCode = langCodeValue;
+    var version = langVersion;
+    var path = folderPath;
+    var isValid = true;
+
+    if (langCode === null || langCode == "" || langCodeValue === null || langCode == "") {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
-    }else if(langCode.match(/^\d/)) {      
+    } else if(langCode.match(/^\d/)) {      
       isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
-    }
-    else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
-      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
-    }
-    else if (version === null || version === "") {
+    } else if (version === null || version === "") {
       isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
       isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
         isValid = true;
     }
+
     return isValid;
   }
 
   saveSetting = () => {
+    console.log(this.target_setting())
     if (this.target_setting() == false) return;
+    console.log('hello')
     const {langCodeValue, langVersion, folderPath} = this.state.settingData;
      const settingData = { 
         _id: 'targetBible',
@@ -544,7 +544,10 @@ class SettingsModal extends React.Component {
                             {
                               (listCode != null) ? (
                                 Object.keys(listCode).map((key, index) => {
-                                 return <li key={index} onClick={this.clickListSettingData.bind(this, listCode[key],`(${key})`)} >
+                                 return <li
+                                          key={index}
+                                          onClick={this.clickListSettingData.bind(this, listCode[key],`(${key})`)}
+                                        >
                                           <span className='code-name'>{listCode[key]} {`(${key})`}</span>
                                         </li>})
                                 ) : (<li></li>)
