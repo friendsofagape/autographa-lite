@@ -174,9 +174,7 @@ class SettingsModal extends React.Component {
   }
 
   saveSetting = () => {
-    console.log(this.target_setting())
     if (this.target_setting() == false) return;
-    console.log('hello')
     const {langCodeValue, langVersion, folderPath} = this.state.settingData;
      const settingData = { 
         _id: 'targetBible',

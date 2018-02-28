@@ -391,10 +391,8 @@ class Navbar extends React.Component {
     saveTarget() {
         var bookNo = TodoStore.bookId.toString();
         db.get(bookNo).then(function(doc) {
-            console.log(doc);
             refDb.get('refChunks').then(function(chunkDoc) {
                 var verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                console.log(verses);
                 verses.forEach(function(verse, index) {
                     var vId = 'v' + (index + 1);
                     verse.verse = document.getElementById(vId).textContent;
@@ -589,7 +587,16 @@ class Navbar extends React.Component {
                                     aria-label="..."
                                     id="bookBtn"
                                     style={{marginLeft:"200px"}}>
-                                    <a onClick={() => this.openpopupBooks(1)} href="#" className="btn btn-default" data-toggle="tooltip"data-placement="bottom" title="Select Book"  id="book-chapter-btn">{bookName}
+                                    <a
+                                        onClick={() => this.openpopupBooks(1)}
+                                        href="#"
+                                        className="btn btn-default"
+                                        data-toggle="tooltip"
+                                        data-placement="bottom"
+                                        title="Select Book"
+                                        id="book-chapter-btn"
+                                    >
+                                    {bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
                                         <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(TodoStore.chapterId).toLocaleString(TodoStore.appLang)}
