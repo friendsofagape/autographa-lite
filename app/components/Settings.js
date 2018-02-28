@@ -155,11 +155,9 @@ class SettingsModal extends React.Component {
 
   target_setting = () => {
     const {langCode, langCodeValue, langVersion, folderPath} = this.state.settingData;
-    // var langCode = langCodeValue;
-    var version = langVersion;
-    var path = folderPath;
-    var isValid = true;
-
+    let version = langVersion;
+    let path = folderPath;
+    let isValid = true;
     if (langCode === null || langCode == "" || langCodeValue === null || langCode == "") {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     } else if(langCode.match(/^\d/)) {      
@@ -275,22 +273,23 @@ class SettingsModal extends React.Component {
 
   reference_setting() {
     const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
-    var name = bibleName,
-        langCode = refLangCode,
-        version = refVersion,
-        path = refFolderPath,
-        isValid = true;
+    let name = bibleName;
+    let langCode = refLangCode;
+    let version = refVersion;
+    let path = refFolderPath;
+    let isValid = true;
     if (name == "") {
       isValid = this.setMessage('dynamic-msg-bib-name-validation', false);
     } else if (langCode === null || langCode === "") {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
-    }else if (version === null || version === "") {
+    } else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if (version === null || version === "") {
       isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
       isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
         isValid = true;
-
     }
     return isValid;
   }
