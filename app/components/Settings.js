@@ -116,7 +116,7 @@ class SettingsModal extends React.Component {
             return [];
         }
     }).catch(function(err) {
-        console.log(err);
+      console.log(err);
     })
   }
 
@@ -175,27 +175,26 @@ class SettingsModal extends React.Component {
 
   saveSetting = () => {
     if (this.target_setting() == false) return;
-    const {langCodeValue, langVersion, folderPath} = this.state.settingData;
-     const settingData = { 
-        _id: 'targetBible',
-        targetLang: langCodeValue,
-        targetVersion: langVersion,
-        targetPath: folderPath,
-        langScript: TodoStore.scriptDirection.toUpperCase()
+    const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
+    const settingData = { 
+      _id: 'targetBible',
+      targetLang: langCode,
+      targetVersion: langVersion,
+      targetPath: folderPath,
+      langScript: TodoStore.scriptDirection.toUpperCase()
     }
     db.get('targetBible').then((doc) => {
-        settingData._rev = doc._rev;
-        db.put(settingData).then((res) => {
-          swal("Translation Data", "Successfully saved data in database", "success");
-            // alert_message(".alert-success", "dynamic-msg-saved-trans");
-        });
+      settingData._rev = doc._rev;
+      db.put(settingData).then((res) => {
+        swal("Translation Data", "Successfully saved data in database", "success");
+      }); 
     }, (err) => {
-        db.put(settingData).then((res) => {
-          swal("Translation Data", "Successfully saved data in database", "success");
-        }, (err) => {
-          swal("Translation Data", "Oops....", "error");
-                      
-        });
+      db.put(settingData).then((res) => {
+        swal("Translation Data", "Successfully saved data in database", "success");
+      }, (err) => {
+        swal("Translation Data", "Oops....", "error");
+                    
+      });
     });
   }
 
@@ -584,7 +583,12 @@ class SettingsModal extends React.Component {
                           >
                           <FormattedMessage id="label-script-direction" />
                           </label>
-                          <RadioButtonGroup valueSelected={TodoStore.scriptDirection} name="scriptDir" style={{display: "flex", marginBottom:"6%"}} onChange={(event, value) => this.onChangeScriptDir(value)}>
+                          <RadioButtonGroup
+                            valueSelected={TodoStore.scriptDirection}
+                            name="scriptDir"
+                            style={{display: "flex", marginBottom:"6%"}}
+                            onChange={(event, value) => this.onChangeScriptDir(value)}
+                          >
                             <RadioButton
                             value="LTR"
                             label={<FormattedMessage id="label-rtl" />}
@@ -599,7 +603,12 @@ class SettingsModal extends React.Component {
                         </div>
                         <FormattedMessage id="btn-save" >
                           { (message)=>
-                            <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.saveSetting}/>  
+                            <RaisedButton
+                              style={{float: "right", marginRight: "33px"}}
+                              label={message}
+                              primary={true}
+                              onClick={this.saveSetting}
+                            />  
                           }
                         </FormattedMessage>
                       </Tab.Pane>
@@ -619,7 +628,12 @@ class SettingsModal extends React.Component {
                           </FormattedMessage>
                           <FormattedMessage id="btn-import" >
                             {(message)=>
-                              <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label={message} primary={true} onClick={this.importTranslation}/>
+                              <RaisedButton
+                                style={{float: "right", marginRight: "33px", marginTop: "257px"}}
+                                label={message}
+                                primary={true}
+                                onClick={this.importTranslation}
+                              />
                             }
                           </FormattedMessage>
                         </div>
@@ -688,7 +702,12 @@ class SettingsModal extends React.Component {
                         </div>
                         <FormattedMessage id="btn-import">
                           {(message) => 
-                            <RaisedButton style={{float: "right", marginRight: "33px"}} label={message} primary={true} onClick={this.importReference}/>
+                            <RaisedButton
+                              style={{float: "right", marginRight: "33px"}}
+                              label={message}
+                              primary={true}
+                              onClick={this.importReference}
+                            />
                           }
                         </FormattedMessage>
                       </Tab.Pane>
