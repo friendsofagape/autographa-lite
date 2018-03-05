@@ -154,22 +154,24 @@ class SettingsModal extends React.Component {
   }
 
   target_setting = () => {
-    const {langCode, langCodeValue, langVersion, folderPath} = this.state.settingData;
+    const {langCode, langVersion, folderPath} = this.state.settingData;
+    console.log(langCode)
     let version = langVersion;
     let path = folderPath;
     let isValid = true;
-    if (langCode === null || langCode == "" || langCodeValue === null || langCode == "") {
+    if (langCode === null || langCode == "") {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     } else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
       isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
     } else if (version === null || version === "") {
       isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
       isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
-        isValid = true;
+      isValid = true;
     }
-
     return isValid;
   }
 
@@ -364,8 +366,8 @@ class SettingsModal extends React.Component {
 
   clickListSettingData = (evt, obj) => {
     let settingData = Object.assign({}, this.state.settingData);
-        settingData.langCode = evt + " " + obj;
-        settingData.langCodeValue = obj.slice(1,-1);
+        settingData.langCodeValue = evt + " " + obj;
+        settingData.langCode = obj.slice(1,-1);
     this.setState({ 
       settingData,
       visibleList: false
@@ -531,7 +533,7 @@ class SettingsModal extends React.Component {
                           <TextField 
                             hintText="eng"
                             onChange={this.onChangeList.bind(this)}
-                            value={langCode || ""}
+                            value={langCodeValue || langCode}
                             name="langCode"
                           />
                         </div>
