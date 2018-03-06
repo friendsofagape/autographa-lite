@@ -21,15 +21,17 @@ class Reference extends React.Component {
      	})
 
 	     refLists.then((refsArray) => {
-	        this.setState({refList:  refsArray});
+	        // this.setState({refList:  refsArray});
+	        TodoStore.refList = refsArray;
 	     });
 	}
 	render() {
+		console.log(TodoStore.activeRefs)
 		return(
 			<div style={{textAlign: "center", backgroundColor: "#f5f8fa", paddingTop: "26px", borderRight: "1px solid #d3e0e9"}}>
-				<select className="ref-drop-down" title="Select Reference Text" onChange={this.props.onClick} value = {this.props.refIds} id={this.props.id} data-layout={this.props.layout} >
+				<select className="ref-drop-down" title="Select Reference Text" onChange={this.props.onClick} defaultValue = {this.props.refIds} id={this.props.id} data-layout={this.props.layout} >
 	                {
-	                    this.state.refList.map(function(refDoc, index){
+	                    TodoStore.refList.map(function(refDoc, index){
 	                        return(
 	                        	<option value={refDoc.value}  key={index} >{refDoc.option}</option>
 	                        )

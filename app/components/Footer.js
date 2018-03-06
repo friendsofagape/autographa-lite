@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import TodoStore from "./TodoStore";
 import { FormattedMessage } from 'react-intl';
 const Constant = require("../util/constants");
+const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+
 
 
 @observer
@@ -25,10 +27,27 @@ class Footer extends React.Component {
 
     handleChange(key) {
         // console.log(key);
+        console.log(TodoStore.refId)
         TodoStore.layout = key;
         TodoStore.layoutContent = key;
+        TodoStore.aId = key;
         let chapter = TodoStore.chapterId;
-        this.props.getRef(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString(),TodoStore.selectId);
+        // this.props.getRef(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString(),TodoStore.selectId);
+        refDb.get('targetReferenceLayout').then(function(doc) {
+            refDb.put({
+                _id: 'targetReferenceLayout',
+                layout: key,
+                _rev: doc._rev
+            })
+        }).catch(function(err) {
+            refDb.put({
+                _id: 'targetReferenceLayout',
+                layout: key
+            }).catch(function(err) {
+                //refDb.close();
+            });
+        });
+
 
     }
 
