@@ -15,14 +15,8 @@ class Footer extends React.Component {
         super(props);
         this.fontChange = this.fontChange.bind(this);
         this.state = {
-            // step: 1,
-            // max: 40,
-            // min: 14,
-            // currentValue: 14,
             onSave: props.onSave
-        }
-       
-        // console.log(mySlider)
+        }       
     }
 
     handleChange(key) {
@@ -32,7 +26,6 @@ class Footer extends React.Component {
         TodoStore.layoutContent = key;
         TodoStore.aId = key;
         let chapter = TodoStore.chapterId;
-        // this.props.getRef(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString(),TodoStore.selectId);
         refDb.get('targetReferenceLayout').then(function(doc) {
             refDb.put({
                 _id: 'targetReferenceLayout',
@@ -44,11 +37,8 @@ class Footer extends React.Component {
                 _id: 'targetReferenceLayout',
                 layout: key
             }).catch(function(err) {
-                //refDb.close();
             });
         });
-
-
     }
 
     fontChange(multiplier) {

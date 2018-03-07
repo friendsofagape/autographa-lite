@@ -1,96 +1,73 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-const bootstrap = require('react-bootstrap');
-const Modal = require('react-bootstrap/lib/Modal');
-const Button = require('react-bootstrap/lib/Button');
-const Col = require('react-bootstrap/lib/Col');
-const Tabs = require('react-bootstrap/lib/Tabs');
-const Tab = require('react-bootstrap/lib/Tab');
-const Constant = require("../util/constants");
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const session =  require('electron').remote.session;
 import { dialog, remote } from 'electron';
 import { observer } from "mobx-react"
 import TodoStore from "./TodoStore"
-import Reference from "./Reference"
+const { Modal, Button, Col, Tabs, Tab } = require('react-bootstrap/lib');
+const Constant = require("../util/constants");
+const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+const session = require('electron').remote.session;
+const i18n = new(require('../../translations/i18n'));
 
 @observer
 class TranslationPanel extends React.Component {
-    constructor(props) {
-        super(props);
-        //  this.handleRefChange = this.handleRefChange.bind(this);
-        //this.saveTarget = this.saveTarget.bind(this);
-        this.state = { verses: [], refContent: '', refList: [] }
+  constructor(props){
+    super(props);
+    i18n.isRtl().then((res) => {
+      if(res) TodoStore.scriptDirection = "rtl"
+    });
+  }
 
-         
-        
+  highlightRef(obj) {
+    var content = ReactDOM.findDOMNode(this);
+    let verses = content.getElementsByClassName("verse-input")[0].querySelectorAll("span[id^=v]");
+    var refContent = document.getElementsByClassName('ref-contents');
+    for (var a=0; a< refContent.length; a++) {
+      var refContent2 = refContent[a];
+      for (var i = 0; i < TodoStore.verses.length; i++) {
+        var refDiv = refContent2.querySelectorAll('div[data-verse^='+'"'+"r"+(i+1)+'"'+']');
+        if (refDiv != 'undefined') {
+          refDiv[0].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
+        }            
+      };
+      let chunk = document.getElementById(obj).getAttribute("data-chunk-group");
+      if (chunk) {
+        refContent2.querySelectorAll('div[data-verse^="r"]').style="background-color: '';font-weight: '';padding-left:10px;padding-right:10px";
+        var limits = chunk.split("-").map(function(element) { return parseInt(element, 10) - 1; });
+        for(var j=limits[0]; j<=limits[1];j++){
+          refContent2.querySelectorAll("div[data-verse=r"+(j+1)+"]")[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;margin-right:10px";
+        }
+        $('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
+        $('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
+      }
+    }           
+  }
 
-        session.defaultSession.cookies.get({ url: 'http://refs.autographa.com' }, (error, refCookie) => {
-            if(refCookie.length > 0){
-                TodoStore.refId = refCookie[0].value;
-            }
-        });
-        session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, bookCookie) => {
-            if(bookCookie.length > 0){
-                TodoStore.bookId = bookCookie[0].value;
-            }
-        });
-        session.defaultSession.cookies.get({ url: 'http://chapter.autographa.com' }, (error, chapterCookie) => {
-            if(chapterCookie.length > 0){
-                TodoStore.chapterId = chapterCookie[0].value;
-            }
-        });
-    }
-
-  //   componentWillUpdate(nextProps, nextState) {
-  //    {this.nextProps.refContent}
-  // }
-
-
-    // getRefContents(id, chapter) {
-    //     let refContent = refDb.get(id).then(function(doc) { //book code is hard coded for now
-    //         for (var i = 0; i < doc.chapters.length; i++) {
-    //             if (doc.chapters[i].chapter == parseInt(chapter, 10)) { // 1 is chapter number and hardcoded for now
-    //                 break;
-    //             }
-    //         }
-    //     let refString = doc.chapters[i].verses.map(function(verse, verseNum) {
-    //         return '<div data-verse="r' + (verseNum + 1) + '"><span class="verse-num">' + (verseNum + 1) + '</span><span>' + verse.verse + '</span></div>';
-    //     }).join('');
-    //     return refString;
-    //     }).catch(function(err) {
-    //         console.log(err)
-    //     });
-    //     refContent.then((content)=> {
-    //          TodoStore.content = content;
-    //     });
-    // }
-
-    
-	render (){
-         // var translationContent = TodoStore.translationContent;
-         // const refContent = TodoStore.content;
-         // const refContentOne = TodoStore.contentOne; 
-		return (
-		
-        <div className="container-fluid">
-            <div className="row row-col-fixed rmvflex" style={{display: 'flex'}}>
-                <div className="col-sm-12 col-fixed" id="section-0">                       
-                    <div className="row">
-                        <div type="ref" className="col-12 col-ref ref-contents">
-                            {/*<Reference refId = {TodoStore.refId}/>*/}
-                            {/*<h2 className="header-title-right wow fadeInRight" dangerouslySetInnerHTML={{__html: props.text}} />*/}
-                           <div dangerouslySetInnerHTML={{__html: this.props.refContent}} ></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  render (){
+    var verseGroup = [];
+    for (var i = 0; i < TodoStore.chunkGroup.length; i++) {
+      var vid="v"+(i+1);  
+      verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
+          <span className='verse-num' key={i}>{(i+1).toLocaleString(TodoStore.appLang)}</span>
+          <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={TodoStore.chunkGroup[i]}>
+            {TodoStore.translationContent[i]}
+          </span>
         </div>
-
-		) 
-
-	}
+      ); 
+    }
+    return (  
+      <div className="col-editor container-fluid">
+        <div className="row">
+          <div className="col-12 center-align">
+              <p className="translation">Translation</p>
+          </div>
+        </div>
+        <div className="row">
+          <div id="input-verses" className={`col-12 col-ref verse-input ${TodoStore.scriptDirection}`} dir={TodoStore.scriptDirection}>{verseGroup}</div>
+        </div>
+      </div>
+    ) 
+  }
 }
 
-module.exports = TranslationPanel
+module.exports = TranslationPanel;

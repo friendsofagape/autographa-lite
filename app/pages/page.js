@@ -46,6 +46,15 @@ class Page extends React.Component {
 	    i18n.currentLocale().then((res) => {
 	    	TodoStore.currentTrans = res;
 	    })
+
+	}
+	componentWillMount(){
+		console.log(TodoStore.activeRefs)
+		 refDb.get('activeRefs').then((doc) => {
+            Object.assign(TodoStore.activeRefs, doc.activeRefs)
+        }, (err) => {
+
+        });
 	}
 
 	render(){

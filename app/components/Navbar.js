@@ -45,11 +45,7 @@ class Navbar extends React.Component {
             searchVal: "", 
             replaceVal:"",
         };
-        refDb.get('activeRefs').then((doc) => {
-            TodoStore.activeRefs = Object.assign(TodoStore.activeRefs, doc.activeRefs)
-        }, (err) => {
-
-        });
+       
         var verses, chunks, chapter;
         var that = this;
         refDb.get("ref_history").then(function(doc) {
@@ -65,16 +61,12 @@ class Navbar extends React.Component {
                     TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
                     chapter = TodoStore.chapterId
                     that.getRefContents(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-
                 })
             })
-            
         }).catch(function(err) {
-            console.log('Error: While retrieving document. ' + err);
-        });
-                  
+            console.log(err)
+        });                  
     }
-
     getContent = (id, chapter) => {
         return refDb.get(id).then(function(doc) { //book code is hard coded for now
             for (var i = 0; i < doc.chapters.length; i++) {
@@ -90,8 +82,6 @@ class Navbar extends React.Component {
             console.log(err)
         });
     }
-
-    
 
     getRefContents = (id,chapter) => {
 
@@ -217,17 +207,12 @@ class Navbar extends React.Component {
 
     onItemClick(bookName) {
         var bookNo;
-        console.log(bookName)
-        console.log(Constant.booksList)
-                for (var i = 0; i < Constant.booksList.length; i++) {
+        for (var i = 0; i < Constant.booksList.length; i++) {
             bookName == Constant.booksList[i]
             console.log(bookName == Constant.booksList[i])
             if (bookName == Constant.booksList[i]) {
-                 // console.log(i)
                 var bookNo = i+1;
-                 console.log(bookNo)
                 break;
-
             };
         };
         TodoStore.bookActive = bookNo;
@@ -257,11 +242,7 @@ class Navbar extends React.Component {
 
     getValue(chapter, bookId){
         TodoStore.translationContent = "";
-         // console.log("get value called")
         TodoStore.chapterId = chapter;
-        //TodoStore.aId = event.target.id;
-        //console.log(event.target.id);
-         // console.log(chapter)
         TodoStore.bookId = bookId;
         var verses = TodoStore.verses;
         var chunks = TodoStore.chunks;
@@ -288,10 +269,7 @@ class Navbar extends React.Component {
                     TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
                     TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
                     chapter = TodoStore.chapterId;
-                    console.log("if called")
-                    // console.log(chapter);
                     that.getRefContents(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                    // that.getRefContents(TodoStore.refId1+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString(),verses);
                     
                 });
             })
@@ -308,7 +286,6 @@ class Navbar extends React.Component {
                     TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
                     chapter = TodoStore.chapterId;
                     that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                    //that.createVerseInputs(verses, chunks, chapter);
                 });
             })
             }    
@@ -360,7 +337,6 @@ class Navbar extends React.Component {
                                 clearInterval("#saved-time");
                             });
                             clearInterval("#saved-time");
-                            // clearInterval(intervalId);
                         });
                     });
                 });
@@ -414,7 +390,7 @@ class Navbar extends React.Component {
         const refContentCommon = TodoStore.contentCommon;
         const refContentTwo = TodoStore.contentTwo;
         const bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]
-        let close = () => TodoStore.showModalBooks = false;//this.setState({ showModal: false, showModalSettings: false, showModalBooks: false });
+        let close = () => TodoStore.showModalBooks = false;
         const test = (TodoStore.activeTab == 1);
         var chapterList = [];
         for(var i=0; i<TodoStore.bookChapter["chapterLength"]; i++){
@@ -602,28 +578,28 @@ class Navbar extends React.Component {
                 {
                     TodoStore.layout == 1   &&
                         <div className="parentdiv">
-                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id = {1} layout={1}/><TranslationPanel refContent ={refContent}  /></div>
-                            <div style={{padding: "10px"}} className="layoutx"><ReferencePanel /></div>                    
+                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
+                            <div style={{padding: "10px"}} className="layoutx"><TranslationPanel /></div>                    
                         </div>
                 } 
                 {
                     TodoStore.layout == 2 &&
                     <div className="parentdiv">
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><TranslationPanel refContent ={refContent}  /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent}  /></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><TranslationPanel refContent ={refContentOne}/></div>
-                        <div style={{padding: "10px"}} className="layout2x"><ReferencePanel /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div style={{padding: "10px"}} className="layout2x"><TranslationPanel /></div>
                     </div>
                 }
                 {
                     TodoStore.layout == 3 &&
                     <div className="parentdiv">
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><TranslationPanel refContent ={refContent}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><TranslationPanel refContent ={refContentOne}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><TranslationPanel refContent ={refContentTwo}/></div>
-                        <div style={{ padding: "10px"}} className="layout3x"><ReferencePanel /></div>                    
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo}/></div>
+                        <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel /></div>                    
                     </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
