@@ -49,8 +49,7 @@ class Page extends React.Component {
 
 	}
 	componentWillMount(){
-		console.log(TodoStore.activeRefs)
-		 refDb.get('activeRefs').then((doc) => {
+		refDb.get('activeRefs').then((doc) => {
             Object.assign(TodoStore.activeRefs, doc.activeRefs)
         }, (err) => {
 

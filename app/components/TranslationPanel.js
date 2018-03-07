@@ -16,6 +16,7 @@ class TranslationPanel extends React.Component {
     i18n.isRtl().then((res) => {
       if(res) TodoStore.scriptDirection = "rtl"
     });
+    this.timeout =  0;
   }
 
   highlightRef(obj) {
@@ -43,13 +44,20 @@ class TranslationPanel extends React.Component {
     }           
   }
 
+  handleKeyUp =(e)=> {
+    if(this.timeout) clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.props.onSave();
+    }, 3000);
+  }
+  
   render (){
     var verseGroup = [];
     for (var i = 0; i < TodoStore.chunkGroup.length; i++) {
       var vid="v"+(i+1);  
       verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
           <span className='verse-num' key={i}>{(i+1).toLocaleString(TodoStore.appLang)}</span>
-          <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={TodoStore.chunkGroup[i]}>
+          <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={TodoStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
             {TodoStore.translationContent[i]}
           </span>
         </div>
