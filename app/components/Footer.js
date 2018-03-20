@@ -21,7 +21,6 @@ class Footer extends React.Component {
 
     handleChange(key) {
         // console.log(key);
-        console.log(TodoStore.refId)
         TodoStore.layout = key;
         TodoStore.layoutContent = key;
         TodoStore.aId = key;
@@ -77,6 +76,7 @@ class Footer extends React.Component {
     }
 
     render() {
+        console.log(TodoStore.layout)
         return (
         <nav className="navbar navbar-default navbar-fixed-bottom">
             <div className="container-fluid">
@@ -109,19 +109,19 @@ class Footer extends React.Component {
                         <div className="btn-group navbar-btn layout" role="group" aria-label="...">
                             <FormattedMessage id="tooltip-2-column">
                                 { (message) =>
-                                  <a className="btn btn-primary btn-default" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                  <a className={`btn btn-primary btn-default ${TodoStore.layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                   </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-3-column">
                                 { (message) =>
-                                <a className="btn btn-primary btn-default" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${TodoStore.layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-4-column">
                                 { (message) =>                            
-                                <a className="btn btn-primary btn-default" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${TodoStore.layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                             }
                             </FormattedMessage>
