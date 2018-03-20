@@ -232,3 +232,43 @@ body{font-family: "Lato", sans-serif;}
 }
 .invisible{display: inline;}
 .msg {margin: auto; text-align: center;}
+
+.loading {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 1%;
+  }
+  #loading-img {
+    background: url(../assets/images/loader.gif) center center no-repeat;
+    text-align: center;
+    background:#fff;
+    opacity: 0.85;
+    margin-bottom:10px;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position:fixed;
+    z-index: 999999;
+}
+ 
+// The ghost, nudged to maintain perfect centering 
+#loading-img:before {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; //Adjusts for spacing
+}
+
+// The element to be centered, can
+// also be of any width and height 
+#loading > div {
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+}
+.loader-css {
+    height: 10%;
+    width: 10%;
+    margin-top: 22%;
+}
