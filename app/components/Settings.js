@@ -19,6 +19,7 @@ const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
 import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
 
 
 @observer
@@ -38,6 +39,7 @@ class SettingsModal extends React.Component {
       appLang: "en",
       message: "",
       hideAlert: "hidemessage",
+      showLoader: false
     };
     db.get('targetBible').then((doc) => {
         if(doc.langScript.toUpperCase() == "RTL"){
@@ -51,6 +53,15 @@ class SettingsModal extends React.Component {
     this.loadSetting();
     this.loadReference();
 
+  }
+
+  getStuffAsync = (param) => {
+    return new Promise(function(resolve,reject){
+         bibUtil_to_json.toJson(param, function(err, data){
+            if(err !== null) return reject(err);
+             resolve(data);
+         });
+    });
   }
 
   loadSetting = () => {
@@ -248,25 +259,34 @@ class SettingsModal extends React.Component {
   }
 
   importTranslation = () => {
+    let that = this;
+    this.setState({showLoader: true})
     if (this.import_sync_setting() == false) return;
     const {langCode, langVersion} = this.state.settingData;
     let inputPath = this.state.folderPathImport;
     var files = fs.readdirSync(inputPath[0]);
-    Promise.map(files, function(file){
+    Promise.map(files, (file) => {
       var filePath = path.join(inputPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
           lang: langCode.toLowerCase(),
           version: langVersion.toLowerCase(),
           usfmFile: filePath,
-          targetDb: 'target'
+          targetDb: 'target',
+          scriptDirection: "ltr"
         }
-        bibUtil_to_json.toJson(options);
+        console.log(options)
+        return that.getStuffAsync(options).then((res) => {
+            return res;
+        }, (err)=>{
+            return err;
+        })
       }
     }).then(function(res){
-      swal("Translation Data", "Successfully imported text", "success");
+      window.location.reload();
     }).catch(function(err){
-      swal("Translation Data", "Oops...", "error");
+      window.location.reload();
+      console.log(err)
     })
   }
 
@@ -344,6 +364,10 @@ class SettingsModal extends React.Component {
         });
   }
 
+  
+  
+
+
   saveJsonToDB = (files) => {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
     Promise.map(files, function(file) {
@@ -355,7 +379,12 @@ class SettingsModal extends React.Component {
           usfmFile: filePath,
           targetDb: 'refs'
         }
-        bibUtil_to_json.toJson(options);
+        return this.getStuffAsync(options).then((res) => {
+                    return res;
+        }, (err)=>{
+            return err;
+        })
+        // bibUtil_to_json.toJson(options);
       }
     }).then(function(res){
       swal("Import Reference Text", "Successfully loaded new refs", "success");
@@ -489,7 +518,9 @@ class SettingsModal extends React.Component {
     } else {
       displayCSS = 'none';
     }
-
+    if(this.state.showLoader){
+      return(<Loader />);
+    }
     return (  
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
