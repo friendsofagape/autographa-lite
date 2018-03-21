@@ -44,50 +44,12 @@ describe('Autographa Test', () => {
         return app.client.waitUntilWindowLoaded()
             .getTitle().should.eventually.equal('Autographa Lite');
     });
- 	//it("check layout", function() {
- 	//        	app.client.elements('.layout2x').then((elements)=> {
- 	//        	console.log(elements);
- 	//        	return false;
- 	//    	});
-	// });
-
-	// it('should assess webview', function() {
- 	//    	return app.client.waitUntilWindowLoaded()
- 	//        .click("") // check whether selector is present in DOM
- 	//        .then(console.log.bind(console))
-	// });
-
-	// it('should open book popup', ()=> {
-	// 	return app.client.click("#bookBtn");
-	// });
-
-	// it('should open chapters popup', ()=> {
-	// 	return app.client.click("#chapterBtn");
-	// });
-
-	// it('should connect to target and ref db', ()=> {
-	// 	const refDb = require(`${__dirname}/../app/util/data-provider`).referenceDb();
-	// 	const db = require(`${__dirname}/../app/util/data-provider`).targetDb();
-	// });
-	// it('should target db exists', ()=>{
-	// 	const db = require(`${__dirname}/../app/util/data-provider`).targetDb();
-	// 	db.get('isDBSetup').then((doc)=> {
-	// 	    // console.log(doc);	
-	// 	}, (err) => {
-	// 		console.log(err)
-	// 	})
-	// });
-
-	// it('should save the target', ()=> {
-
-	// 	return app.client.click("#btn-save");
-	// });
-
+ 	
 	it('should check reference verse exist', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
 	 		.waitForExist("#v1", 20000)
-	 		.getText("div[data-verse='r1']>.verse-num").should.eventually.equal("1")
+	 		.getText("div[data-verse='r1']>.verse-num").should.eventually.equal('1')
   	});
 
   	it('should save the target text', () => {
@@ -101,16 +63,34 @@ describe('Autographa Test', () => {
   	});
 
   	it('should check book button', () => {
-  		return app.client.waitUntilWindowLoaded().getText('#book-chapter-btn').should.eventually.equal('Genesis');
-  	})
-  	// // it('should should change layout to 4x', (done) => {
-  	// 	app.client.click("#btn-4x").element(".layout3x");
-  	// 	done();
-  	// })
+  		return app.client.waitUntilWindowLoaded()
+  		.getText('#book-chapter-btn').should.eventually.equal('Genesis');
+  	});
 
-  	// it('should should change layout to default', (done) => {
-  	// 	app.client.click("#btn-2x");
-  	// 	done();
-  	// })
+  	it('should check chapter button', () => {
+  		return app.client.waitUntilWindowLoaded()
+  		.getText('#chapterBtn').should.eventually.equal('1');
+  	});
+
+  	it('should change layout to 3x', () => {
+  		return app.client.waitUntilWindowLoaded()
+  		.waitForExist("#btn-3x", 20000)
+  		.click("#btn-3x")
+  		.getText('.layout2x').should.eventually.exist;
+  	});
+
+  	it('should change layout to 4x', () => {
+  		return app.client.waitUntilWindowLoaded()
+  		.waitForExist("#btn-4x", 20000)
+  		.click("#btn-4x")
+  		.getText('.layout3x').should.eventually.exist;
+  	});
+
+  	it('should change layout to 2x', () => {
+  		return app.client.waitUntilWindowLoaded()
+  		.waitForExist("#btn-2x", 20000)
+  		.click("#btn-2x")
+  		.getText('.layoutx').should.eventually.exist;
+  	});
 
 });
