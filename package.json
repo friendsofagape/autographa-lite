@@ -15,7 +15,7 @@
     "postinstall": "npm rebuild --runtime=electron --target=1.8.2 --disturl=https://atom.io/download/atom-shell --build-from-source",
     "postinstall_windows": "cd node_modules/pouchdb/node_modules/leveldown; node-gyp rebuild --target=1.8.2 --dist-url=https://atom.io/download/atom-shell",
     "installer": "node ./script/installer.js",
-    "test:app": "./node_modules/mocha/bin/mocha --timeout 15000 tests/test.js"
+    "test:app": "./node_modules/mocha/bin/mocha --timeout 30000 tests/test.js"
   },
   "repository": {
     "type": "git",
