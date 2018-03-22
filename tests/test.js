@@ -52,25 +52,40 @@ describe('Autographa Test', () => {
 	 		.getText("div[data-verse='r1']>.verse-num").should.eventually.equal('1')
   	});
 
+  	it('should check book button', () => {
+  		return app.client.waitUntilWindowLoaded()
+  		.getText('#book-chapter-btn').should.eventually.equal('Genesis');
+  	});
+
   	it('should save the target text', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
-	 		.waitForExist("#v1", 20000)
+	 		.waitForVisible("#v1", 20000)
 	 		.setValue("#v1", input)
 	 		.waitForExist("#save-btn", 20000)
 	 		.click('#save-btn')
 	 		.getText("#v1").should.eventually.equal(input);
   	});
 
-  	it('should check book button', () => {
+  	it('close the app', () => {
+  		return app.stop();
+  	});
+
+  	it('open the app', () => {
+  		return app.start();
+  	});
+
+  	it('should check the saved target verse', ()=>{
+	 	 const input = 'this is a test';
   		return app.client.waitUntilWindowLoaded()
-  		.getText('#book-chapter-btn').should.eventually.equal('Genesis');
+  		.getText("#v1").should.eventually.equal(input);
   	});
 
   	it('should check chapter button', () => {
   		return app.client.waitUntilWindowLoaded()
   		.getText('#chapterBtn').should.eventually.equal('1');
   	});
+
 
   	it('should change layout to 3x', () => {
   		return app.client.waitUntilWindowLoaded()
