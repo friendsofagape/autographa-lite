@@ -23,40 +23,47 @@ import Checkbox from 'material-ui/Checkbox';
 import { observer } from "mobx-react"
 import TodoStore from "./TodoStore";
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
-
+import { FormattedMessage } from 'react-intl';
 
 @observer
 class SearchModal extends React.Component {
-constructor(props) {
-  super(props);
-  this.handleFindChange = this.handleFindChange.bind(this);
-  this.handleReplaceChange = this.handleReplaceChange.bind(this);
-    this.state = {
-      showModalSearch: this.props.show,
-      checked: false,
-    };
-  }
+  constructor(props) {
+    super(props);
+    this.handleFindChange = this.handleFindChange.bind(this);
+    this.handleReplaceChange = this.handleReplaceChange.bind(this);
+      this.state = {
+        showModalSearch: this.props.show,
+        checked: false,
+      };
+    }
 
     searchRegExp(str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
       }
 
-     handleFindChange(event) {
+    handleFindChange(event) {
       TodoStore.searchValue = event.target.value
     }
 
     handleReplaceChange(event) {
       TodoStore.replaceValue = event.target.value
     }
+
     replaceContentAndSave(){
-      var newContent;
+      let newContent;
+      let replaceCount;
+      let allChapterReplaceCount = [];
       const searchValue = TodoStore.searchValue;
       const replaceValue = TodoStore.replaceValue;
       var oldContent = TodoStore.translationContent;
-      for (var i = 0; i < TodoStore.verses.length; i++) {
-        if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {                  
-            newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
-            oldContent[i] = newContent;
+
+      for (var i = 0; i < TodoStore.verses.length; i++) {      
+        if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {
+          newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
+          oldContent[i] = newContent;
+          var totalReplacedWord = newContent.match(new RegExp(this.searchRegExp(replaceValue), 'g')).length;
+          allChapterReplaceCount.push(totalReplacedWord);
+          replaceCount = allChapterReplaceCount.reduce((a,b) => a+b, 0);
         }
       }
       db.get(TodoStore.bookId).then((doc) => {
@@ -64,71 +71,73 @@ constructor(props) {
           verses.forEach(function(verse, index) {
               verse.verse = oldContent[index];
         });
-        doc.chapters[TodoStore.chapterId-1].verses = verses;
-        db.put(doc, function(err, response) {
-          if (err) {
-              console.log(err);
-          } else {
-           window.location.reload();
-          }
-        });
+      doc.chapters[TodoStore.chapterId-1].verses = verses;
+      db.put(doc, function(err, response) {
+        if (err) {
+            console.log(err);
+        } else {
+          TodoStore.showModalSearch = false;
+          swal('Replaced Information', `Book: ${Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]}
+                                        Total word replaced: ${replaceCount} `, 'success');
+          replaceCount = 0;
+          allChapterReplaceCount = [];
+        }
+      });
     })
-
   }
 
   render (){
-       let closeSearch = () => TodoStore.showModalSearch = false
-  return (  
-    <Modal show={TodoStore.showModalSearch} onHide={closeSearch} id="tab-search">
+    let closeSearch = () => TodoStore.showModalSearch = false
+    return (  
+      <Modal show={TodoStore.showModalSearch} onHide={closeSearch} id="tab-search">
         <Modal.Header closeButton>
-            <Modal.Title>Search and Replace</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-                    <FormGroup >
-                      <RadioButtonGroup name="SearchAndReplace" style={{display: "flex", marginBottom:"2%"}}>
-                        <RadioButton
-                        value="chapter"
-                        label="Current Chapter"
-                        style={{width: "40%"}}
-                        />
-                        <RadioButton
-                        value="book"
-                        label="Whole Book"
-                        style={{width: "40%"}}
-                        />
-                      </RadioButtonGroup>
-                    </FormGroup>
-                    <div>
-                        <label>Find</label><br />
-                        <TextField
-                          style={{marginTop: "-12px"}}
-                          hintText="Find"
-                          value={TodoStore.searchValue}
-                          onChange={this.handleFindChange.bind(this)}
-                        />
-                        <br />
-                        <label>Replace With</label><br />
-                        <TextField
-                          style={{marginTop: "-12px"}}
-                          hintText="Replacement"
-                          value={TodoStore.replaceValue}
-                          onChange={this.handleReplaceChange.bind(this)}
-                        />
-                        <br />
-                    </div>
-            {/*<div>
-                <label>Find</label><br />
-                <TextField id="searchTextBox" value={searchText}/> <br />
-                <label>Replace With</label><br />
-                <TextField id="replaceTextBox" value= {replaceText} />
-            </div>*/}
-          </Modal.Body>
-          <Modal.Footer>
-            <RaisedButton style={{float: "right"}} label="Make Changes" primary={true} onClick={this.replaceContentAndSave.bind(this)}/>
-          </Modal.Footer>
-    </Modal>
-  )
-}
+          <Modal.Title><FormattedMessage id="label-find-replace" /></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormGroup >
+            <RadioButtonGroup valueSelected="chapter" onChange={this.handleFindChange.bind(this)} name="SearchAndReplace" style={{display: "flex", marginBottom:"2%"}}>
+              <RadioButton
+                value="chapter"
+                label={<FormattedMessage id="label-current-chapter" />}
+                style={{width: "40%"}}
+              />
+              <RadioButton
+                value="book"
+                label={<FormattedMessage id="label-current-book" />}
+                style={{width: "40%"}}
+              />
+            </RadioButtonGroup>
+          </FormGroup>
+          <div>
+            <label><FormattedMessage id="label-find" /></label><br />
+            <TextField
+              style={{marginTop: "-12px"}}
+              hintText={<FormattedMessage id="placeholder-search-text" />}
+              value={TodoStore.searchValue}
+              onChange={this.handleFindChange.bind(this)}
+            />
+            <br />
+            <label><FormattedMessage id="label-replace-with" /></label><br />
+            <TextField
+              style={{marginTop: "-12px"}}
+              hintText={<FormattedMessage id="placeholder-replace-text" />}
+              value={TodoStore.replaceValue}
+              onChange={this.handleReplaceChange.bind(this)}
+            />
+            <br />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <RaisedButton
+            style={{float: "right"}}
+            label={<FormattedMessage id="btn-save-changes" />}
+            primary={true}
+            onClick={this.replaceContentAndSave.bind(this)}
+          />
+        </Modal.Footer>
+      </Modal>
+    )
+  }
 }
 
 module.exports = SearchModal

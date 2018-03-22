@@ -11,6 +11,7 @@ const { Tabs, Tab, Modal, Button, Col, Row, ControlLabel,Grid, Radio, FormGroup 
 const session = require('electron').remote.session;
 const constants = require("../util/constants");
 let bibUtil = require("../util/json_to_usfm.js");
+import { FormattedMessage } from 'react-intl';
 
 @observer
 class DownloadModal extends React.Component {
@@ -23,7 +24,7 @@ class DownloadModal extends React.Component {
         };
     }
 
-    onChange = (e) => {
+    onChange = (e) => { 
         this.setState({[e.target.name]: e.target.value})
     }
   
@@ -59,21 +60,24 @@ class DownloadModal extends React.Component {
         return ( 
             <Modal show={TodoStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
                 <Modal.Header closeButton>
-                    <Modal.Title id="export-heading">Export as USFM</Modal.Title>
+                    <Modal.Title id="export-heading"><FormattedMessage id="tooltip-export-usfm" /></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                 <div className="row">
                     <div className="col-lg-6">
                         <div className="input-group">
+                            <FormattedMessage id="placeholder-stage-trans">
+                            {(message) =>
                             <input 
                                 type="text"
                                 className="form-control"
                                 id="stageText" 
-                                placeholder="Stage name of translation"
+                                placeholder={message}
                                 name="stageChange"
                                 value={this.state.stageChange}
                                 onChange={this.onChange}
-                            />
+                            />}
+                            </FormattedMessage>
                             <div className="input-group-btn">
                                 <button 
                                     id="dropdownBtn"
@@ -81,33 +85,34 @@ class DownloadModal extends React.Component {
                                     className="btn btn-default dropdown-toggle"
                                     data-toggle="dropdown"
                                     aria-haspopup="true"
-                                    aria-expanded="false">{this.state.buttonStage} 
+                                    aria-expanded="false"><FormattedMessage id={this.state.buttonStage} /> 
                                     <span className="caret"></span>
                                 </button>
                                 <ul className="dropdown-menu dropdown-menu-right" id="trans-stage">
                                     <li>
+
                                         <a href="#" value="stage1" onClick={() => this.clickStage("Stage 1")}>
-                                            <span className="stage">Stage </span> 1 
+                                            <span className="stage"><FormattedMessage id="label-stage" /> </span> 1 
                                         </a>
                                     </li>
                                     <li>
                                         <a href="#" value="stage2" onClick={() => this.clickStage("Stage 2")}>
-                                            <span className="stage">Stage </span> 2 
+                                            <span className="stage"><FormattedMessage id="label-stage" /> </span> 2 
                                         </a>
                                     </li>
                                     <li>
                                         <a href="#" value="stage3" onClick={() => this.clickStage("Stage 3")}>
-                                            <span className="stage">Stage </span> 3
+                                            <span className="stage"><FormattedMessage id="label-stage" /> </span> 3
                                         </a>
                                     </li>
                                     <li>
                                         <a href="#" value="stage4" onClick={() => this.clickStage("Stage 4")}>
-                                            <span className="stage">Stage </span> 4
+                                            <span className="stage"><FormattedMessage id="label-stage" /> </span> 4
                                         </a>
                                     </li>
                                     <li>
                                         <a href="#" value="stage5" onClick={() => this.clickStage("Stage 5")}>
-                                            <span className="stage">Stage </span> 5
+                                            <span className="stage"><FormattedMessage id="label-stage" /> </span> 5
                                         </a>
                                     </li>
                                 </ul>
@@ -117,7 +122,11 @@ class DownloadModal extends React.Component {
                 </div>
                 </Modal.Body>
                 <Modal.Footer>
-                <RaisedButton style={{float: "right"}} label="Export" primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                <FormattedMessage id="btn-export">
+                {(message) =>
+                  <RaisedButton style={{float: "right"}} label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                }
+                </FormattedMessage>
                 </Modal.Footer>
             </Modal>
         )

@@ -138,7 +138,7 @@ body{font-family: "Lato", sans-serif;}
 /* Style the tab content */
 .tabcontent {float: left; padding: 23px 0px 0px 10px; width: 70%; border-left: none; height: 380px;} 
 .ref-drop-down {background-color: rgb(11, 130, 255); color: #ffffff; font-weight: bold; width: 166px; border-radius: 6px; height: 34px; padding-left: 9px;}
-.lang-code {position:absolute; width:294px; height: 100px; display:none; margin-top:-20px; border:solid 1px #dedede; border-top:0px; overflow-x:auto; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; -moz-border-bottom-right-radius: 6px; -moz-border-bottom-left-radius: 6px; box-shadow: 0px 0px 5px #999; border-width: 3px 1px 1px; border-style: solid; background-color: rgb(222, 213, 213); color: rgb(11, 130, 255); z-index: 1;}
+.lang-code {position:absolute; width:294px; height: 100px; display:none; margin-top:-8px; border:solid 1px #dedede; border-top:0px; overflow-x:auto; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; -moz-border-bottom-right-radius: 6px; -moz-border-bottom-left-radius: 6px; box-shadow: 0px 0px 5px #999; border-width: 1px 1px 1px; border-style: solid; background-color: rgb(222, 213, 213); color: rgb(11, 130, 255); z-index: 1;}
 #language-settings .lang-code {margin-top: 0px !important;}
 .col-ref{margin-top: 10px;}
 @media (max-width: 768px) {.layout {display: none; } #saved-time {display: none; }}
@@ -150,6 +150,8 @@ body{font-family: "Lato", sans-serif;}
 .col-xs-6 p {margin: 0;}
 // #input-verses span {font-size: 14px;font-family: "Helvetica","Arial",sans-serif; font-weight: 400;}
 .verse-num {font-size: 10px; font-weight: bold;} 
+.rtl div span {margin-left: 10px; padding-right: 0px !important;}
+.rtl .verse-num{font-size: 12px;}
 // @media screen and (max-width: 2880px) {.col-fixed{min-height: 1690px;}}
 // @media screen and (max-width: 1280px) {.col-fixed{min-height: 765px;}}
 // // @media (min-width: 1440px) {.col-fixed{min-height: 985px;}}
@@ -227,4 +229,46 @@ body{font-family: "Lato", sans-serif;}
 [data-tip]:hover:before,
 [data-tip]:hover:after {
   display:block;
+}
+.invisible{display: inline;}
+.msg {margin: auto; text-align: center;}
+
+.loading {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 1%;
+  }
+  #loading-img {
+    background: url(../assets/images/loader.gif) center center no-repeat;
+    text-align: center;
+    background:#fff;
+    opacity: 0.85;
+    margin-bottom:10px;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position:fixed;
+    z-index: 999999;
+}
+ 
+// The ghost, nudged to maintain perfect centering 
+#loading-img:before {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em; //Adjusts for spacing
+}
+
+// The element to be centered, can
+// also be of any width and height 
+#loading > div {
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+}
+.loader-css {
+    height: 10%;
+    width: 10%;
+    margin-top: 22%;
 }

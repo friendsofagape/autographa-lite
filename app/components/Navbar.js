@@ -15,7 +15,11 @@ const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const injectTapEventPlugin = require("react-tap-event-plugin");
 import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
-import Reference from "./Reference"
+import Reference from "./Reference";
+import { FormattedMessage } from 'react-intl';
+import { Toggle } from 'material-ui';
+
+
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 
@@ -41,67 +45,30 @@ class Navbar extends React.Component {
             searchVal: "", 
             replaceVal:"",
         };
-
+       
         var verses, chunks, chapter;
         var that = this;
-        session.defaultSession.cookies.get({ url: 'http://refs.autographa.com' }, (error, refCookie) => {
-            if(refCookie.length > 0){
-                TodoStore.refId = refCookie[0].value;
-            }
-        });
-        session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, bookCookie) => {
-            if(bookCookie.length > 0){
-                TodoStore.bookId = bookCookie[0].value;
-                session.defaultSession.cookies.get({ url: 'http://chapter.autographa.com' }, (error, chapterCookie) => {
-                    if(chapterCookie[0].value){
-                        TodoStore.chapterId = chapterCookie[0].value;
-                        db.get(TodoStore.bookId).then(function(doc) {
-                            refDb.get('refChunks').then(function(chunkDoc) {
-                                TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                                TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
-                                chapter = TodoStore.chapterId
-                                that.getRefContents(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                            })
-                        })
-                    }
-                });
-            }
-            else{
-                refDb.get("ref_history").then(function(doc) {
-                    var bookName = doc.visit_history[0].book; 
-                    var book = doc.visit_history[0].bookId;
-                    chapter = doc.visit_history[0].chapter;
-                    TodoStore.bookId = book.toString();
-                    TodoStore.chapterId = chapter;
-                    TodoStore.verses = verses;
-                    db.get(TodoStore.bookId).then(function(doc) {
-                    refDb.get('refChunks').then(function(chunkDoc) {
-                        TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                        TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
-                        chapter = TodoStore.chapterId
-                        that.getRefContents(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                    })
+        refDb.get("ref_history").then(function(doc) {
+            var bookName = doc.visit_history[0].book; 
+            var book = doc.visit_history[0].bookId;
+            chapter = doc.visit_history[0].chapter;
+            TodoStore.bookId = book.toString();
+            TodoStore.chapterId = chapter;
+            TodoStore.verses = verses;
+            db.get(TodoStore.bookId).then(function(doc) {
+                refDb.get('refChunks').then(function(chunkDoc) {
+                    TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
+                    TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
+                    chapter = TodoStore.chapterId
+                    that.getRefContents(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
                 })
-                    var cookie = { url: 'http://book.autographa.com', name: 'book', value: book.toString() };
-                    session.defaultSession.cookies.set(cookie, (error) => {
-                        if (error)
-                            console.error(error);
-                        var cookie = { url: 'http://chapter.autographa.com', name: 'chapter', value: chapter.toString() };
-                        session.defaultSession.cookies.set(cookie, (error) => {
-                            if (error)
-                                console.error(error);
-                        });
-                    });
-                }).catch(function(err) {
-                    console.log('Error: While retrieving document. ' + err);
-                });
-            }
-        });        
+            })
+        }).catch(function(err) {
+            console.log(err)
+        });                  
     }
-
-    getRefContents(id,chapter) {
-
-        let refContent = refDb.get(id).then(function(doc) { //book code is hard coded for now
+    getContent = (id, chapter) => {
+        return refDb.get(id).then(function(doc) { //book code is hard coded for now
             for (var i = 0; i < doc.chapters.length; i++) {
                 if (doc.chapters[i].chapter == parseInt(chapter, 10)) { // 1 is chapter number and hardcoded for now
                     break;
@@ -114,67 +81,39 @@ class Navbar extends React.Component {
         }).catch(function(err) {
             console.log(err)
         });
+    }
 
-        // console.log(TodoStore.aId)
-        if(TodoStore.aid ==1 || TodoStore.aId  == 2 && TodoStore.layout === 2) {
+    getRefContents = (id,chapter) => {
 
-            console.log("TodoStore.selectId")
-             refContent.then((content)=> {
-                console.log("content called")
-                TodoStore.content = content;
-                // TodoStore.contentOne = content;
-
-            });
-              refContent.then((content)=> {
-                // console.log("contentOne called")
-                TodoStore.contentOne = content;
-            });
-        }
-
-        else if(TodoStore.aId  == 1 || TodoStore.aId  == 2 && TodoStore.layout === 3) {
-
-            // console.log("TodoStore.selectId")
-             refContent.then((content)=> {
-                // console.log("content called")
-                TodoStore.content = content;
-                // TodoStore.contentOne = content;
-
-            });
-              refContent.then((content)=> {
-                // console.log("contentOne called")
-                TodoStore.contentOne = content;
-            });
-              refContent.then((content)=> {
-             TodoStore.contentTwo = content;
-         });
-        }
-       else if(TodoStore.layoutContent === 1 ) {
-            refContent.then((content)=> {
-                // console.log("content called")
-                TodoStore.content = content;
-
-            });
-        }
-
-        else if(TodoStore.layoutContent === 2 ) {
-             // console.log("selectId")
-            refContent.then((content)=> {
-                console.log("contentOne called")
-                TodoStore.contentOne = content;
-            });
-            
-        }
-
-        else if(TodoStore.layoutContent === 3 ) {
-            refContent.then((content)=> {
-             TodoStore.contentTwo = content;
-             if(TodoStore.layout3xDirect == true) {
-                TodoStore.contentOne = content;
-                TodoStore.layout3xDirect = false;
-             }
-            });
-        }
-        TodoStore.aId  = "";
+        refDb.get('targetReferenceLayout').then((doc) => {
+            TodoStore.layout = doc.layout;
+            TodoStore.layoutContent = doc.layout;
+            let chapter = TodoStore.chapterId.toString();
+            switch(doc.layout){
+                case 1:
+                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.content = content;
+                    })
+                case 2:
+                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.content = content;
+                    }) 
+                    this.getContent(TodoStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.contentOne = content;
+                    })
+                case 3:
+                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.content = content;
+                    }) 
+                    this.getContent(TodoStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.contentOne = content;
+                    })
+                    this.getContent(TodoStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
+                        TodoStore.contentTwo = content;
+                    })
+            }
+        })
+       //  TodoStore.aId  = "";
         var translationContent = [];
         var i;
         var chunkIndex = 0;
@@ -268,17 +207,12 @@ class Navbar extends React.Component {
 
     onItemClick(bookName) {
         var bookNo;
-        console.log(bookName)
-        console.log(Constant.booksList)
-                for (var i = 0; i < Constant.booksList.length; i++) {
+        for (var i = 0; i < Constant.booksList.length; i++) {
             bookName == Constant.booksList[i]
             console.log(bookName == Constant.booksList[i])
             if (bookName == Constant.booksList[i]) {
-                 // console.log(i)
                 var bookNo = i+1;
-                 console.log(bookNo)
                 break;
-
             };
         };
         TodoStore.bookActive = bookNo;
@@ -298,7 +232,7 @@ class Navbar extends React.Component {
 
      
     handleSelect(key) {
-        this.setState({key});
+        // this.setState({key});
     }
 
     goToTab(key) {
@@ -308,11 +242,7 @@ class Navbar extends React.Component {
 
     getValue(chapter, bookId){
         TodoStore.translationContent = "";
-         // console.log("get value called")
         TodoStore.chapterId = chapter;
-        //TodoStore.aId = event.target.id;
-        //console.log(event.target.id);
-         // console.log(chapter)
         TodoStore.bookId = bookId;
         var verses = TodoStore.verses;
         var chunks = TodoStore.chunks;
@@ -339,10 +269,7 @@ class Navbar extends React.Component {
                     TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
                     TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
                     chapter = TodoStore.chapterId;
-                    console.log("if called")
-                    // console.log(chapter);
                     that.getRefContents(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                    // that.getRefContents(TodoStore.refId1+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString(),verses);
                     
                 });
             })
@@ -359,7 +286,6 @@ class Navbar extends React.Component {
                     TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
                     chapter = TodoStore.chapterId;
                     that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
-                    //that.createVerseInputs(verses, chunks, chapter);
                 });
             })
             }    
@@ -387,10 +313,8 @@ class Navbar extends React.Component {
     saveTarget() {
         var bookNo = TodoStore.bookId.toString();
         db.get(bookNo).then(function(doc) {
-            console.log(doc);
             refDb.get('refChunks').then(function(chunkDoc) {
                 var verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                console.log(verses);
                 verses.forEach(function(verse, index) {
                     var vId = 'v' + (index + 1);
                     verse.verse = document.getElementById(vId).textContent;
@@ -413,7 +337,6 @@ class Navbar extends React.Component {
                                 clearInterval("#saved-time");
                             });
                             clearInterval("#saved-time");
-                            // clearInterval(intervalId);
                         });
                     });
                 });
@@ -423,25 +346,23 @@ class Navbar extends React.Component {
         });
     }
 
-    handleRefChange(event) {
-        event.persist();
-
-         TodoStore.selectId = event.target.id;
-         TodoStore.layoutContent = parseInt(event.currentTarget.dataset.layout);
-         let referenceValue = event.target.value;
-         TodoStore.currentRef = referenceValue;
-         switch(TodoStore.layoutContent){
-            case 1:
-                TodoStore.refId = event.target.value;
-                break;
-            case 2:
-                TodoStore.refId1 = event.target.value;
-                break;
-            case 3:
-                TodoStore.refId2 = event.target.value;
-                break;
-         }
-
+    handleRefChange(refDropDownPos, event) {
+        // event.persist();
+        TodoStore.activeRefs[refDropDownPos] = event.target.value;
+        refDb.get('activeRefs').then((doc) => {
+            doc._rev = doc._rev;
+            doc.activeRefs = Object.assign(doc.activeRefs, TodoStore.activeRefs);
+            refDb.put(doc);
+        }, (err) => {
+            refDb.put({_id: "activeRefs" , activeRefs: activeRefs}).then((res) => {
+            }, (err) => {
+                console.log(err);
+            });
+        });
+        TodoStore.selectId = event.target.id;
+        TodoStore.layoutContent = parseInt(event.currentTarget.dataset.layout);
+        let referenceValue = event.target.value;
+        TodoStore.currentRef = referenceValue;
         session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, bookCookie) => {
             if(bookCookie.length > 0){
                 this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt(bookCookie[0].value, 10) - 1],TodoStore.chapterId) 
@@ -458,7 +379,7 @@ class Navbar extends React.Component {
     } 
     
     render() {
-        const layout = TodoStore.layout;
+        // const layout = TodoStore.layout;
         var OTbooksstart = 0;
         var OTbooksend = 38;
         var NTbooksstart= 39;
@@ -469,11 +390,11 @@ class Navbar extends React.Component {
         const refContentCommon = TodoStore.contentCommon;
         const refContentTwo = TodoStore.contentTwo;
         const bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]
-        let close = () => TodoStore.showModalBooks = false;//this.setState({ showModal: false, showModalSettings: false, showModalBooks: false });
+        let close = () => TodoStore.showModalBooks = false;
         const test = (TodoStore.activeTab == 1);
         var chapterList = [];
         for(var i=0; i<TodoStore.bookChapter["chapterLength"]; i++){
-        chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == TodoStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, TodoStore.bookChapter["bookId"]) } >{i+1}</a></li> );
+            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == TodoStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, TodoStore.bookChapter["bookId"]) } >{(i+1).toLocaleString(TodoStore.appLang)}</a></li> );
         }
         return (
             <div>
@@ -585,81 +506,101 @@ class Navbar extends React.Component {
                                     aria-label="..."
                                     id="bookBtn"
                                     style={{marginLeft:"200px"}}>
-                                    <a onClick={() => this.openpopupBooks(1)} href="#" className="btn btn-default" data-toggle="tooltip"data-placement="bottom" title="Select Book"  id="book-chapter-btn">{bookName}
+                                    <a
+                                        onClick={() => this.openpopupBooks(1)}
+                                        href="#"
+                                        className="btn btn-default"
+                                        data-toggle="tooltip"
+                                        data-placement="bottom"
+                                        title="Select Book"
+                                        id="book-chapter-btn"
+                                    >
+                                    {bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
-                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{TodoStore.chapterId}
+                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(TodoStore.chapterId).toLocaleString(TodoStore.appLang)}
                                         </a>
                                     </span>
                                 </div>                               
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span>OFF</span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
-                                <label style={{marginTop:"17px"}} className="mdl-switch mdl-js-switch mdl-js-ripple-effect" htmlFor="switch-2" id="switchLable" data-toggle='tooltip' data-placement='bottom' title="Compare mode">
-                                    <input type="checkbox" id="switch-2" className="mdl-switch__input check-diff"/>
-                                    <span className="mdl-switch__label"></span>
-                                </label>                               
+
+                                <FormattedMessage id="tooltip-compare-mode">
+                                    {(message) =>
+                                        <Toggle
+                                          defaultToggled={true}
+                                          style={{marginTop:"17px"}}
+                                        />
+                                    }
+                                </FormattedMessage>                               
                             </li>
-                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span>ON</span></li>
+                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
                             <li>
-                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title="Find and replace" id="searchText"><i className="fa fa-search fa-2x"></i></a>
+                                <FormattedMessage id="tooltip-find-and-replace">
+                                {(message) =>
+                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText">
+                                <i className="fa fa-search fa-2x"></i>
+                                </a>}
+                                </FormattedMessage>
                             </li>
                             <li>
                                 <a href="#" className="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="fa fa-cloud-download fa-2x"></i>
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;" id="export-usfm">USFM</a>
+                                        <a onClick={() => this.openpopupDownload()} href="javascript:;">USFM</a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;" id="print-pdf">HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;">HTML</a>
                                     </li>
                                 </ul>
                             </li>
                             <li>
-                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title="About" id="btnAbout"><i className="fa fa-info fa-2x"></i></a>
+                                <FormattedMessage id="tooltip-about" >
+                                {(message) =>
+                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title={message} id="btnAbout"><i className="fa fa-info fa-2x"></i></a>}
+                                </FormattedMessage>
                             </li>
                             <li>
-                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title="Settings"><i className="fa fa-cog fa-2x"></i>
-                                </a>
+                                <FormattedMessage id="tooltip-settings" >
+                                {(message) =>
+                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message}><i className="fa fa-cog fa-2x"></i>
+                                </a>}
+                                </FormattedMessage>
                             </li>
                         </ul>
                     </div>
                     </div>
                 </nav>
-                {layout == 1   &&
-                <div className="parentdiv">
-                <div className="parentdiv">
-                <div className="layoutx"> <Reference onClick={this.handleRefChange} refIds={TodoStore.refId} id = {1} layout={1}/><TranslationPanel refContent ={refContent}  /></div>
-                <div style={{padding: "10px"}} className="layoutx"><ReferencePanel /></div>                    
-                </div>
-                </div>
+                {
+                    TodoStore.layout == 1   &&
+                        <div className="parentdiv">
+                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
+                            <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} /></div>
+                        </div>
                 } 
-                {layout == 2 &&
-                <div className="parentdiv">
-                <div className="parentdiv">
+                {
+                    TodoStore.layout == 2 &&
+                    <div className="parentdiv">
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent}  /></div>
 
-                <div className="layout2x"><Reference onClick={this.handleRefChange} refIds={TodoStore.refId} id={21} layout = {1} /><TranslationPanel refContent ={refContent}  /></div>
-
-                <div className="layout2x"><Reference onClick={this.handleRefChange} refIds={TodoStore.refId1} id={22} layout = {2} /><TranslationPanel refContent ={refContentOne}/></div>
-                <div style={{padding: "10px"}} className="layout2x"><ReferencePanel /></div>
-                </div>
-                </div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} /></div>
+                    </div>
                 }
-                {layout == 3 &&
-                <div className="parentdiv">
-                <div className="parentdiv">
+                {
+                    TodoStore.layout == 3 &&
+                    <div className="parentdiv">
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent}/></div>
 
-                <div className="layout3x"><Reference onClick={this.handleRefChange} refIds={TodoStore.refId} id={31} layout = {1} /><TranslationPanel refContent ={refContent}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
 
-                <div className="layout3x"><Reference onClick={this.handleRefChange} refIds={TodoStore.refId1} id={32} layout = {2} /><TranslationPanel refContent ={refContentOne}/></div>
-
-                <div className="layout3x"><Reference onClick={this.handleRefChange} refIds={TodoStore.refId2} id={33} layout = {3} /><TranslationPanel refContent ={refContentTwo}/></div>
-                <div style={{ padding: "10px"}} className="layout3x"><ReferencePanel /></div>                    
-                </div>
-                </div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo}/></div>
+                        <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} /></div>
+                    </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
             </div>

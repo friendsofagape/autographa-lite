@@ -17,11 +17,13 @@ function createWindow() {
     icon:'/app/assets/images/logo.png',
     width: 800,
     height: 600,
-    // 'min-width': 600,
-    // 'min-height': 300,
-    // 'accept-first-mouse': true,
-    // 'title-bar-style': 'hidden',
-    // 'webPreferences': {'session': session}
+     height: 600,
+    'min-width': 600,
+    'min-height': 300,
+    'accept-first-mouse': true,
+    'title-bar-style': 'hidden',
+    'webPreferences': {'session': session},
+    show: false
     });
 
     // and load the index.html of the app.

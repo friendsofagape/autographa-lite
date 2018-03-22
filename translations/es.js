@@ -1,4 +1,4 @@
-{
+[{
 	
 	"label-translation": "Traducción",	
 	"app-name-Autographa-Lite" : "Autographa Lite",
@@ -31,6 +31,7 @@
 	"label-exported-file" : "Archivo Exportado en",
 	"label-language" : "Idioma de la Aplicación",
 	"label-select-language": "Seleccione el idioma para configurar la aplicación en:",
+	"label-heading-confirmation" : "Confirmación",
 	"placeholder-search-text" : "Buscar texto",
 	"placeholder-replace-text" : "Reemplazo",
 	"placeholder-path-to-destination" : "Ruta a la carpeta de destino",
@@ -49,6 +50,7 @@
 	"tooltip-compare-mode" : "Modo de comparación",
 	"tooltip-find-and-replace" : "Encontrar y reemplazar",
 	"tooltip-export-usfm" : "Exportar como USFM",
+	"tooltip-export-html" : "Exportar como HTML",
 	"tooltip-about" : "Acerca de",
 	"tooltip-settings" : "Configuración",
 	"tooltip-modal-close" : "Cerrar",
@@ -70,6 +72,13 @@
 	"label-license-tab" : "Licencia",
 	"label-hosted-url": "Código fuente alojado en",
 	"label-stage" : "Etapa",
+	"label-script-direction": "Dirección de guión",
+	"label-ltr": "de izquierda a derecha",
+	"label-rtl": "De derecha a izquierda",
+	"export-html": "HTML",
+	"export-usfm": "USFM",
+	"tooltip-language-validation": "La longitud debe tener entre 3 y 8 caracteres y no puede comenzar con un número.",
+	"dynamic-msg-bib-code-start-with-number": "La longitud del código de idioma de la Biblia debe tener entre 3 y 8 caracteres y no puede comenzar con un número.",
 	"error-msg-search-validation" : "Ingrese un valor para buscar",
 	"error-msg-replace-validation" : "Introduzca el valor para reemplazar",
 	"dynamic-msg-error" : "Error",
@@ -167,4 +176,4 @@
 	"book-3-john" : "3 Juan",
 	"book-jude" : "Judas",
 	"book-revelation" : "Apocalipsis"
-}
+}]

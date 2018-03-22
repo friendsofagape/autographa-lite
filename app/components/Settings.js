@@ -8,6 +8,7 @@ import TodoStore from "./TodoStore";
 import ReferencePanel from './ReferencePanel';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
@@ -17,6 +18,9 @@ const session = require('electron').remote.session;
 const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
+import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
+
 
 @observer
 class SettingsModal extends React.Component {
@@ -31,12 +35,33 @@ class SettingsModal extends React.Component {
       refListEdit: [],
       bibleReference: true,
       visibleList: true,
-      myBible: '',
-      Details: ''
+      myBible: "",
+      appLang: "en",
+      message: "",
+      hideAlert: "hidemessage",
+      showLoader: false
     };
+    db.get('targetBible').then((doc) => {
+        if(doc.langScript.toUpperCase() == "RTL"){
+            TodoStore.scriptDirection = "RTL"
+        }else{
+          TodoStore.scriptDirection = "LTR"
+        }
+    }, (err) => {
+    })
 
     this.loadSetting();
     this.loadReference();
+
+  }
+
+  getStuffAsync = (param) => {
+    return new Promise(function(resolve,reject){
+         bibUtil_to_json.toJson(param, function(err, data){
+            if(err !== null) return reject(err);
+             resolve(data);
+         });
+    });
   }
 
   loadSetting = () => {
@@ -89,7 +114,7 @@ class SettingsModal extends React.Component {
           Object.keys(response.rows).map((index, value) => {
             if (response.rows) {
               if (!filteredResults.hasOwnProperty(response.rows[index].doc['lang_code'])) {
-                filteredResults[response.rows[index].doc['lang_code']] = response.rows[index].doc['name']; // 0 duplicates
+                filteredResults[response.rows[index].doc['lang_code']] = response.rows[index].doc['name'];
               } else {
                 existingValue = filteredResults[response.rows[index].doc['lang_code']]
                 filteredResults[response.rows[index].doc['lang_code']] = (existingValue + " , " + response.rows[index].doc['name']);
@@ -102,7 +127,7 @@ class SettingsModal extends React.Component {
             return [];
         }
     }).catch(function(err) {
-        console.log(err);
+      console.log(err);
     })
   }
 
@@ -131,65 +156,58 @@ class SettingsModal extends React.Component {
         this.setState({});
   }
 
-  // validation target settings
+  setMessage = (msgid, isValid) => {
+    this.setState({ message: msgid, hideAlert: 'failure' });
+    setTimeout(() => {
+      this.setState({hideAlert: 'hidemessage'})
+    }, 2000);
+    return isValid;
+  }
+
   target_setting = () => {
-    const {langCodeValue, langVersion, folderPath} = this.state.settingData;
-    var langCode = langCodeValue,
-        version = langVersion,
-        path = folderPath,
-        isValid = true;
-    console.log(langCode);
-    if (langCode === null || langCode === "") {
-        this.setState({message: 'The Bible language code is required.', Details: 'failure' });
-        setTimeout(() => {
-          this.setState({Details: 'failure'})
-        }, 2000);
-        isValid = false;
-    }else if(langCode.match(/^\d/)) {
-        console.log(langCode.match(/^\d/));
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
-        isValid = false;
-    }
-    else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
-        this.setState({message: 'The Bible language code length should be between 3 and 8 characters and can’t start with a number.', Details: 'failure'});
-        isValid = false;
-    }
-    else if (version === null || version === "") {
-        this.setState({ message:'The Bible version is required.', Details: 'failure' });
-        isValid = false;
+    const {langCode, langVersion, folderPath} = this.state.settingData;
+    console.log(langCode)
+    let version = langVersion;
+    let path = folderPath;
+    let isValid = true;
+    if (langCode === null || langCode == "") {
+      isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
+    } else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if (version === null || version === "") {
+      isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
-      this.setState({message: 'The Bible path is required.', Details: 'failure'});
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
-        isValid = true;
+      isValid = true;
     }
     return isValid;
   }
 
   saveSetting = () => {
     if (this.target_setting() == false) return;
-    const {langCodeValue, langVersion, folderPath} = this.state.settingData;
+    const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
+    const settingData = { 
+      _id: 'targetBible',
+      targetLang: langCode,
+      targetVersion: langVersion,
+      targetPath: folderPath,
+      langScript: TodoStore.scriptDirection.toUpperCase()
+    }
     db.get('targetBible').then((doc) => {
-        db.put({
-            _id: 'targetBible',
-            _rev: doc._rev,
-            targetLang: langCodeValue,
-            targetVersion: langVersion,
-            targetPath: folderPath
-        }).then(function(e) {
-          swal("Translation Data", "Successfully saved data in database", "success");
-        });
-    }, (err) =>  {
-        db.put({
-            _id: 'targetBible',
-            targetLang: langCodeValue,
-            targetVersion: langVersion,
-            targetPath: folderPath
-        }).then((res) => {
-          swal("Translation Data", "Successfully saved data in database", "success");
-        }, (err) => {
-          swal("Translation Data", "Oops....", "error");
-        })
+      settingData._rev = doc._rev;
+      db.put(settingData).then((res) => {
+        swal("Translation Data", "Successfully saved data in database", "success");
+      }); 
+    }, (err) => {
+      db.put(settingData).then((res) => {
+        swal("Translation Data", "Successfully saved data in database", "success");
+      }, (err) => {
+        swal("Translation Data", "Oops....", "error");
+                    
+      });
     });
   }
 
@@ -214,7 +232,6 @@ class SettingsModal extends React.Component {
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.setState({folderPathImport: selectedDir});
-          this.setState({});
         }
     });
   }
@@ -232,52 +249,69 @@ class SettingsModal extends React.Component {
     });
   }
 
-  importTranslation = (event) => {
-    const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
-    var files = fs.readdirSync(folderPath[0]);
-    Promise.map(files, function(file){
-      var filePath = path.join(folderPath[0], file);
+  import_sync_setting = () => {
+    let targetImportPath = this.state.folderPathImport;
+    let isValid = true;
+    if (targetImportPath === undefined ||targetImportPath === null || targetImportPath === "") {
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
+    }
+    return isValid;
+  }
+
+  importTranslation = () => {
+    let that = this;
+    this.setState({showLoader: true})
+    if (this.import_sync_setting() == false) return;
+    const {langCode, langVersion} = this.state.settingData;
+    let inputPath = this.state.folderPathImport;
+    var files = fs.readdirSync(inputPath[0]);
+    Promise.map(files, (file) => {
+      var filePath = path.join(inputPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
           lang: langCode.toLowerCase(),
           version: langVersion.toLowerCase(),
           usfmFile: filePath,
-          targetDb: 'target'
+          targetDb: 'target',
+          scriptDirection: "ltr"
         }
-        bibUtil_to_json.toJson(options);
+        console.log(options)
+        return that.getStuffAsync(options).then((res) => {
+            return res;
+        }, (err)=>{
+            return err;
+        })
       }
     }).then(function(res){
-      swal("Translation Data", "Successfully imported text", "success");
+      window.location.reload();
     }).catch(function(err){
-      swal("Translation Data", "Oops...", "error");
+      window.location.reload();
+      console.log(err)
     })
   }
 
   reference_setting() {
     const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
-    var name = bibleName,
-        langCode = refLangCode,
-        version = refVersion,
-        path = refFolderPath,
-        isValid = true;
+    let name = bibleName;
+    let langCode = refLangCode;
+    let version = refVersion;
+    let path = refFolderPath;
+    let isValid = true;
     if (name == "") {
-        swal("Error", "The Bible name is required.", "error");
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-name-validation', false);
     } else if (langCode === null || langCode === "") {
-        swal("Error", "The Bible language code is required.", "error");
-        isValid = false;
-    }else if (version === null || version === "") {
-      swal("Error", "The Bible version is required.", "error")
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
+    } else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if (version === null || version === "") {
+      isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
     } else if (path === null || path === "") {
-        swal("Error", "The Bible path is required.", "error")
-        isValid = false;
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
     } else {
         isValid = true;
-
     }
     return isValid;
-  } //validation reference settings
+  }
 
   importReference = () => {
     if (this.reference_setting() == false)
@@ -330,6 +364,10 @@ class SettingsModal extends React.Component {
         });
   }
 
+  
+  
+
+
   saveJsonToDB = (files) => {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
     Promise.map(files, function(file) {
@@ -341,7 +379,12 @@ class SettingsModal extends React.Component {
           usfmFile: filePath,
           targetDb: 'refs'
         }
-        bibUtil_to_json.toJson(options);
+        return this.getStuffAsync(options).then((res) => {
+                    return res;
+        }, (err)=>{
+            return err;
+        })
+        // bibUtil_to_json.toJson(options);
       }
     }).then(function(res){
       swal("Import Reference Text", "Successfully loaded new refs", "success");
@@ -352,8 +395,8 @@ class SettingsModal extends React.Component {
 
   clickListSettingData = (evt, obj) => {
     let settingData = Object.assign({}, this.state.settingData);
-        settingData.langCode = evt + " " + obj;
-        settingData.langCodeValue = obj.slice(1,-1);
+        settingData.langCodeValue = evt + " " + obj;
+        settingData.langCode = obj.slice(1,-1);
     this.setState({ 
       settingData,
       visibleList: false
@@ -425,6 +468,36 @@ class SettingsModal extends React.Component {
    });
   }
 
+  changeLangauge = (event) => {
+    TodoStore.appLang = event.target.value;
+  }
+
+  saveAppLanguage = (e) => {
+    refDb.get('app_locale').then((doc) => {
+      doc.appLang = TodoStore.appLang;
+      refDb.put(doc);
+      this.setState({message: 'dynamic-msg-save-language', hideAlert: 'success' });
+      setTimeout(() => {
+        this.setState({hideAlert: 'hidemessage'})
+      }, 2000);
+    }).catch((err) => {
+      if (err.message === 'missing') {
+        var locale = {
+            _id: 'app_locale',
+            appLang: TodoStore.appLang
+        };
+        refDb.put(locale).then(function(res) {
+          swal("Title", "dynamic-msg-save-language", "success"); 
+        }).catch(function(internalErr) {
+            swal("dynamic-msg-went-wrong");
+        });
+      } 
+    });
+  }
+
+  onChangeScriptDir = (value) => {
+    TodoStore.scriptDirection = value;
+  }
 
   render(){
     var errorStyle = {
@@ -445,16 +518,19 @@ class SettingsModal extends React.Component {
     } else {
       displayCSS = 'none';
     }
-
+    if(this.state.showLoader){
+      return(<Loader />);
+    }
     return (  
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-          <div className={"alert " + (this.state.Details === 'success' ? 'alert-success msg' : 'invisible')}>
-            <span>{this.state.message}</span>
-          </div>
-          <div className={"alert " + (this.state.Details === 'failure' ? 'alert-danger msg': 'invisible')}>
-            <span>{this.state.message}</span>
+          <Modal.Title><FormattedMessage id="modal-title-setting" /></Modal.Title>
+          <div
+            className={"alert " + (this.state.hideAlert != 'hidemessage' ?
+              (this.state.hideAlert === 'success' ? 'alert-success msg' : 'alert-danger msg'): 'invisible')
+            }
+          >
+            <span>{this.state.message ? <FormattedMessage id={this.state.message}/ > : ""}</span>
           </div>
         </Modal.Header>
           <Modal.Body>
@@ -463,29 +539,32 @@ class SettingsModal extends React.Component {
                 <Col sm={4}>
                   <Nav bsStyle="pills" stacked>
                     <NavItem eventKey="first">
-                      Translation Details
+                      <FormattedMessage id="label-translation-details" />
                     </NavItem>
                     <NavItem eventKey="second">
-                      Import Translation
+                      <FormattedMessage id="label-import-translation" />
                     </NavItem>
                     <NavItem eventKey="third">
-                      Import Reference Text
+                      <FormattedMessage id="label-import-ref-text" />
                     </NavItem>
                     <NavItem eventKey="fourth">
-                      Manage Reference Texts
+                      <FormattedMessage id="label-manage-ref-texts" />
+                    </NavItem>
+                    <NavItem eventKey="fifth">
+                    <FormattedMessage id="label-language" />
                     </NavItem>
                   </Nav>
                 </Col>
                 <Col sm={8}>
                   <Tab.Content animation>
                       <Tab.Pane eventKey="first" >
-                        <div className="form-group" data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
-                          <label>Language Code</label>
+                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                          <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField 
                             hintText="eng"
                             onChange={this.onChangeList.bind(this)}
-                            value={langCode || ""}
+                            value={langCodeValue || langCode}
                             name="langCode"
                           />
                         </div>
@@ -494,15 +573,18 @@ class SettingsModal extends React.Component {
                             {
                               (listCode != null) ? (
                                 Object.keys(listCode).map((key, index) => {
-                                 return <li key={index} onClick={this.clickListSettingData.bind(this, listCode[key],`(${key})`)} >
+                                 return <li
+                                          key={index}
+                                          onClick={this.clickListSettingData.bind(this, listCode[key],`(${key})`)}
+                                        >
                                           <span className='code-name'>{listCode[key]} {`(${key})`}</span>
                                         </li>})
                                 ) : (<li></li>)
                             }
                           </ul>
                         </div>
-                        <div className="form-group">
-                          <label>Version</label>
+                        <div>
+                          <label><FormattedMessage id="label-version" /></label>
                           <br />
                           <TextField
                             hintText="NET-S3"
@@ -511,56 +593,110 @@ class SettingsModal extends React.Component {
                             name="langVersion"
                           />
                         </div>
-                        <div className="form-group">
-                          <label>Path to Folder Location</label>
+                        <div>
+                          <label><FormattedMessage id="label-export-folder-location" /></label>
                           <br />
-                          <TextField
-                            hintText="Path of folder containing USFM files"
-                            onChange={this.onChange.bind(this)}
-                            value={folderPath || ""}
-                            name="folderPath"
-                            onClick={this.openFileDialogSettingData}
-                          />
+                          <FormattedMessage id="placeholder-path-of-usfm-files">
+                            {(message) => 
+                              <TextField
+                                hintText={message}
+                                onChange={this.onChange.bind(this)}
+                                value={folderPath || ""}
+                                name="folderPath"
+                                onClick={this.openFileDialogSettingData}
+                              />
+                            }
+                          </FormattedMessage>
+                        </div> 
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                          <label
+                            style={{"marginTop": "-24px", "fontSize": "14px"}}
+                            className="mdl-textfield__label"
+                            id="label-script-dir"
+                          >
+                          <FormattedMessage id="label-script-direction" />
+                          </label>
+                          <RadioButtonGroup
+                            valueSelected={TodoStore.scriptDirection}
+                            name="scriptDir"
+                            style={{display: "flex", marginBottom:"6%"}}
+                            onChange={(event, value) => this.onChangeScriptDir(value)}
+                          >
+                            <RadioButton
+                            value="LTR"
+                            label={<FormattedMessage id="label-rtl" />}
+                            style={{width: "70%"}} 
+                            />
+                            <RadioButton
+                            value="RTL"
+                            label={<FormattedMessage id="label-ltr" />}
+                            style={{width: "70%"}}
+                            />
+                          </RadioButtonGroup>
                         </div>
-                        <RaisedButton label="Save" primary={true} onClick={this.saveSetting}/>  
+                        <FormattedMessage id="btn-save" >
+                          { (message)=>
+                            <RaisedButton
+                              style={{float: "right", marginRight: "33px"}}
+                              label={message}
+                              primary={true}
+                              onClick={this.saveSetting}
+                            />  
+                          }
+                        </FormattedMessage>
                       </Tab.Pane>
+
                       <Tab.Pane eventKey="second">
                         <div className="form-group">
-                          <label>Folder Location</label>
+                          <label><FormattedMessage id="label-folder-location" /></label>
                           <br />
-                          <TextField
-                            hintText="Path of folder containing USFM files" 
+                          <FormattedMessage id="placeholder-path-of-usfm-files">
+                            {(message) => <TextField
+                            hintText={message}
                             onChange={this.onChange.bind(this)}
                             value={this.state.folderPathImport}
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
-                          />
+                          />}
+                          </FormattedMessage>
+                          <FormattedMessage id="btn-import" >
+                            {(message)=>
+                              <RaisedButton
+                                style={{float: "right", marginRight: "33px", marginTop: "257px"}}
+                                label={message}
+                                primary={true}
+                                onClick={this.importTranslation}
+                              />
+                            }
+                          </FormattedMessage>
                         </div>
-                      <RaisedButton style={{float: "right", marginRight: "33px", marginTop: "257px"}} label="Import" primary={true} onClick={this.importTranslation}/>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="third">
-                          <div>
-                            <label>Bible name</label>
-                            <br />
-                            <TextField 
-                              hintText="New English Translation"
-                              onChange={this.onReferenceChange.bind(this)}
-                              value={bibleName || ""}
-                              name="bibleName"
-                            />
-                          </div>
-                          <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
-                            <label>Language Code</label>
-                            <br />
-                            <TextField
-                              hintText="eng"
-                              onChange={this.onReferenceChangeList.bind(this)}
-                              value={refLangCode || ""}
-                              name="refLangCode"
-                            />
-                          </div>
-                          <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
+                        <div>
+                          <label><FormattedMessage id="label-bible-name" /></label>
+                          <br />
+                          <FormattedMessage id="placeholder-eng-translation">
+                            {(message) => <TextField
+                                hintText={message}
+                                onChange={this.onReferenceChange.bind(this)}
+                                value={bibleName || ""}
+                                name="bibleName"
+                                
+                            />}
+                          </FormattedMessage>
+                        </div>
+                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                          <label><FormattedMessage id="label-language-code" /></label>
+                          <br />
+                          <TextField
+                            hintText="eng"
+                            onChange={this.onReferenceChangeList.bind(this)}
+                            value={refLangCode || ""}
+                            name="refLangCode"
+                          />
+                        </div>
+                        <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
                           <ul>
                             {
                               (listCode != null) ? (
@@ -571,29 +707,42 @@ class SettingsModal extends React.Component {
                                 ) : (<li></li>)
                             }
                           </ul>
-                          </div>
-                          <div>
-                            <label>Version</label>
-                            <br />
-                            <TextField
-                              hintText="NET-S3"
-                              onChange={this.onReferenceChange.bind(this)}
-                              value={refVersion || ""}
-                              name="refVersion"
-                            />
-                          </div>
-                          <div>
-                            <label>Folder Location</label>
-                            <br />
-                            <TextField
-                              hintText="Path of folder containing USFM files"
+                        </div>
+                        <div>
+                          <label><FormattedMessage id="label-version" /></label>
+                          <br />
+                          <TextField
+                            hintText="NET-S3"
+                            onChange={this.onReferenceChange.bind(this)}
+                            value={refVersion || ""}
+                            name="refVersion"
+                          />
+                        </div>
+                        <div>
+                          <label>Folder Location</label>
+                          <br />
+                          <FormattedMessage
+                            id="placeholder-path-of-usfm-files"
+                            >
+                              {(message) => <TextField
+                              hintText={message}
                               onChange={this.onReferenceChange.bind(this)}
                               value={refFolderPath || ""}
                               ref="refFolderPath"
                               onClick={this.openFileDialogRefSetting}
+                            />}
+                          </FormattedMessage>
+                        </div>
+                        <FormattedMessage id="btn-import">
+                          {(message) => 
+                            <RaisedButton
+                              style={{float: "right", marginRight: "33px"}}
+                              label={message}
+                              primary={true}
+                              onClick={this.importReference}
                             />
-                          </div>
-                       	<RaisedButton style={{float: "right", marginRight: "33px"}} label="Import" primary={true} onClick={this.importReference}/>
+                          }
+                        </FormattedMessage>
                       </Tab.Pane>
 
                       <Tab.Pane eventKey="fourth">
@@ -601,10 +750,10 @@ class SettingsModal extends React.Component {
                           <table className="table table-bordered table-hover table-striped">
                             <thead>
                               <tr>
-                                <th>Name</th>
-                                <th>Language Code</th>
-                                <th>Version</th>
-                                <th>Action</th>
+                                <th><FormattedMessage id="tbl-header-name" /></th>
+                                <th><FormattedMessage id="label-language-code" /></th>
+                                <th><FormattedMessage id="label-version" /></th>
+                                <th><FormattedMessage id="tbl-header-action" /></th>
                               </tr>
                             </thead>
                             <tbody id="reference-list">
@@ -635,7 +784,7 @@ class SettingsModal extends React.Component {
                                                       className="edit-ref"
                                                       data-rename={ref.ref_name}
                                                       value={this.state.myBible}
-                                                      onClick={this.onReferenceSave.bind(this)}>Save
+                                                      onClick={this.onReferenceSave.bind(this)}><FormattedMessage id="btn-save" />
                                                     </a>
                                                     <span>|</span>
                                                     <a
@@ -695,6 +844,24 @@ class SettingsModal extends React.Component {
                               }
                             </tbody>
                           </table>
+                        </div>
+                      </Tab.Pane>
+
+                      <Tab.Pane eventKey="fifth" >
+                        <div id="app-lang-setting" className="tabcontent">
+                            <div className="form-group">
+                                <div className="mdl-selectfield mdl-js-selectfield">
+                                    <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
+                                    <select className="mdl-selectfield__select" id="localeList" value = {TodoStore.appLang} onChange = {this.changeLangauge}>
+                                        <option value="ar">Arabic</option>
+                                        <option value="en">English</option>
+                                        <option value="hi">Hindi</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="es">Spanish</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                         </div>
                       </Tab.Pane>
                   </Tab.Content>

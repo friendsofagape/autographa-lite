@@ -1,4 +1,4 @@
-{
+[{
 	
 	"label-translation": "Translation",	
 	"app-name-Autographa-Lite" : "Autographa Lite",
@@ -31,6 +31,7 @@
 	"label-exported-file" : "Exported file at",
 	"label-language" : "App Language",
 	"label-select-language": "Select the language to setup the application in:",
+	"label-heading-confirmation" : "Confirmation",
 	"placeholder-search-text" : "Search text",
 	"placeholder-replace-text" : "Replacement",
 	"placeholder-path-to-destination" : "Path to destination folder",
@@ -49,6 +50,7 @@
 	"tooltip-compare-mode" : "Compare mode",
 	"tooltip-find-and-replace" : "Find and replace",
 	"tooltip-export-usfm" : "Export as USFM",
+	"tooltip-export-html" : "Export as HTML",
 	"tooltip-about" : "About",
 	"tooltip-settings" : "Settings",
 	"tooltip-modal-close" : "Close",
@@ -70,6 +72,14 @@
 	"label-license-tab" : "License",
 	"label-hosted-url": "Source available at:",
 	"label-stage" : "Stage",
+	"label-script-direction": "Script Direction",
+	"label-ltr": "LTR",
+	"label-rtl": "RTL",
+	"export-html": "HTML",
+	"export-usfm": "USFM",
+	"tooltip-language-validation": "Length should be between 3 and 8 characters and can’t start with a number.",
+	"dynamic-msg-bib-code-start-with-number": "The Bible language code length should be between 3 and 8 characters and can’t start with a number.",
+	
 	"error-msg-search-validation" : "Please enter value to search",
 	"error-msg-replace-validation" : "Please enter value to replace",
 	"dynamic-msg-error" : "Error",
@@ -167,4 +177,4 @@
 	"book-3-john" : "3 John",
 	"book-jude" : "Jude",
 	"book-revelation" : "Revelation"
-}
+}]

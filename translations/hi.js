@@ -1,4 +1,4 @@
-{
+[{
 	
 	"label-translation": "अनुवाद",	
 	"app-name-Autographa-Lite" : "औटोग्रफा लाईट",
@@ -31,6 +31,7 @@
 	"label-exported-file" : "इस पर एक्सपोर्ट की गई फ़ाइल",
 	"label-language" : "एैप भाषा",
 	"label-select-language": "इस में एप्लीकेशन स्थापित करने के लिए भाषा चुनें",
+	"label-heading-confirmation" : "पुष्टीकरण",
 	"placeholder-search-text" : "विषय ढूंढें",
 	"placeholder-replace-text" : "प्रतिस्थापन",
 	"placeholder-path-to-destination" : "लक्षित फोल्डर की ओर मार्ग",
@@ -49,6 +50,7 @@
 	"tooltip-compare-mode" : "मोड चुनें",
 	"tooltip-find-and-replace" : "ढूंढें और प्रतिस्थापन करें",
 	"tooltip-export-usfm" : "युएसऍफ़एम् के रूप में एक्सपोर्ट करें",
+	"tooltip-export-html" : "HTML के रूप में निर्यात करें",
 	"tooltip-about" : "के विषय में",
 	"tooltip-settings" : "सेटिंग्स",
 	"tooltip-modal-close" : "बंद करें",
@@ -70,6 +72,14 @@
 	"label-license-tab" : "लाइसेंस",
 	"label-hosted-url": "स्रोत कोड इस पर होस्ट किया गया",
 	"label-stage" : "स्तर",
+	"label-script-direction": "स्क्रिप्ट दिशा",
+	"label-ltr": "बाएं से दाएं",
+	"label-rtl": "दाएं से बाएं",
+	"export-html": "एचटीएमएल",
+	"export-usfm": "यूएसएफएम",
+	"tooltip-language-validation": "लंबाई 3 से 8 अक्षरों के बीच होनी चाहिए और किसी संख्या से शुरू नहीं हो सकती।",
+	"dynamic-msg-bib-code-start-with-number": "बाइबल भाषा कोड की लंबाई 3 से 8 वर्णों के बीच होनी चाहिए और किसी संख्या से शुरू नहीं हो सकती है",
+
 	"error-msg-search-validation" : "ढूँढने के लिए मूल्य डालें",
 	"error-msg-replace-validation" : "कप्रतिस्थापन के लिए मूल्य डालें",
 	"dynamic-msg-error" : "त्रुटि",
@@ -167,4 +177,4 @@
 	"book-3-john" : "3 युहत्रा",
 	"book-jude" : "यहूदा",
 	"book-revelation" : "प्रकाशितवाक्य"
-}
+}]

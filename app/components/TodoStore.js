@@ -5,9 +5,6 @@ const Constant = require("../util/constants");
 export class TodoStore {
   @observable bookId = '1'
   @observable chapterId = '1'
-  @observable refId = 'eng_ulb'
-  @observable refId1 = 'eng_ulb'
-  @observable refId2 = 'eng_ulb'
   @observable bookChapter = { bookId: 0, chapterLength: 0 }
   @observable activeTab = 1
   @observable showModalBooks = false
@@ -47,6 +44,11 @@ export class TodoStore {
   // @observable currentValue = 14
   @observable fontSize = 14
   @observable aId =''
+  @observable appLang = 'en'
+  @observable currentTrans = {}
+  @observable scriptDirection = "LTR"
+  @observable refList = []
+  @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  
