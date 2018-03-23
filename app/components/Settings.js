@@ -166,7 +166,6 @@ class SettingsModal extends React.Component {
 
   target_setting = () => {
     const {langCode, langVersion, folderPath} = this.state.settingData;
-    console.log(langCode)
     let version = langVersion;
     let path = folderPath;
     let isValid = true;
@@ -273,7 +272,7 @@ class SettingsModal extends React.Component {
           version: langVersion.toLowerCase(),
           usfmFile: filePath,
           targetDb: 'target',
-          scriptDirection: "ltr"
+          scriptDirection: TodoStore.refScriptDirection
         }
         console.log(options)
         return that.getStuffAsync(options).then((res) => {
@@ -316,6 +315,7 @@ class SettingsModal extends React.Component {
   importReference = () => {
     if (this.reference_setting() == false)
     return;
+    this.setState({showLoader: true})
     const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
     var ref_id_value = refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
         ref_entry = {},
@@ -364,22 +364,20 @@ class SettingsModal extends React.Component {
         });
   }
 
-  
-  
-
-
   saveJsonToDB = (files) => {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
-    Promise.map(files, function(file) {
+    let that = this;
+    Promise.map(files, (file) => {
       var filePath = path.join(refFolderPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
           lang: refLangCodeValue.toLowerCase(),
           version: refVersion.toLowerCase(),
           usfmFile: filePath,
-          targetDb: 'refs'
+          targetDb: 'refs',
+          scriptDirection: TodoStore.refScriptDirection
         }
-        return this.getStuffAsync(options).then((res) => {
+        return that.getStuffAsync(options).then((res) => {
                     return res;
         }, (err)=>{
             return err;
@@ -387,9 +385,13 @@ class SettingsModal extends React.Component {
         // bibUtil_to_json.toJson(options);
       }
     }).then(function(res){
-      swal("Import Reference Text", "Successfully loaded new refs", "success");
+      window.location.reload();
+      // swal("Import Reference Text", "Successfully loaded new refs", "success");
     }).catch(function(err){
-      swal("Import Reference Text", "Error: While loading new refs.", "error");
+      console.log(err)
+      // window.location.reload();
+
+      // swal("Import Reference Text", "Error: While loading new refs.", "error");
     })
   }
 
@@ -497,6 +499,9 @@ class SettingsModal extends React.Component {
 
   onChangeScriptDir = (value) => {
     TodoStore.scriptDirection = value;
+  }
+  onChangeRefScriptDir = (value) => {
+    TodoStore.refScriptDirection = value;
   }
 
   render(){
@@ -624,13 +629,13 @@ class SettingsModal extends React.Component {
                           >
                             <RadioButton
                             value="LTR"
-                            label={<FormattedMessage id="label-rtl" />}
-                            style={{width: "70%"}} 
+                            label={<FormattedMessage id="label-ltr" />}
+                            style={{width: "70%"}}
                             />
                             <RadioButton
                             value="RTL"
-                            label={<FormattedMessage id="label-ltr" />}
-                            style={{width: "70%"}}
+                            label={<FormattedMessage id="label-rtl" />}
+                            style={{width: "70%"}} 
                             />
                           </RadioButtonGroup>
                         </div>
@@ -718,8 +723,36 @@ class SettingsModal extends React.Component {
                             name="refVersion"
                           />
                         </div>
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                          <label
+                            style={{"marginTop": "-29px", "fontSize": "14px"}}
+                            className="mdl-textfield__label"
+                            id="label-script-dir"
+                          >
+                          <FormattedMessage id="label-script-direction" />
+                          </label>
+                          <RadioButtonGroup
+                            valueSelected={TodoStore.refScriptDirection}
+                            name="refscriptDir"
+                            style={{display: "flex", marginBottom:"-8%"}}
+                            onChange={(event, value) => this.onChangeRefScriptDir(value)}
+                          >
+                            <RadioButton
+                              value="LTR"
+                              label={<FormattedMessage id="label-ltr" />}
+                              style={{width: "70%"}}
+                            />
+
+                            <RadioButton
+                              value="RTL"
+                              label={<FormattedMessage id="label-rtl" />}
+                              style={{width: "70%"}} 
+                            />
+
+                          </RadioButtonGroup>
+                        </div>
                         <div>
-                          <label>Folder Location</label>
+                           <label><FormattedMessage id="label-folder-location" /></label>
                           <br />
                           <FormattedMessage
                             id="placeholder-path-of-usfm-files"

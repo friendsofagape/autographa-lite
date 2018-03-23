@@ -19,7 +19,7 @@ import Reference from "./Reference"
 class ReferencePanel extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { verses: [], refContent: '', refList: [] }
+        this.state = { verses: [], refContent: '', refList: [], scriptDir: "LTR" }
         session.defaultSession.cookies.get({ url: 'http://refs.autographa.com' }, (error, refCookie) => {
             if(refCookie.length > 0){
                 TodoStore.refId = refCookie[0].value;
@@ -36,18 +36,12 @@ class ReferencePanel extends React.Component {
             }
         });
     }
-    
-    render (){
+    render (){   
         return (        
             <div className="container-fluid">
                 <div className="row row-col-fixed rmvflex" style={{display: 'flex'}}>
                     <div className="col-sm-12 col-fixed" id="section-0">                       
-                        <div className="row">
-                            <div type="ref" className="col-12 col-ref ref-contents">
-                                {/*<h2 className="header-title-right wow fadeInRight" dangerouslySetInnerHTML={{__html: props.text}} />*/}
-                               <div dangerouslySetInnerHTML={{__html: this.props.refContent}} ></div>
-                            </div>
-                        </div>
+                        <div dangerouslySetInnerHTML={{__html: this.props.refContent}} ></div>
                     </div>
                 </div>
             </div>

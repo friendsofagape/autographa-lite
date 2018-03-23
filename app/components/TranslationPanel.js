@@ -71,7 +71,7 @@ class TranslationPanel extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div id="input-verses" className={`col-12 col-ref verse-input ${TodoStore.scriptDirection}`} dir={TodoStore.scriptDirection}>{verseGroup}</div>
+          <div id="input-verses" className={`col-12 col-ref verse-input ${TodoStore.scriptDirection.toLowerCase()}`} dir={TodoStore.scriptDirection}>{verseGroup}</div>
         </div>
       </div>
     ) 

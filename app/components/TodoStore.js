@@ -47,8 +47,10 @@ export class TodoStore {
   @observable appLang = 'en'
   @observable currentTrans = {}
   @observable scriptDirection = "LTR"
+  @observable refScriptDirection = "LTR"
   @observable refList = []
   @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
+  @observable transSaveTime = ""
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  

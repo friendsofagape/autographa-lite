@@ -24,6 +24,7 @@ class Reference extends React.Component {
 	    });
 	}
 	render() {
+
 		return(
 			<div style={{textAlign: "center", backgroundColor: "#f5f8fa", paddingTop: "26px", borderRight: "1px solid #d3e0e9"}}>
 				<select className="ref-drop-down" title="Select Reference Text" onChange={this.props.onClick} value = {this.props.refIds} id={this.props.id} data-layout={this.props.layout} >
