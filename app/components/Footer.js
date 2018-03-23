@@ -127,7 +127,7 @@ class Footer extends React.Component {
                             </FormattedMessage>
                         </div>
                     </div>
-                    <span id="tooltip-btn-save"></span>
+                    <span id="saved-time">{TodoStore.transSaveTime ? `Saved ${TodoStore.transSaveTime}` : ""}</span>
                         <ul style={{marginRight: "30px", float: "right"}} className="nav navbar-nav navbar-right">
                             <li>
                                 <FormattedMessage id="btn-save" >
