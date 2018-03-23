@@ -68,17 +68,17 @@ class Navbar extends React.Component {
         });                  
     }
     getContent = (id, chapter) => {
-        return refDb.get(id).then(function(doc) { //book code is hard coded for now
+        return refDb.get(id).then( (doc) => { 
             for (var i = 0; i < doc.chapters.length; i++) {
-                if (doc.chapters[i].chapter == parseInt(chapter, 10)) { // 1 is chapter number and hardcoded for now
+                if (doc.chapters[i].chapter == parseInt(chapter, 10)) { 
                     break;
-                    }
+                }
             }
-            let refString = doc.chapters[i].verses.map(function(verse, verseNum) {
-                return '<div data-verse="r' + (verseNum + 1) + '"><span class="verse-num">' + (verseNum + 1) + '</span><span>' + verse.verse + '</span></div>';
+            let refString = doc.chapters[i].verses.map((verse, verseNum) => {
+                return `<div type="ref" class="col-12 col-ref ref-contents ${doc.scriptDirection.toLowerCase()}" dir=${doc.scriptDirection}><div data-verse=r${(verseNum + 1)}><span class="verse-num"> ${doc.scriptDirection == "LTR" ? (verseNum + 1) : (verseNum + 1).toLocaleString('ar')} </span><span> ${verse.verse}</span></div></div`;
             }).join('');
             return refString;
-        }).catch(function(err) {
+        }, (err) => {
             console.log(err)
         });
     }
@@ -165,19 +165,16 @@ class Navbar extends React.Component {
         TodoStore.showModalDownload = true
     }
 
-    exportPDF = (e) => { 
-        session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, cookie) => {
-            if (error) {
-                swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
-            }
-            var bookNo = TodoStore.bookId.toString();
-            db.get(bookNo).then((doc) => {
-                book = cookie[0].value;
-                currentBook = doc;
-                let id = TodoStore.currentRef + '_' + Constant.bookCodeList[parseInt(book, 10) - 1];
-                exportHtml.exportHtml(id, currentBook, db, doc.langScript);
-            }); 
-        });
+    exportPDF = (e, column) => {
+        let id = TodoStore.currentRef + '_' + Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1];
+        db.get('targetBible').then((doc) => {
+            db.get(TodoStore.bookId).then((book) => {
+                exportHtml.exportHtml(id, book, db, doc.langScript, column);
+            })
+        }).catch(function(err) {
+            // handle any errors
+            swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
+        });  
     }
 
     openpopupAboutUs() {
@@ -209,7 +206,6 @@ class Navbar extends React.Component {
         var bookNo;
         for (var i = 0; i < Constant.booksList.length; i++) {
             bookName == Constant.booksList[i]
-            console.log(bookName == Constant.booksList[i])
             if (bookName == Constant.booksList[i]) {
                 var bookNo = i+1;
                 break;
@@ -309,31 +305,46 @@ class Navbar extends React.Component {
         };
         TodoStore.bookData = booksCategory;
     }
+    formatDate = (date) => {
+      let monthNames = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "June", "July",
+        "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+      ];
 
-    saveTarget() {
-        var bookNo = TodoStore.bookId.toString();
-        db.get(bookNo).then(function(doc) {
+      let day = date.getDate();
+      let monthIndex = date.getMonth();
+      let year = date.getFullYear();
+      let hours = date.getHours();
+      let seconds = date.getSeconds();
+      let minutes = date.getMinutes();
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+
+      return hours+ ':' + minutes  
+    }
+
+    saveTarget = () => {
+        let bookNo = TodoStore.bookId.toString();
+        let that = this;
+        db.get(bookNo).then((doc) => {
             refDb.get('refChunks').then(function(chunkDoc) {
-                var verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                verses.forEach(function(verse, index) {
-                    var vId = 'v' + (index + 1);
+                let verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
+                verses.forEach( (verse, index) => {
+                    let vId = 'v' + (index + 1);
                     verse.verse = document.getElementById(vId).textContent;
                     doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses = verses;
-                    db.get(doc._id).then(function(book) {
+                    db.get(doc._id).then((book) => {
                         doc._rev = book._rev;
-                        db.put(doc).then(function(response) {
-                            var dateTime = new Date();
-                            var finalTime = dateTime.toLocaleTimeString();
-                            $("#saved-time").html("Changes last saved on " + finalTime);
-                            setAutoSaveTime(formatDate(dateTime));
+                        db.put(doc).then((response) => {
+                            let dateTime = new Date();
+                            TodoStore.transSaveTime = that.formatDate(dateTime);
                             clearInterval("#saved-time");
-                        }).catch(function(err) {
-                            db.put(doc).then(function(response) {
-                            var dateTime = new Date();
-                            var finalTime = dateTime.toLocaleTimeString();
-                            $("#saved-time").html("Changes last saved on " + finalTime);
-                                setAutoSaveTime(formatDate(dateTime));
-                            }).catch(function(err) {
+                        }, (err) => {
+                            db.put(doc).then((response) => {
+                                let dateTime = new Date();
+                                TodoStore.transSaveTime = that.formatDate(dateTime)
+                            },(err) => {
                                 clearInterval("#saved-time");
                             });
                             clearInterval("#saved-time");
@@ -341,7 +352,7 @@ class Navbar extends React.Component {
                     });
                 });
             });
-        }).catch(function(err) {
+        }, (err) => {
             console.log('Error: While retrieving document. ' + err);
         });
     }
@@ -366,7 +377,6 @@ class Navbar extends React.Component {
         session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, bookCookie) => {
             if(bookCookie.length > 0){
                 this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt(bookCookie[0].value, 10) - 1],TodoStore.chapterId) 
-
             }else{
                 this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt('1', 10) - 1],TodoStore.chapterId)
             }    
@@ -376,6 +386,7 @@ class Navbar extends React.Component {
             if (error)
             console.log(error);
         });
+
     } 
     
     render() {
@@ -554,7 +565,9 @@ class Navbar extends React.Component {
                                         <a onClick={() => this.openpopupDownload()} href="javascript:;">USFM</a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;">HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;">1-Column HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;">2-Column HTML</a>
+                                        
                                     </li>
                                 </ul>
                             </li>
@@ -585,20 +598,20 @@ class Navbar extends React.Component {
                 {
                     TodoStore.layout == 2 &&
                     <div className="parentdiv">
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent}  /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={TodoStore.activeRefs[0]} /></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={TodoStore.activeRefs[1]}/></div>
                         <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} /></div>
                     </div>
                 }
                 {
                     TodoStore.layout == 3 &&
                     <div className="parentdiv">
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={TodoStore.activeRefs[0]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={TodoStore.activeRefs[1]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={TodoStore.activeRefs[2]}/></div>
                         <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} /></div>
                     </div>
                 }  
