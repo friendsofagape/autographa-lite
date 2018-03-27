@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import { observer } from "mobx-react";
-import TodoStore from "./TodoStore";
+import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from 'react-intl';
 const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -21,10 +21,10 @@ class Footer extends React.Component {
 
     handleChange(key) {
         // console.log(key);
-        TodoStore.layout = key;
-        TodoStore.layoutContent = key;
-        TodoStore.aId = key;
-        let chapter = TodoStore.chapterId;
+        AutographaStore.layout = key;
+        AutographaStore.layoutContent = key;
+        AutographaStore.aId = key;
+        let chapter = AutographaStore.chapterId;
         refDb.get('targetReferenceLayout').then(function(doc) {
             refDb.put({
                 _id: 'targetReferenceLayout',
@@ -42,26 +42,26 @@ class Footer extends React.Component {
 
     fontChange(multiplier) {
         var elements = (document.getElementsByClassName("col-ref").length - 1)
-        let fontSize = TodoStore.fontMin;
+        let fontSize = AutographaStore.fontMin;
         if (document.getElementsByClassName("col-ref")[0].style.fontSize == "") {
             document.getElementsByClassName("col-ref")[0].style.fontSize = "14px";
         }else{
             fontSize = parseInt(document.getElementsByClassName("col-ref")[0].style.fontSize)
         }
         if(multiplier < 0){
-            if((multiplier+fontSize) <= TodoStore.fontMin ){
-                fontSize = TodoStore.fontMin
+            if((multiplier+fontSize) <= AutographaStore.fontMin ){
+                fontSize = AutographaStore.fontMin
             }else{
                 fontSize = multiplier + fontSize
             }
         }else{
-            if((multiplier+fontSize) >= TodoStore.fontMax ){
-                fontSize = TodoStore.fontMax
+            if((multiplier+fontSize) >= AutographaStore.fontMax ){
+                fontSize = AutographaStore.fontMax
             }else{
                 fontSize = multiplier + fontSize
             }
         }
-        TodoStore.currentFontValue = fontSize
+        AutographaStore.currentFontValue = fontSize
         for (var i = 0; i <= elements; i++) {
             document.getElementsByClassName("col-ref")[i].style.fontSize = fontSize + "px";
         };
@@ -76,7 +76,7 @@ class Footer extends React.Component {
     }
 
     render() {
-        console.log(TodoStore.layout)
+        console.log(AutographaStore.layout)
         return (
         <nav className="navbar navbar-default navbar-fixed-bottom">
             <div className="container-fluid">
@@ -91,10 +91,10 @@ class Footer extends React.Component {
                             </span>
                                 <ReactBootstrapSlider
                                     change={this.sliderFontChange.bind(this)}
-                                    value={TodoStore.currentFontValue}
-                                    step={TodoStore.fontStep}
-                                    max={TodoStore.fontMax}
-                                    min={TodoStore.fontMin}
+                                    value={AutographaStore.currentFontValue}
+                                    step={AutographaStore.fontStep}
+                                    max={AutographaStore.fontMax}
+                                    min={AutographaStore.fontMin}
                                     orientation="horizontal"
                                 />
                             <span>
@@ -109,25 +109,25 @@ class Footer extends React.Component {
                         <div className="btn-group navbar-btn layout" role="group" aria-label="...">
                             <FormattedMessage id="tooltip-2-column">
                                 { (message) =>
-                                  <a className={`btn btn-primary btn-default ${TodoStore.layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                  <a className={`btn btn-primary btn-default ${AutographaStore.layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                   </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-3-column">
                                 { (message) =>
-                                <a className={`btn btn-primary btn-default ${TodoStore.layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${AutographaStore.layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-4-column">
                                 { (message) =>                            
-                                <a className={`btn btn-primary btn-default ${TodoStore.layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${AutographaStore.layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                             }
                             </FormattedMessage>
                         </div>
                     </div>
-                    <span id="saved-time">{TodoStore.transSaveTime ? `Saved ${TodoStore.transSaveTime}` : ""}</span>
+                    <span id="saved-time">{AutographaStore.transSaveTime ? `Saved ${AutographaStore.transSaveTime}` : ""}</span>
                         <ul style={{marginRight: "30px", float: "right"}} className="nav navbar-nav navbar-right">
                             <li>
                                 <FormattedMessage id="btn-save" >

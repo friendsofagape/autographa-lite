@@ -21,7 +21,7 @@ import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import Checkbox from 'material-ui/Checkbox';
 import { observer } from "mobx-react"
-import TodoStore from "./TodoStore";
+import AutographaStore from "./AutographaStore";
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
      var replacedChapter = {},
@@ -51,26 +51,26 @@ class SearchModal extends React.Component {
     }
 
     handleFindChange(event) {
-      TodoStore.searchValue = event.target.value
+      AutographaStore.searchValue = event.target.value
     }
 
     handleReplaceChange(event) {
-      TodoStore.replaceValue = event.target.value
+      AutographaStore.replaceValue = event.target.value
     }
     handleOption = (event) => {
-      TodoStore.replaceOption = event.target.value
+      AutographaStore.replaceOption = event.target.value
     } 
 
     findAndReplaceText = (searchVal, replaceVal, option) => {
       let that = this;
       let allChapterReplaceCount = [];
 
-      db.get(TodoStore.bookId).then((doc) => {
+      db.get(AutographaStore.bookId).then((doc) => {
           
               let currentBook = doc;
               let totalReplacedWord = 0;
               if (option == "chapter") {
-                  totalReplacedWord = that.findReplaceSearchInputs(doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses, TodoStore.chapterId - 1, searchVal, replaceVal, option);
+                  totalReplacedWord = that.findReplaceSearchInputs(doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses, AutographaStore.chapterId - 1, searchVal, replaceVal, option);
                   allChapterReplaceCount.push(totalReplacedWord);
               } else {
                   for (let i = 0; i < doc.chapters.length; i++) {
@@ -150,10 +150,10 @@ class SearchModal extends React.Component {
     }
 
     saveReplacedText = () => {
-    db.get(TodoStore.bookId).then((doc) => {
-        if (TodoStore.replaceOption == "chapter") {
+    db.get(AutographaStore.bookId).then((doc) => {
+        if (AutographaStore.replaceOption == "chapter") {
             for (var c in replacedChapter) {
-                var verses = doc.chapters[TodoStore.chapterId-1].verses
+                var verses = doc.chapters[AutographaStore.chapterId-1].verses
                 verses.forEach((verse, index)=> {
                     verse.verse = replacedChapter[c][index + 1];
                 });
@@ -192,12 +192,12 @@ class SearchModal extends React.Component {
       let newContent;
       let replaceCount;
       let allChapterReplaceCount = [];
-      const searchValue = TodoStore.searchValue;
-      const replaceValue = TodoStore.replaceValue;
-      let oldContent = TodoStore.translationContent;
+      const searchValue = AutographaStore.searchValue;
+      const replaceValue = AutographaStore.replaceValue;
+      let oldContent = AutographaStore.translationContent;
 
-      this.findAndReplaceText(TodoStore.searchValue, TodoStore.replaceValue, TodoStore.replaceOption);
-      // for (var i = 0; i < TodoStore.verses.length; i++) {      
+      this.findAndReplaceText(AutographaStore.searchValue, AutographaStore.replaceValue, AutographaStore.replaceOption);
+      // for (var i = 0; i < AutographaStore.verses.length; i++) {      
       //   if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {
       //     newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
       //     oldContent[i] = newContent;
@@ -208,20 +208,20 @@ class SearchModal extends React.Component {
       //   }
       // }
       // this.setState({replaceInfo: true});
-      TodoStore.showModalSearch = false;
+      AutographaStore.showModalSearch = false;
 
-      // db.get(TodoStore.bookId).then((doc) => {
-      //     var verses = doc.chapters[TodoStore.chapterId-1].verses
+      // db.get(AutographaStore.bookId).then((doc) => {
+      //     var verses = doc.chapters[AutographaStore.chapterId-1].verses
       //     verses.forEach(function(verse, index) {
       //         verse.verse = oldContent[index];
       //     });
-      //     doc.chapters[TodoStore.chapterId-1].verses = verses;
+      //     doc.chapters[AutographaStore.chapterId-1].verses = verses;
       //     db.put(doc, function(err, response) {
       //       if (err) {
       //           console.log(err);
       //       } else {
-      //         TodoStore.showModalSearch = false;
-      //         swal('Replaced Information', `Book: ${Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]}
+      //         AutographaStore.showModalSearch = false;
+      //         swal('Replaced Information', `Book: ${Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]}
       //                                       Total word replaced: ${replaceCount} `, 'success');
       //         replaceCount = 0;
       //         allChapterReplaceCount = [];
@@ -232,11 +232,11 @@ class SearchModal extends React.Component {
 
 
   render (){
-    let closeSearch = () => TodoStore.showModalSearch = false
+    let closeSearch = () => AutographaStore.showModalSearch = false
     let closeReplaceModal = () => this.setState({replaceInfo: false})
     return (  
       <div>
-      <Modal show={TodoStore.showModalSearch} onHide={closeSearch} id="tab-search">
+      <Modal show={AutographaStore.showModalSearch} onHide={closeSearch} id="tab-search">
         <Modal.Header closeButton>
           <Modal.Title><FormattedMessage id="label-find-replace" /></Modal.Title>
         </Modal.Header>
@@ -290,7 +290,7 @@ class SearchModal extends React.Component {
           <div className="row">
               <div className="col-lg-6" id="replace-message">
                 {
-                  `Book: ${Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]}
+                  `Book: ${Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]}
                     Total word replaced: ${this.state.replaceCount}`
                 }
               </div>
