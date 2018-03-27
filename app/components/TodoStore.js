@@ -51,6 +51,7 @@ export class TodoStore {
   @observable refList = []
   @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
   @observable transSaveTime = ""
+  @observable replaceOption = "chapter"
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  

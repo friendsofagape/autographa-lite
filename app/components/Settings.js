@@ -212,7 +212,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogSettingData = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {
@@ -225,7 +225,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogImportTrans = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {
@@ -237,7 +237,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogRefSetting = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {

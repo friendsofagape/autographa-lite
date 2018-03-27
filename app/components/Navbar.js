@@ -64,6 +64,8 @@ class Navbar extends React.Component {
                 })
             })
         }).catch(function(err) {
+            TodoStore.bookId = "1";
+            TodoStore.chapterId = "1";
             console.log(err)
         });                  
     }
@@ -273,7 +275,6 @@ class Navbar extends React.Component {
                 var that = this; 
                 var bkId = TodoStore.bookId.toString();  
                 var chapter;
-                console.log("else called")
                 TodoStore.bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1] 
                 db.get(bkId).then(function(doc) {
                     console.log("else called")
@@ -327,31 +328,35 @@ class Navbar extends React.Component {
     saveTarget = () => {
         let bookNo = TodoStore.bookId.toString();
         let that = this;
+        let translationContent = [];
         db.get(bookNo).then((doc) => {
-            refDb.get('refChunks').then(function(chunkDoc) {
-                let verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                verses.forEach( (verse, index) => {
-                    let vId = 'v' + (index + 1);
-                    verse.verse = document.getElementById(vId).textContent;
-                    doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses = verses;
-                    db.get(doc._id).then((book) => {
-                        doc._rev = book._rev;
-                        db.put(doc).then((response) => {
-                            let dateTime = new Date();
-                            TodoStore.transSaveTime = that.formatDate(dateTime);
-                            clearInterval("#saved-time");
-                        }, (err) => {
-                            db.put(doc).then((response) => {
-                                let dateTime = new Date();
-                                TodoStore.transSaveTime = that.formatDate(dateTime)
-                            },(err) => {
-                                clearInterval("#saved-time");
-                            });
-                            clearInterval("#saved-time");
-                        });
+            let verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
+            verses.forEach( (verse, index) => {
+                let vId = 'v' + (index + 1);
+                translationContent.push(document.getElementById(vId).textContent).toString();
+                verse.verse = document.getElementById(vId).textContent;
+                doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses = verses;
+            });
+            db.get(doc._id).then((book) => {
+                doc._rev = book._rev;
+                db.put(doc).then((response) => {
+                    let dateTime = new Date();
+                    TodoStore.transSaveTime = that.formatDate(dateTime);
+                    TodoStore.translationContent = translationContent;
+                    clearInterval("#saved-time");
+                }, (err) => {
+                    db.put(doc).then((response) => {
+                        let dateTime = new Date();
+                        TodoStore.transSaveTime = that.formatDate(dateTime)
+                        TodoStore.translationContent = translationContent;
+                    },(err) => {
+                        clearInterval("#saved-time");
                     });
+                    clearInterval("#saved-time");
                 });
             });
+
+           
         }, (err) => {
             console.log('Error: While retrieving document. ' + err);
         });
