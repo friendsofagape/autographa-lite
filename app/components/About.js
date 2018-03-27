@@ -16,11 +16,11 @@ const Nav = require('react-bootstrap/lib/Nav');
 const NavItem = require('react-bootstrap/lib/NavItem');
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import TodoStore from "./TodoStore" 
+import AutographaStore from "./AutographaStore" 
 import { FormattedMessage } from 'react-intl';
 
 var AboutUsModel = function(props) {
-    let closeAboutUs = () => TodoStore.showModalAboutUs = false
+    let closeAboutUs = () => AutographaStore.showModalAboutUs = false
     return (  
     <Modal show={props.show} onHide={closeAboutUs} id="tab-about">
         <Modal.Header closeButton>

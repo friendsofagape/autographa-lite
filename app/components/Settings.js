@@ -4,7 +4,7 @@ import { remote } from 'electron';
 import { TextField, RaisedButton } from 'material-ui';
 import swal from 'sweetalert';
 import { observer } from "mobx-react"
-import TodoStore from "./TodoStore";
+import AutographaStore from "./AutographaStore";
 import ReferencePanel from './ReferencePanel';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
@@ -43,9 +43,9 @@ class SettingsModal extends React.Component {
     };
     db.get('targetBible').then((doc) => {
         if(doc.langScript.toUpperCase() == "RTL"){
-            TodoStore.scriptDirection = "RTL"
+            AutographaStore.scriptDirection = "RTL"
         }else{
-          TodoStore.scriptDirection = "LTR"
+          AutographaStore.scriptDirection = "LTR"
         }
     }, (err) => {
     })
@@ -166,7 +166,6 @@ class SettingsModal extends React.Component {
 
   target_setting = () => {
     const {langCode, langVersion, folderPath} = this.state.settingData;
-    console.log(langCode)
     let version = langVersion;
     let path = folderPath;
     let isValid = true;
@@ -194,7 +193,7 @@ class SettingsModal extends React.Component {
       targetLang: langCode,
       targetVersion: langVersion,
       targetPath: folderPath,
-      langScript: TodoStore.scriptDirection.toUpperCase()
+      langScript: AutographaStore.scriptDirection.toUpperCase()
     }
     db.get('targetBible').then((doc) => {
       settingData._rev = doc._rev;
@@ -213,7 +212,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogSettingData = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {
@@ -226,7 +225,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogImportTrans = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {
@@ -238,7 +237,7 @@ class SettingsModal extends React.Component {
 
   openFileDialogRefSetting = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory'],
+        properties: ['openDirectory', 'openFile'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Select reference version folder"
     }, (selectedDir) => {
@@ -273,7 +272,7 @@ class SettingsModal extends React.Component {
           version: langVersion.toLowerCase(),
           usfmFile: filePath,
           targetDb: 'target',
-          scriptDirection: "ltr"
+          scriptDirection: AutographaStore.refScriptDirection
         }
         console.log(options)
         return that.getStuffAsync(options).then((res) => {
@@ -316,6 +315,7 @@ class SettingsModal extends React.Component {
   importReference = () => {
     if (this.reference_setting() == false)
     return;
+    this.setState({showLoader: true})
     const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
     var ref_id_value = refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
         ref_entry = {},
@@ -364,22 +364,20 @@ class SettingsModal extends React.Component {
         });
   }
 
-  
-  
-
-
   saveJsonToDB = (files) => {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
-    Promise.map(files, function(file) {
+    let that = this;
+    Promise.map(files, (file) => {
       var filePath = path.join(refFolderPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
           lang: refLangCodeValue.toLowerCase(),
           version: refVersion.toLowerCase(),
           usfmFile: filePath,
-          targetDb: 'refs'
+          targetDb: 'refs',
+          scriptDirection: AutographaStore.refScriptDirection
         }
-        return this.getStuffAsync(options).then((res) => {
+        return that.getStuffAsync(options).then((res) => {
                     return res;
         }, (err)=>{
             return err;
@@ -387,9 +385,13 @@ class SettingsModal extends React.Component {
         // bibUtil_to_json.toJson(options);
       }
     }).then(function(res){
-      swal("Import Reference Text", "Successfully loaded new refs", "success");
+      window.location.reload();
+      // swal("Import Reference Text", "Successfully loaded new refs", "success");
     }).catch(function(err){
-      swal("Import Reference Text", "Error: While loading new refs.", "error");
+      console.log(err)
+      // window.location.reload();
+
+      // swal("Import Reference Text", "Error: While loading new refs.", "error");
     })
   }
 
@@ -469,12 +471,12 @@ class SettingsModal extends React.Component {
   }
 
   changeLangauge = (event) => {
-    TodoStore.appLang = event.target.value;
+    AutographaStore.appLang = event.target.value;
   }
 
   saveAppLanguage = (e) => {
     refDb.get('app_locale').then((doc) => {
-      doc.appLang = TodoStore.appLang;
+      doc.appLang = AutographaStore.appLang;
       refDb.put(doc);
       this.setState({message: 'dynamic-msg-save-language', hideAlert: 'success' });
       setTimeout(() => {
@@ -484,7 +486,7 @@ class SettingsModal extends React.Component {
       if (err.message === 'missing') {
         var locale = {
             _id: 'app_locale',
-            appLang: TodoStore.appLang
+            appLang: AutographaStore.appLang
         };
         refDb.put(locale).then(function(res) {
           swal("Title", "dynamic-msg-save-language", "success"); 
@@ -496,7 +498,10 @@ class SettingsModal extends React.Component {
   }
 
   onChangeScriptDir = (value) => {
-    TodoStore.scriptDirection = value;
+    AutographaStore.scriptDirection = value;
+  }
+  onChangeRefScriptDir = (value) => {
+    AutographaStore.refScriptDirection = value;
   }
 
   render(){
@@ -505,7 +510,7 @@ class SettingsModal extends React.Component {
       textAlign: 'center',
     }
 
-    let closeSetting = () => TodoStore.showModalSettings = false
+    let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
@@ -617,20 +622,20 @@ class SettingsModal extends React.Component {
                           <FormattedMessage id="label-script-direction" />
                           </label>
                           <RadioButtonGroup
-                            valueSelected={TodoStore.scriptDirection}
+                            valueSelected={AutographaStore.scriptDirection}
                             name="scriptDir"
                             style={{display: "flex", marginBottom:"6%"}}
                             onChange={(event, value) => this.onChangeScriptDir(value)}
                           >
                             <RadioButton
                             value="LTR"
-                            label={<FormattedMessage id="label-rtl" />}
-                            style={{width: "70%"}} 
+                            label={<FormattedMessage id="label-ltr" />}
+                            style={{width: "70%"}}
                             />
                             <RadioButton
                             value="RTL"
-                            label={<FormattedMessage id="label-ltr" />}
-                            style={{width: "70%"}}
+                            label={<FormattedMessage id="label-rtl" />}
+                            style={{width: "70%"}} 
                             />
                           </RadioButtonGroup>
                         </div>
@@ -718,8 +723,36 @@ class SettingsModal extends React.Component {
                             name="refVersion"
                           />
                         </div>
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                          <label
+                            style={{"marginTop": "-29px", "fontSize": "14px"}}
+                            className="mdl-textfield__label"
+                            id="label-script-dir"
+                          >
+                          <FormattedMessage id="label-script-direction" />
+                          </label>
+                          <RadioButtonGroup
+                            valueSelected={AutographaStore.refScriptDirection}
+                            name="refscriptDir"
+                            style={{display: "flex", marginBottom:"-8%"}}
+                            onChange={(event, value) => this.onChangeRefScriptDir(value)}
+                          >
+                            <RadioButton
+                              value="LTR"
+                              label={<FormattedMessage id="label-ltr" />}
+                              style={{width: "70%"}}
+                            />
+
+                            <RadioButton
+                              value="RTL"
+                              label={<FormattedMessage id="label-rtl" />}
+                              style={{width: "70%"}} 
+                            />
+
+                          </RadioButtonGroup>
+                        </div>
                         <div>
-                          <label>Folder Location</label>
+                           <label><FormattedMessage id="label-folder-location" /></label>
                           <br />
                           <FormattedMessage
                             id="placeholder-path-of-usfm-files"
@@ -852,7 +885,7 @@ class SettingsModal extends React.Component {
                             <div className="form-group">
                                 <div className="mdl-selectfield mdl-js-selectfield">
                                     <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
-                                    <select className="mdl-selectfield__select" id="localeList" value = {TodoStore.appLang} onChange = {this.changeLangauge}>
+                                    <select className="mdl-selectfield__select" id="localeList" value = {AutographaStore.appLang} onChange = {this.changeLangauge}>
                                         <option value="ar">Arabic</option>
                                         <option value="en">English</option>
                                         <option value="hi">Hindi</option>

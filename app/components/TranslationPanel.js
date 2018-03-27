@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dialog, remote } from 'electron';
 import { observer } from "mobx-react"
-import TodoStore from "./TodoStore"
+import AutographaStore from "./AutographaStore"
 const { Modal, Button, Col, Tabs, Tab } = require('react-bootstrap/lib');
 const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -14,7 +14,7 @@ class TranslationPanel extends React.Component {
   constructor(props){
     super(props);
     i18n.isRtl().then((res) => {
-      if(res) TodoStore.scriptDirection = "rtl"
+      if(res) AutographaStore.scriptDirection = "rtl"
     });
     this.timeout =  0;
   }
@@ -25,7 +25,7 @@ class TranslationPanel extends React.Component {
     var refContent = document.getElementsByClassName('ref-contents');
     for (var a=0; a< refContent.length; a++) {
       var refContent2 = refContent[a];
-      for (var i = 0; i < TodoStore.verses.length; i++) {
+      for (var i = 0; i < AutographaStore.verses.length; i++) {
         var refDiv = refContent2.querySelectorAll('div[data-verse^='+'"'+"r"+(i+1)+'"'+']');
         if (refDiv != 'undefined') {
           refDiv[0].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
@@ -53,12 +53,12 @@ class TranslationPanel extends React.Component {
   
   render (){
     var verseGroup = [];
-    for (var i = 0; i < TodoStore.chunkGroup.length; i++) {
+    for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
       var vid="v"+(i+1);  
       verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
-          <span className='verse-num' key={i}>{(i+1).toLocaleString(TodoStore.appLang)}</span>
-          <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={TodoStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
-            {TodoStore.translationContent[i]}
+          <span className='verse-num' key={i}>{(i+1).toLocaleString(AutographaStore.appLang)}</span>
+          <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
+            {AutographaStore.translationContent[i]}
           </span>
         </div>
       ); 
@@ -71,7 +71,7 @@ class TranslationPanel extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div id="input-verses" className={`col-12 col-ref verse-input ${TodoStore.scriptDirection}`} dir={TodoStore.scriptDirection}>{verseGroup}</div>
+          <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
         </div>
       </div>
     ) 

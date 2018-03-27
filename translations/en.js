@@ -11,6 +11,7 @@
 	"btn-save-changes" : "Save Changes",
 	"btn-cancel" : "Cancel",
 	"btn-export" : "Export",
+	"btn-replace-cancel": "Cancel",
 	"label-translation-details": "Translation Details",
 	"label-import-translation": "Import Translation",
 	"label-import-ref-text": "Import Reference Text",

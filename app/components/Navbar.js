@@ -4,7 +4,7 @@ const { Nav, NavItem, Modal, Button, Col, Row, Grid, Tabs, Tab } = require('reac
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 import { observer } from "mobx-react"
-import TodoStore from "./TodoStore"
+import AutographaStore from "./AutographaStore"
 import SettingsModal from "./Settings"
 import AboutUsModal from "./About"
 import SearchModal from "./Search"
@@ -52,33 +52,35 @@ class Navbar extends React.Component {
             var bookName = doc.visit_history[0].book; 
             var book = doc.visit_history[0].bookId;
             chapter = doc.visit_history[0].chapter;
-            TodoStore.bookId = book.toString();
-            TodoStore.chapterId = chapter;
-            TodoStore.verses = verses;
-            db.get(TodoStore.bookId).then(function(doc) {
+            AutographaStore.bookId = book.toString();
+            AutographaStore.chapterId = chapter;
+            AutographaStore.verses = verses;
+            db.get(AutographaStore.bookId).then(function(doc) {
                 refDb.get('refChunks').then(function(chunkDoc) {
-                    TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                    TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
-                    chapter = TodoStore.chapterId
-                    that.getRefContents(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
+                    AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+                    AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
+                    chapter = AutographaStore.chapterId
+                    that.getRefContents(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
                 })
             })
         }).catch(function(err) {
+            AutographaStore.bookId = "1";
+            AutographaStore.chapterId = "1";
             console.log(err)
         });                  
     }
     getContent = (id, chapter) => {
-        return refDb.get(id).then(function(doc) { //book code is hard coded for now
+        return refDb.get(id).then( (doc) => { 
             for (var i = 0; i < doc.chapters.length; i++) {
-                if (doc.chapters[i].chapter == parseInt(chapter, 10)) { // 1 is chapter number and hardcoded for now
+                if (doc.chapters[i].chapter == parseInt(chapter, 10)) { 
                     break;
-                    }
+                }
             }
-            let refString = doc.chapters[i].verses.map(function(verse, verseNum) {
-                return '<div data-verse="r' + (verseNum + 1) + '"><span class="verse-num">' + (verseNum + 1) + '</span><span>' + verse.verse + '</span></div>';
+            let refString = doc.chapters[i].verses.map((verse, verseNum) => {
+                return `<div type="ref" class="col-12 col-ref ref-contents ${doc.scriptDirection.toLowerCase()}" dir=${doc.scriptDirection}><div data-verse=r${(verseNum + 1)}><span class="verse-num"> ${doc.scriptDirection == "LTR" ? (verseNum + 1) : (verseNum + 1).toLocaleString('ar')} </span><span> ${verse.verse}</span></div></div`;
             }).join('');
             return refString;
-        }).catch(function(err) {
+        }, (err) => {
             console.log(err)
         });
     }
@@ -86,42 +88,42 @@ class Navbar extends React.Component {
     getRefContents = (id,chapter) => {
 
         refDb.get('targetReferenceLayout').then((doc) => {
-            TodoStore.layout = doc.layout;
-            TodoStore.layoutContent = doc.layout;
-            let chapter = TodoStore.chapterId.toString();
+            AutographaStore.layout = doc.layout;
+            AutographaStore.layoutContent = doc.layout;
+            let chapter = AutographaStore.chapterId.toString();
             switch(doc.layout){
                 case 1:
-                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.content = content;
+                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.content = content;
                     })
                 case 2:
-                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.content = content;
+                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.content = content;
                     }) 
-                    this.getContent(TodoStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.contentOne = content;
+                    this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.contentOne = content;
                     })
                 case 3:
-                    this.getContent(TodoStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.content = content;
+                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.content = content;
                     }) 
-                    this.getContent(TodoStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.contentOne = content;
+                    this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.contentOne = content;
                     })
-                    this.getContent(TodoStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter).then((content)=>{
-                        TodoStore.contentTwo = content;
+                    this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.contentTwo = content;
                     })
             }
         })
-       //  TodoStore.aId  = "";
+       //  AutographaStore.aId  = "";
         var translationContent = [];
         var i;
         var chunkIndex = 0;
         var chunkVerseStart; 
         var chunkVerseEnd;
         var chunkGroup = [];
-        var chunks = TodoStore.chunks;
-        var verses = TodoStore.verses;
+        var chunks = AutographaStore.chunks;
+        var verses = AutographaStore.verses;
         for (i = 0; i < chunks.length; i++) {
             if (parseInt(chunks[i].chp, 10) === parseInt(chapter, 10)) {
                 chunkIndex = i + 1;
@@ -149,57 +151,54 @@ class Navbar extends React.Component {
             chunkGroup.push(spanVerse);
         }
 
-        TodoStore.chunkGroup = chunkGroup;
-        TodoStore.translationContent= translationContent;
+        AutographaStore.chunkGroup = chunkGroup;
+        AutographaStore.translationContent= translationContent;
     }
 
     openpopupSettings() {
-        TodoStore.showModalSettings = true
+        AutographaStore.showModalSettings = true
     }
 
     openpopupSearch() {
-        TodoStore.showModalSearch = true
+        AutographaStore.showModalSearch = true
     }
 
     openpopupDownload() {
-        TodoStore.showModalDownload = true
+        AutographaStore.showModalDownload = true
     }
 
-    exportPDF = (e) => { 
-        session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, cookie) => {
-            if (error) {
-                swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
-            }
-            var bookNo = TodoStore.bookId.toString();
-            db.get(bookNo).then((doc) => {
-                book = cookie[0].value;
-                currentBook = doc;
-                let id = TodoStore.currentRef + '_' + Constant.bookCodeList[parseInt(book, 10) - 1];
-                exportHtml.exportHtml(id, currentBook, db, doc.langScript);
-            }); 
-        });
+    exportPDF = (e, column) => {
+        let id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1];
+        db.get('targetBible').then((doc) => {
+            db.get(AutographaStore.bookId).then((book) => {
+                exportHtml.exportHtml(id, book, db, doc.langScript, column);
+            })
+        }).catch(function(err) {
+            // handle any errors
+            swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
+        });  
     }
 
     openpopupAboutUs() {
-        TodoStore.showModalAboutUs = true
+        AutographaStore.showModalAboutUs = true
     }
 
     openpopupBooks(tab) {
         // event.persist();
-         TodoStore.aId = tab;
+         AutographaStore.aId = tab;
         var chap = [];
-        TodoStore.showModalBooks = true;
-        TodoStore.activeTab = tab;
-        TodoStore.bookActive = TodoStore.bookId;
-        TodoStore.bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1] 
-        TodoStore.chapterActive = TodoStore.chapterId;
+        AutographaStore.showModalBooks = true;
+        AutographaStore.activeTab = tab;
+        AutographaStore.bookActive = AutographaStore.bookId;
+        AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1] 
+        AutographaStore.chapterActive = AutographaStore.chapterId;
         this.getData();
     }
 
     getData(){
-        refDb.get(TodoStore.currentRef +"_"+ Constant.bookCodeList[parseInt(TodoStore.bookId, 10)-1]).then(function(doc) {
-            TodoStore.bookChapter["chapterLength"] = doc.chapters.length;
-            TodoStore.bookChapter["bookId"] = TodoStore.bookId;
+        refDb.get(AutographaStore.currentRef +"_"+ Constant.bookCodeList[parseInt(AutographaStore.bookId, 10)-1]).then(function(doc) {
+            AutographaStore.bookChapter["chapterLength"] = doc.chapters.length;
+            AutographaStore.bookChapter["bookId"] = AutographaStore.bookId;
         }).catch(function(err){
             console.log(err);
         })
@@ -209,24 +208,23 @@ class Navbar extends React.Component {
         var bookNo;
         for (var i = 0; i < Constant.booksList.length; i++) {
             bookName == Constant.booksList[i]
-            console.log(bookName == Constant.booksList[i])
             if (bookName == Constant.booksList[i]) {
                 var bookNo = i+1;
                 break;
             };
         };
-        TodoStore.bookActive = bookNo;
-        TodoStore.bookName = bookName;
-        TodoStore.chapterActive = 0;
-        var id = TodoStore.currentRef + '_' + Constant.bookCodeList[parseInt(bookNo, 10) - 1]
+        AutographaStore.bookActive = bookNo;
+        AutographaStore.bookName = bookName;
+        AutographaStore.chapterActive = 0;
+        var id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(bookNo, 10) - 1]
         var getData = refDb.get(id).then(function(doc) {
             return doc.chapters.length;
         }).catch(function(err){
             console.log(err);
         });
         getData.then((length) => {
-            TodoStore.bookChapter["chapterLength"] = length;
-            TodoStore.bookChapter["bookId"] = bookNo;
+            AutographaStore.bookChapter["chapterLength"] = length;
+            AutographaStore.bookChapter["bookId"] = bookNo;
         });
     }
 
@@ -237,15 +235,15 @@ class Navbar extends React.Component {
 
     goToTab(key) {
         var _this = this;
-        TodoStore.activeTab = key;
+        AutographaStore.activeTab = key;
     }
 
     getValue(chapter, bookId){
-        TodoStore.translationContent = "";
-        TodoStore.chapterId = chapter;
-        TodoStore.bookId = bookId;
-        var verses = TodoStore.verses;
-        var chunks = TodoStore.chunks;
+        AutographaStore.translationContent = "";
+        AutographaStore.chapterId = chapter;
+        AutographaStore.bookId = bookId;
+        var verses = AutographaStore.verses;
+        var chunks = AutographaStore.chunks;
         this.saveLastVisit(bookId,chapter);
         const cookiechapter = { url: 'http://chapter.autographa.com', name: 'chapter' , value: chapter.toString() };
         session.defaultSession.cookies.set(cookiechapter, (error) => {
@@ -263,39 +261,38 @@ class Navbar extends React.Component {
             if(refCookie.length > 0){
                 var that = this;   
                 var chapter;
-                var bkId = TodoStore.bookId.toString();
+                var bkId = AutographaStore.bookId.toString();
                 db.get(bkId).then(function(doc) {
                     refDb.get('refChunks').then(function(chunkDoc) {
-                    TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                    TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
-                    chapter = TodoStore.chapterId;
-                    that.getRefContents(TodoStore.refId+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
+                    AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+                    AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
+                    chapter = AutographaStore.chapterId;
+                    that.getRefContents(AutographaStore.refId+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
                     
                 });
             })
             }else{
                 var that = this; 
-                var bkId = TodoStore.bookId.toString();  
+                var bkId = AutographaStore.bookId.toString();  
                 var chapter;
-                console.log("else called")
-                TodoStore.bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1] 
+                AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1] 
                 db.get(bkId).then(function(doc) {
                     console.log("else called")
                     refDb.get('refChunks').then(function(chunkDoc) {
-                    TodoStore.verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                    TodoStore.chunks = chunkDoc.chunks[parseInt(TodoStore.bookId, 10) - 1];
-                    chapter = TodoStore.chapterId;
-                    that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(TodoStore.bookId, 10) - 1],chapter.toString());
+                    AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+                    AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
+                    chapter = AutographaStore.chapterId;
+                    that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
                 });
             })
             }    
         })
-        TodoStore.showModalBooks = false;
+        AutographaStore.showModalBooks = false;
     }
 
     saveLastVisit(book, chapter) {
         refDb.get('ref_history').then(function(doc) {
-            doc.visit_history = [{ "book": TodoStore.bookName, "chapter": chapter, "bookId": book }]
+            doc.visit_history = [{ "book": AutographaStore.bookName, "chapter": chapter, "bookId": book }]
             refDb.put(doc).then(function(response) {}).catch(function(err) {
             console.log(err);
             });
@@ -307,51 +304,70 @@ class Navbar extends React.Component {
         for (var i = booksstart; i <= booksend; i++) {
             booksCategory.push(Constant.booksList[i]);
         };
-        TodoStore.bookData = booksCategory;
+        AutographaStore.bookData = booksCategory;
+    }
+    formatDate = (date) => {
+      let monthNames = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "June", "July",
+        "Aug", "Sep", "Oct",
+        "Nov", "Dec"
+      ];
+
+      let day = date.getDate();
+      let monthIndex = date.getMonth();
+      let year = date.getFullYear();
+      let hours = date.getHours();
+      let seconds = date.getSeconds();
+      let minutes = date.getMinutes();
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+
+      return hours+ ':' + minutes  
     }
 
-    saveTarget() {
-        var bookNo = TodoStore.bookId.toString();
-        db.get(bookNo).then(function(doc) {
-            refDb.get('refChunks').then(function(chunkDoc) {
-                var verses = doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses;
-                verses.forEach(function(verse, index) {
-                    var vId = 'v' + (index + 1);
-                    verse.verse = document.getElementById(vId).textContent;
-                    doc.chapters[parseInt(TodoStore.chapterId, 10) - 1].verses = verses;
-                    db.get(doc._id).then(function(book) {
-                        doc._rev = book._rev;
-                        db.put(doc).then(function(response) {
-                            var dateTime = new Date();
-                            var finalTime = dateTime.toLocaleTimeString();
-                            $("#saved-time").html("Changes last saved on " + finalTime);
-                            setAutoSaveTime(formatDate(dateTime));
-                            clearInterval("#saved-time");
-                        }).catch(function(err) {
-                            db.put(doc).then(function(response) {
-                            var dateTime = new Date();
-                            var finalTime = dateTime.toLocaleTimeString();
-                            $("#saved-time").html("Changes last saved on " + finalTime);
-                                setAutoSaveTime(formatDate(dateTime));
-                            }).catch(function(err) {
-                                clearInterval("#saved-time");
-                            });
-                            clearInterval("#saved-time");
-                        });
+    saveTarget = () => {
+        let bookNo = AutographaStore.bookId.toString();
+        let that = this;
+        let translationContent = [];
+        db.get(bookNo).then((doc) => {
+            let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+            verses.forEach( (verse, index) => {
+                let vId = 'v' + (index + 1);
+                translationContent.push(document.getElementById(vId).textContent).toString();
+                verse.verse = document.getElementById(vId).textContent;
+                doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
+            });
+            db.get(doc._id).then((book) => {
+                doc._rev = book._rev;
+                db.put(doc).then((response) => {
+                    let dateTime = new Date();
+                    AutographaStore.transSaveTime = that.formatDate(dateTime);
+                    AutographaStore.translationContent = translationContent;
+                    clearInterval("#saved-time");
+                }, (err) => {
+                    db.put(doc).then((response) => {
+                        let dateTime = new Date();
+                        AutographaStore.transSaveTime = that.formatDate(dateTime)
+                        AutographaStore.translationContent = translationContent;
+                    },(err) => {
+                        clearInterval("#saved-time");
                     });
+                    clearInterval("#saved-time");
                 });
             });
-        }).catch(function(err) {
+
+           
+        }, (err) => {
             console.log('Error: While retrieving document. ' + err);
         });
     }
 
     handleRefChange(refDropDownPos, event) {
         // event.persist();
-        TodoStore.activeRefs[refDropDownPos] = event.target.value;
+        AutographaStore.activeRefs[refDropDownPos] = event.target.value;
         refDb.get('activeRefs').then((doc) => {
             doc._rev = doc._rev;
-            doc.activeRefs = Object.assign(doc.activeRefs, TodoStore.activeRefs);
+            doc.activeRefs = Object.assign(doc.activeRefs, AutographaStore.activeRefs);
             refDb.put(doc);
         }, (err) => {
             refDb.put({_id: "activeRefs" , activeRefs: activeRefs}).then((res) => {
@@ -359,16 +375,15 @@ class Navbar extends React.Component {
                 console.log(err);
             });
         });
-        TodoStore.selectId = event.target.id;
-        TodoStore.layoutContent = parseInt(event.currentTarget.dataset.layout);
+        AutographaStore.selectId = event.target.id;
+        AutographaStore.layoutContent = parseInt(event.currentTarget.dataset.layout);
         let referenceValue = event.target.value;
-        TodoStore.currentRef = referenceValue;
+        AutographaStore.currentRef = referenceValue;
         session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, bookCookie) => {
             if(bookCookie.length > 0){
-                this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt(bookCookie[0].value, 10) - 1],TodoStore.chapterId) 
-
+                this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt(bookCookie[0].value, 10) - 1],AutographaStore.chapterId) 
             }else{
-                this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt('1', 10) - 1],TodoStore.chapterId)
+                this.getRefContents(referenceValue+'_'+Constant.bookCodeList[parseInt('1', 10) - 1],AutographaStore.chapterId)
             }    
         })
         var cookieRef = { url: 'http://refs.autographa.com', name: '0' , value: event.target.value };
@@ -376,37 +391,38 @@ class Navbar extends React.Component {
             if (error)
             console.log(error);
         });
+
     } 
     
     render() {
-        // const layout = TodoStore.layout;
+        // const layout = AutographaStore.layout;
         var OTbooksstart = 0;
         var OTbooksend = 38;
         var NTbooksstart= 39;
         var NTbooksend= 65;
-        const bookData = TodoStore.bookData;
-        const refContent = TodoStore.content; 
-        const refContentOne = TodoStore.contentOne;
-        const refContentCommon = TodoStore.contentCommon;
-        const refContentTwo = TodoStore.contentTwo;
-        const bookName = Constant.booksList[parseInt(TodoStore.bookId, 10) - 1]
-        let close = () => TodoStore.showModalBooks = false;
-        const test = (TodoStore.activeTab == 1);
+        const bookData = AutographaStore.bookData;
+        const refContent = AutographaStore.content; 
+        const refContentOne = AutographaStore.contentOne;
+        const refContentCommon = AutographaStore.contentCommon;
+        const refContentTwo = AutographaStore.contentTwo;
+        const bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        let close = () => AutographaStore.showModalBooks = false;
+        const test = (AutographaStore.activeTab == 1);
         var chapterList = [];
-        for(var i=0; i<TodoStore.bookChapter["chapterLength"]; i++){
-            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == TodoStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, TodoStore.bookChapter["bookId"]) } >{(i+1).toLocaleString(TodoStore.appLang)}</a></li> );
+        for(var i=0; i<AutographaStore.bookChapter["chapterLength"]; i++){
+            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == AutographaStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, AutographaStore.bookChapter["bookId"]) } >{(i+1).toLocaleString(AutographaStore.appLang)}</a></li> );
         }
         return (
             <div>
-                <Modal show={TodoStore.showModalBooks} onHide = {close} id="tab-books">
+                <Modal show={AutographaStore.showModalBooks} onHide = {close} id="tab-books">
                     <Modal.Header closeButton>
                         <Modal.Title>Book and Chapter</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Tabs 
                             animation={false}
-                            activeKey={TodoStore.activeTab}
-                            onSelect={() =>this.goToTab(TodoStore.activeTab == 1? 2 : 1)} id="noanim-tab-example">
+                            activeKey={AutographaStore.activeTab}
+                            onSelect={() =>this.goToTab(AutographaStore.activeTab == 1? 2 : 1)} id="noanim-tab-example">
                             {
                                 test ? (
                                 <div className="wrap-center">
@@ -456,7 +472,7 @@ class Navbar extends React.Component {
                                             bookData.map((item,index) =>{
                                             return <li key={index}>
                                                         <a href="#" key={index} onClick={ this.onItemClick.bind(this, item) }
-                                                            value={item} className={( TodoStore.bookName == item ) ? 'link-active': ""} >
+                                                            value={item} className={( AutographaStore.bookName == item ) ? 'link-active': ""} >
                                                             {item}
                                                         </a>
                                                     </li>
@@ -476,10 +492,10 @@ class Navbar extends React.Component {
                         </Tabs>
                     </Modal.Body>
                 </Modal>
-                <SettingsModal show={TodoStore.showModalSettings} />
-                <AboutUsModal show={TodoStore.showModalAboutUs} />
-                <SearchModal show={TodoStore.showModalSearch}/>
-                <DownloadModal show={TodoStore.showModalDownload} />
+                <SettingsModal show={AutographaStore.showModalSettings} />
+                <AboutUsModal show={AutographaStore.showModalAboutUs} />
+                <SearchModal show={AutographaStore.showModalSearch}/>
+                <DownloadModal show={AutographaStore.showModalDownload} />
                 <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div className="container-fluid">
                     <div className="navbar-header">
@@ -518,7 +534,7 @@ class Navbar extends React.Component {
                                     {bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
-                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(TodoStore.chapterId).toLocaleString(TodoStore.appLang)}
+                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(AutographaStore.chapterId).toLocaleString(AutographaStore.appLang)}
                                         </a>
                                     </span>
                                 </div>                               
@@ -554,7 +570,9 @@ class Navbar extends React.Component {
                                         <a onClick={() => this.openpopupDownload()} href="javascript:;">USFM</a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e)} href="javascript:;">HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;">1-Column HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;">2-Column HTML</a>
+                                        
                                     </li>
                                 </ul>
                             </li>
@@ -576,29 +594,29 @@ class Navbar extends React.Component {
                     </div>
                 </nav>
                 {
-                    TodoStore.layout == 1   &&
+                    AutographaStore.layout == 1   &&
                         <div className="parentdiv">
-                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
+                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
                             <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} /></div>
                         </div>
                 } 
                 {
-                    TodoStore.layout == 2 &&
+                    AutographaStore.layout == 2 &&
                     <div className="parentdiv">
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent}  /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]}/></div>
                         <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} /></div>
                     </div>
                 }
                 {
-                    TodoStore.layout == 3 &&
+                    AutographaStore.layout == 3 &&
                     <div className="parentdiv">
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={TodoStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={TodoStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={TodoStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={AutographaStore.activeRefs[2]}/></div>
                         <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} /></div>
                     </div>
                 }  

@@ -15,7 +15,7 @@ import es from 'react-intl/locale-data/es';
 import fr from 'react-intl/locale-data/fr';
 import it from 'react-intl/locale-data/it';
 import { observer } from "mobx-react";
-import TodoStore from "../components/TodoStore";
+import AutographaStore from "../components/AutographaStore";
 const i18n = new(require('../../translations/i18n'));
 const refDb = require("../util/data-provider").referenceDb();
 
@@ -41,27 +41,27 @@ class Page extends React.Component {
 		super(props);
 	    this.state = {appLang: ''}
 	    i18n.getLocale().then((lang) => {
-			TodoStore.appLang = lang;
+			AutographaStore.appLang = lang;
 	    });
 	    i18n.currentLocale().then((res) => {
-	    	TodoStore.currentTrans = res;
+	    	AutographaStore.currentTrans = res;
 	    })
 
 	}
 	componentWillMount(){
 		refDb.get('activeRefs').then((doc) => {
-            Object.assign(TodoStore.activeRefs, doc.activeRefs)
+            Object.assign(AutographaStore.activeRefs, doc.activeRefs)
         }, (err) => {
 
         });
 	}
 
 	render(){
-		if(Object.keys(TodoStore.currentTrans).length==0){
+		if(Object.keys(AutographaStore.currentTrans).length==0){
 			return (<div></div>)
 		}
 	    return (
-	    	<IntlProvider  locale = {TodoStore.appLang} messages = {TodoStore.currentTrans} >
+	    	<IntlProvider  locale = {AutographaStore.appLang} messages = {AutographaStore.currentTrans} >
 			    <MuiThemeProvider>
 			    	<NavBar /> 
 			    </ MuiThemeProvider>

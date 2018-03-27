@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { RaisedButton, TextField, RadioButton, RadioButtonGroup, Checkbox } from 'material-ui';
 import { observer } from "mobx-react"
-import TodoStore from "./TodoStore";
+import AutographaStore from "./AutographaStore";
 import { dialog, remote } from 'electron';
 import swal from 'sweetalert';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -47,7 +47,7 @@ class DownloadModal extends React.Component {
                 let filepath = bibUtil.toUsfm(book, stageInput, doc);
                 return filepath;
             }).then((filepath) => {
-                TodoStore.showModalDownload = false;
+                AutographaStore.showModalDownload = false;
                 swal("Book Exported", "Exported file at : " + filepath); 
             }).catch((err) => {
                 swal("Error", "Cannot get details from DB", "error");
@@ -56,9 +56,9 @@ class DownloadModal extends React.Component {
     }
 
     render (){
-        let closeSearchUSFM = () => TodoStore.showModalDownload = false
+        let closeSearchUSFM = () => AutographaStore.showModalDownload = false
         return ( 
-            <Modal show={TodoStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
+            <Modal show={AutographaStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
                 <Modal.Header closeButton>
                     <Modal.Title id="export-heading"><FormattedMessage id="tooltip-export-usfm" /></Modal.Title>
                 </Modal.Header>
