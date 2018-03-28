@@ -20,7 +20,6 @@ class Footer extends React.Component {
     }
 
     handleChange(key) {
-        // console.log(key);
         AutographaStore.layout = key;
         AutographaStore.layoutContent = key;
         AutographaStore.aId = key;
@@ -69,14 +68,13 @@ class Footer extends React.Component {
     }
     sliderFontChange(obj){
         var elements = (document.getElementsByClassName("col-ref").length - 1)
-        console.log(elements);
         for (var i = 0; i <= elements; i++) {
         document.getElementsByClassName("col-ref")[i].style.fontSize = obj.target.value + "px";
         }
     }
 
     render() {
-        console.log(AutographaStore.layout)
+        const layout = AutographaStore.layout;
         return (
         <nav className="navbar navbar-default navbar-fixed-bottom">
             <div className="container-fluid">
@@ -109,19 +107,19 @@ class Footer extends React.Component {
                         <div className="btn-group navbar-btn layout" role="group" aria-label="...">
                             <FormattedMessage id="tooltip-2-column">
                                 { (message) =>
-                                  <a className={`btn btn-primary btn-default ${AutographaStore.layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                  <a className={`btn btn-primary btn-default ${layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                   </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-3-column">
                                 { (message) =>
-                                <a className={`btn btn-primary btn-default ${AutographaStore.layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-4-column">
                                 { (message) =>                            
-                                <a className={`btn btn-primary btn-default ${AutographaStore.layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                             }
                             </FormattedMessage>
