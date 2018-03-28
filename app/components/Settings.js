@@ -39,7 +39,9 @@ class SettingsModal extends React.Component {
       appLang: "en",
       message: "",
       hideAlert: "hidemessage",
-      showLoader: false
+      showLoader: false,
+      refIndex: 0,
+      refName: ""
     };
     db.get('targetBible').then((doc) => {
         if(doc.langScript.toUpperCase() == "RTL"){
@@ -49,10 +51,9 @@ class SettingsModal extends React.Component {
         }
     }, (err) => {
     })
-
+    AutographaStore.refList = []
     this.loadSetting();
-    this.loadReference();
-
+    // this.loadReference();
   }
 
   getStuffAsync = (param) => {
@@ -76,13 +77,17 @@ class SettingsModal extends React.Component {
   }
 
   loadReference = () => {
+    AutographaStore.refListExist = [];
+    AutographaStore.refListEdit = [];
+    AutographaStore.refList = [];
      refDb.get('refs').then((doc) => {
       doc.ref_ids.forEach((ref_doc) => {
+        AutographaStore.refList.push( {value: ref_doc.ref_id, option: ref_doc.ref_name } );
         let ref_id = ref_doc.ref_id;
         if(Constant.defaultReferences.indexOf(ref_doc.ref_id) >= 0) {
-          this.state.refList.push(ref_doc); 
+          AutographaStore.refListExist.push(ref_doc); 
         } else {
-          this.state.refListEdit.push(ref_doc);
+          AutographaStore.refListEdit.push(ref_doc);
         }
       });
     })
@@ -274,7 +279,6 @@ class SettingsModal extends React.Component {
           targetDb: 'target',
           scriptDirection: AutographaStore.refScriptDirection
         }
-        console.log(options)
         return that.getStuffAsync(options).then((res) => {
             return res;
         }, (err)=>{
@@ -317,7 +321,7 @@ class SettingsModal extends React.Component {
     return;
     this.setState({showLoader: true})
     const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
-    var ref_id_value = refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
+    var ref_id_value = bibleName + '_' + refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
         ref_entry = {},
         ref_arr = [],
         files = fs.readdirSync(refFolderPath[0]);
@@ -331,6 +335,7 @@ class SettingsModal extends React.Component {
           var updatedDoc = doc.ref_ids.forEach((ref_doc) => {
             if (ref_doc.ref_id === ref_id_value) {
               refExistsFlag = true;
+              // return
             }
             ref_entry.ref_id = ref_doc.ref_id;
             ref_entry.ref_name = ref_doc.ref_name;
@@ -338,14 +343,18 @@ class SettingsModal extends React.Component {
             ref_arr.push(ref_entry)
             ref_entry= {};
           });
-          if (!refExistsFlag) {
-              doc.ref_ids = ref_arr;
-              refDb.put(doc).then((res)=> {
-                  this.saveJsonToDB(files);
-              });
-          } else {
-              this.saveJsonToDB(files);
-          }
+          doc.ref_ids = ref_arr;
+          refDb.put(doc).then((res)=> {
+            this.saveJsonToDB(files);
+          });
+          // if (!refExistsFlag) {
+          //     doc.ref_ids = ref_arr;
+          //     refDb.put(doc).then((res)=> {
+          //         this.saveJsonToDB(files);
+          //     });
+          // } else {
+          //     this.saveJsonToDB(files);
+          // }
         },(err) => {
           if (err.message === 'missing') {
               var refs = {
@@ -356,7 +365,8 @@ class SettingsModal extends React.Component {
               refs.ref_ids.push(ref_entry);
               refDb.put(refs).then((res) => {
                   this.saveJsonToDB(files);
-              }).catch(function(internalErr) {
+              },(internalErr) => {
+                console.log(internalErr)
               });
           } else if (err.message === 'usfm parser error') {
           } else {
@@ -371,6 +381,7 @@ class SettingsModal extends React.Component {
       var filePath = path.join(refFolderPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         var options = {
+          bibleName: bibleName,
           lang: refLangCodeValue.toLowerCase(),
           version: refVersion.toLowerCase(),
           usfmFile: filePath,
@@ -378,19 +389,18 @@ class SettingsModal extends React.Component {
           scriptDirection: AutographaStore.refScriptDirection
         }
         return that.getStuffAsync(options).then((res) => {
-                    return res;
+          return res;
         }, (err)=>{
-            return err;
+          return err;
         })
         // bibUtil_to_json.toJson(options);
       }
-    }).then(function(res){
+    }).then((res) => {
       window.location.reload();
       // swal("Import Reference Text", "Successfully loaded new refs", "success");
-    }).catch(function(err){
+    }, (err) => {
       console.log(err)
       // window.location.reload();
-
       // swal("Import Reference Text", "Error: While loading new refs.", "error");
     })
   }
@@ -416,23 +426,14 @@ class SettingsModal extends React.Component {
   }
 
   //Rename
-  onReferenceRename = (e) => {
-    this.setState({bibleReference: !this.state.bibleReference})
+  onReferenceRename = (name, index, e) => {
+    this.setState({bibleReference: !this.state.bibleReference, refIndex: index})
   }
 
   //Remove
   onReferenceRemove = (element) => {
     var ref_ids = [];
-    refDb.get('refs').then(function(doc) {
-        doc.ref_ids.forEach(function(ref_doc) {
-            if (ref_doc.ref_id != element) {
-                ref_ids.push({ ref_id: ref_doc.ref_id, ref_name: ref_doc.ref_name, isDefault: ref_doc.isDefault });
-            }
-        })
-        doc.ref_ids = ref_ids;
-        return refDb.put(doc);
-    }).then(function(res) {
-      swal({
+    swal({
         title: "Confirmation",
         text: "Are you sure you want to delete this reference text?",
         icon: "warning",
@@ -441,21 +442,76 @@ class SettingsModal extends React.Component {
       })
       .then((willDelete) => {
         if (willDelete) {
-          swal("Proof! Your reference text has been deleted!", {
-            icon: "success",
+          refDb.get('refs').then((doc) => {
+              doc.ref_ids.forEach((ref_doc) => {
+                  if (ref_doc.ref_id != element) {
+                      ref_ids.push({ ref_id: ref_doc.ref_id, ref_name: ref_doc.ref_name, isDefault: ref_doc.isDefault });
+                  }
+              })
+              doc.ref_ids = ref_ids;
+              return refDb.put(doc);
+          },(err) => {
+            swal("Error", "Unable to delete please try again.", "error")
+          }).then((res) => {
+            
+            swal("Proof! Your reference text has been deleted!", {
+              icon: "success",
+            }).then((res) => {
+              window.location.reload();
+            });  
           });
         } else {
           swal("Your reference text is safe!");
         }
-      });    
-    }).catch(function(err) {
-      swal("Error", "Unable to delete please try again.", "error")
-    })
+      });
   }
-
   //Save
-  onReferenceSave = (e) => {
-    this.setState({bibleReference: !this.state.bibleReference});
+  onReferenceSave = (docId, e) => {
+    // this.setState({bibleReference: !this.state.bibleReference});
+    let bibleNameLen = this.state.refName.length;
+    if( bibleNameLen >= 10 ){
+      swal("Bible Name", "Name can't more than 10 characters", "error"); 
+      return
+    }
+    else if(bibleNameLen < 3){
+      swal("Bible Name", "Name can't less than 3 characters or blank", "error");
+      return
+    }
+    else if(bibleNameLen == 0){
+      swal("Bible Name", "Name can't be blank", "error");
+      return
+    }
+    let ref_ids = [];
+    let result = false;
+     refDb.get('refs').then((doc) => {
+        doc.ref_ids.forEach((ref_doc) => {
+            if ((ref_doc.ref_id != docId) && (ref_doc.ref_name.toLowerCase() === this.state.refName.toLowerCase())) {
+                result = true;
+                return
+            }
+            if (ref_doc.ref_id != docId) {
+                ref_ids.push({ ref_id: ref_doc.ref_id, ref_name: ref_doc.ref_name, isDefault: ref_doc.isDefault });
+            } else {
+                ref_ids.push({ ref_id: ref_doc.ref_id, ref_name: this.state.refName, isDefault: ref_doc.isDefault })
+            }
+        })
+        if (result == true) {
+          return true;
+        } else {
+            doc.ref_ids = ref_ids;
+            return refDb.put(doc);
+        }  
+        
+    }).then((res) => {
+        if (res == true) {
+            swal("Bible Name", "Name already taken", "success");
+        } else {
+            this.loadReference();
+            this.setState({bibleReference: !this.state.bibleReference, refName: ""});
+        }
+    }, (err) => {
+        swal("Bible Name", "Unable to rename. Please try later", "error");
+    })
   }
 
   //Cancel
@@ -465,9 +521,7 @@ class SettingsModal extends React.Component {
 
   //onChange Bible
   onChangeBible = (e) => {
-    this.state.refListEdit.forEach((ref, index) => {
-      this.setState({biblename: e.target.value});
-   });
+    this.setState({refName: e.target.value});
   }
 
   changeLangauge = (event) => {
@@ -505,6 +559,7 @@ class SettingsModal extends React.Component {
   }
 
   render(){
+
     var errorStyle = {
       margin: 'auto',
       textAlign: 'center',
@@ -514,8 +569,7 @@ class SettingsModal extends React.Component {
     const { show } = this.props;
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
-    const refList = this.state.refList;
-    const refListEdit = this.state.refListEdit;
+   
     const listCode = this.state._listArray;
     let displayCSS = 'none';
     if(listCode != null && Object.keys(listCode).length > 0 && this.state.visibleList) {
@@ -552,7 +606,7 @@ class SettingsModal extends React.Component {
                     <NavItem eventKey="third">
                       <FormattedMessage id="label-import-ref-text" />
                     </NavItem>
-                    <NavItem eventKey="fourth">
+                    <NavItem eventKey="fourth" onClick={this.loadReference}>
                       <FormattedMessage id="label-manage-ref-texts" />
                     </NavItem>
                     <NavItem eventKey="fifth">
@@ -791,22 +845,24 @@ class SettingsModal extends React.Component {
                             </thead>
                             <tbody id="reference-list">
                               { 
-                                refListEdit.map((ref, index) => {
+                                AutographaStore.refListEdit.map((ref, index) => {
                                   let ref_first = ref.ref_id.substr(0, ref.ref_id.indexOf('_'));
                                   let ref_except_first =  ref.ref_id.substr(ref.ref_id.indexOf('_')+1);
                                   return(
                                     <tr key={index}>
                                       <td>
                                         {
-                                         (this.state.bibleReference) ? (
-                                            <div>{this.state.biblename || ref.ref_name}</div>
-                                            ):(
-                                                (!this.state.bibleReferenc) ? (
+                                         (this.state.bibleReference && this.state.refIndex != index) ? (
+                                            <div>{ref.ref_name}</div>
+                                            )
+                                            :
+                                            (
+                                                (!this.state.bibleReference) && this.state.refIndex === index ? (
                                                 <div>
                                                   <input 
                                                     type="text"
                                                     onChange={this.onChangeBible.bind(this)}
-                                                    value={this.state.biblename}
+                                                    value = {this.state.refName}
                                                     name="biblename"                                                    
                                                   />
                                                   <div style={{marginLeft: "22%"}}>
@@ -816,8 +872,8 @@ class SettingsModal extends React.Component {
                                                       href="javascript:void(0);"
                                                       className="edit-ref"
                                                       data-rename={ref.ref_name}
-                                                      value={this.state.myBible}
-                                                      onClick={this.onReferenceSave.bind(this)}><FormattedMessage id="btn-save" />
+                                                      value={ref.ref_name}
+                                                      onClick={this.onReferenceSave.bind(this, ref.ref_id)}><FormattedMessage id="btn-save" />
                                                     </a>
                                                     <span>|</span>
                                                     <a
@@ -830,7 +886,7 @@ class SettingsModal extends React.Component {
                                                     </a>
                                                   </div>
                                                 </div>
-                                                ) : (<div>false</div>)
+                                                ) : (<div>{ref.ref_name}</div>)
                                               )
                                         }                         
                                       </td>
@@ -844,7 +900,8 @@ class SettingsModal extends React.Component {
                                             href="javascript:void(0);"
                                             className="edit-ref"
                                             data-rename={ref.ref_name}
-                                            onClick={() => this.onReferenceRename(ref.ref_name)}>Rename
+                                            value = {ref.ref_name}
+                                            onClick={() => this.onReferenceRename(ref.ref_name, index)}>Rename
                                           </a>
                                           <span>|</span>
                                           <a
@@ -862,7 +919,7 @@ class SettingsModal extends React.Component {
                                 })
                               }
                               { 
-                                refList.map((ref, index) => {
+                                AutographaStore.refListExist.map((ref, index) => {
                                   let ref_first = ref.ref_id.substr(0, ref.ref_id.indexOf('_'));
                                   let ref_except_first =  ref.ref_id.substr(ref.ref_id.indexOf('_')+1);
                                   return(
