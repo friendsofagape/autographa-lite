@@ -49,6 +49,8 @@ export class AutographaStore {
   @observable scriptDirection = "LTR"
   @observable refScriptDirection = "LTR"
   @observable refList = []
+  @observable refListEdit = []
+  @observable refListExist = []
   @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
   @observable transSaveTime = ""
   @observable replaceOption = "chapter"

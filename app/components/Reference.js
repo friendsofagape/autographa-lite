@@ -12,9 +12,10 @@ class Reference extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = { verses: [], defaultRef: 'eng_ulb', refList: [] } ;
-		var existRef = [];
-     	var refLists = refDb.get('refs').then(function(doc) {
-            doc.ref_ids.forEach(function(ref_doc) {
+		let existRef = [];
+		AutographaStore.refList = [];
+     	let refLists = refDb.get('refs').then((doc) => {
+            doc.ref_ids.forEach((ref_doc) => {
                 existRef.push( {value: ref_doc.ref_id, option: ref_doc.ref_name } );
         	})
         return existRef;

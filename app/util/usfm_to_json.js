@@ -7,7 +7,6 @@ module.exports = {
 
     toJson: function(options, callback) {
         try {
-        	console.log(options)
             var lineReader = require('readline').createInterface({
                 input: require('fs').createReadStream(options.usfmFile)
             });
@@ -20,7 +19,7 @@ module.exports = {
                 v = 0,
                 usfmBibleBook = false,
                 validLineCount = 0,
-                id_prefix = options.lang + '_' + options.version + '_';
+                id_prefix = options.bibleName + '_' + options.lang + '_' + options.version + '_';
             book["scriptDirection"] = options.scriptDirection;
             book.chapters = [];
         } catch (err) {
@@ -91,14 +90,15 @@ module.exports = {
             //	    const PouchDB = require('pouchdb-core')
             //		  .plugin(require('pouchdb-adapter-leveldb'));
             if (options.targetDb === 'refs') {
-                refDb.get(book._id).then(function(doc) {
+                refDb.get(book._id).then((doc) => {
                     book._rev = doc._rev;
                     book.scriptDirection = options.scriptDirection;
                     refDb.put(book);
-                }).catch(function(err) {
-                    refDb.put(book).then(function(doc) {
+                    return callback(null, "Successfully loaded existing refs")
+                },(err) => {
+                    refDb.put(book).then((doc) => {
                         return callback(null, "Successfully loaded new refs");
-                    }).catch(function(err) {
+                    },(err) => {
                         // console.log("Error: While loading new refs. " + err);
                         return callback("Error: While loading new refs. " + err);
                     });
@@ -114,7 +114,7 @@ module.exports = {
                         break;
                     }
                 }
-                db.get(i.toString()).then(function(doc) {
+                db.get(i.toString()).then((doc) => {
                     for (i = 0; i < doc.chapters.length; i++) {
                         for (j = 0; j < book.chapters.length; j++) {
                             if (book.chapters[j].chapter === doc.chapters[i].chapter) {
@@ -130,9 +130,9 @@ module.exports = {
                             }
                         }
                     }
-                    db.put(doc).then(function(response) {
+                    db.put(doc).then((response) => {
                         return callback(null, response);
-                    }).catch(function(err) {
+                    }, (err) => {
                         return callback('Error: While trying to save to DB. ' + err);
                     });
                 });
