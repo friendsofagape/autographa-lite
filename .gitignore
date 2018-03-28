@@ -37,7 +37,6 @@ bower_components
 database
 test-data
 reference
-app/assets/
 db/referenceDB
 db/targetDB
 db/
