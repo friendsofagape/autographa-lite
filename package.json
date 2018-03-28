@@ -5,7 +5,7 @@
   "description": "A Bible translation editor for everyone.",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "ELECTRON_ENV=production electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm install bower && bower install bootstrap-sass-official && npm install gulp && ./node_modules/.bin/gulp",
     "pack-win": "electron-packager . Autographa  --overwrite --platform=win32 --arch=x64 --icon=app/assets/images/autographa.ico --out=dist  --win32metadata.CompanyName='OA' --win32metadata.ProductName='Autographa Lite' --prune=true",
