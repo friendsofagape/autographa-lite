@@ -25,7 +25,6 @@ module.exports = {
 		    filePath = path.join(book.outputPath[0], exportName);
 		    filePath += '.usfm';
 		    fs.writeFileSync(filePath, usfmContent.join('\n'), 'utf8');
-		    console.log('File exported at ' + filePath);
 		}
 	    });
 	    return filePath;

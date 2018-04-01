@@ -28,6 +28,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     win.loadURL(`file:${__dirname}/app/views/index.html`);
+    // win.setMenu(null);
 
     //loading window gracefully
     win.once('ready-to-show', () => {

@@ -78,6 +78,8 @@
 	"label-rtl": "RTL",
 	"export-html": "HTML",
 	"export-usfm": "USFM",
+	"export-html-1-column": "1-Column HTML",
+	"export-html-2-column": "2-Column HTML",
 	"tooltip-language-validation": "Length should be between 3 and 8 characters and can’t start with a number.",
 	"dynamic-msg-bib-code-start-with-number": "The Bible language code length should be between 3 and 8 characters and can’t start with a number.",
 	
@@ -107,6 +109,9 @@
 	"dynamic-msg-name-taken" : "That name is already taken please try a different name.",
 	"dynamic-msg-ref-name-validation" : "Reference name is required.",
 	"dynamic-msg-book" : "Book", 
+	"ref_name_max_valid": "Name can't more than 10 characters",
+	"ref_name_min_valid": "Name can't less than 3 characters",
+	"ref_name_blank" : "Name can't be blank",
 	"dynamic-msg-save-language": "Successfully saved changes. Restart the application for the changes to take effect.",
 	"label-auto-update-info" : "If enabled this would allow the application to automatically connect to the internet (when available), download and thereafter install updates that are released by the Autographa team.",
 	"label-auto-update" : "Auto-update",

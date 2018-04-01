@@ -67,7 +67,7 @@ class Navbar extends React.Component {
             AutographaStore.bookId = "1";
             AutographaStore.chapterId = "1";
             console.log(err)
-        });                  
+        });
     }
     getContent = (id, chapter) => {
         return refDb.get(id).then( (doc) => { 
@@ -168,6 +168,7 @@ class Navbar extends React.Component {
     }
 
     exportPDF = (e, column) => {
+        const currentTrans = AutographaStore.currentTrans;
         let id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1];
         db.get('targetBible').then((doc) => {
             db.get(AutographaStore.bookId).then((book) => {
@@ -175,7 +176,7 @@ class Navbar extends React.Component {
             })
         }).catch(function(err) {
             // handle any errors
-            swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
+            swal(currentTrans["dynamic-msg-error"], "Please enter Translation Details in the Settings to continue with Export.", "error");
         });  
     }
 
@@ -541,7 +542,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -554,6 +555,7 @@ class Navbar extends React.Component {
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
+                            */}
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>
@@ -567,11 +569,11 @@ class Navbar extends React.Component {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;">USFM</a>
+                                        <a onClick={() => this.openpopupDownload()} href="javascript:;"><FormattedMessage id="export-usfm"/></a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;">1-Column HTML</a>
-                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;">2-Column HTML</a>
+                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;"><FormattedMessage id="export-html-1-column"/></a>
+                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;"><FormattedMessage id="export-html-2-column"/></a>
                                         
                                     </li>
                                 </ul>

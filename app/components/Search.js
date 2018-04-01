@@ -197,37 +197,7 @@ class SearchModal extends React.Component {
       let oldContent = AutographaStore.translationContent;
 
       this.findAndReplaceText(AutographaStore.searchValue, AutographaStore.replaceValue, AutographaStore.replaceOption);
-      // for (var i = 0; i < AutographaStore.verses.length; i++) {      
-      //   if (oldContent[i].search(new RegExp(this.searchRegExp(searchValue), 'g')) >= 0) {
-      //     newContent = oldContent[i].replace(new RegExp(this.searchRegExp(searchValue), 'g'), replaceValue);
-      //     oldContent[i] = newContent;
-      //     var totalReplacedWord = newContent.match(new RegExp(this.searchRegExp(replaceValue), 'g')).length;
-      //     allChapterReplaceCount.push(totalReplacedWord);
-      //     replaceCount = allChapterReplaceCount.reduce((a,b) => a+b, 0);
-      //     this.setState({replaceCount: replaceCount})
-      //   }
-      // }
-      // this.setState({replaceInfo: true});
       AutographaStore.showModalSearch = false;
-
-      // db.get(AutographaStore.bookId).then((doc) => {
-      //     var verses = doc.chapters[AutographaStore.chapterId-1].verses
-      //     verses.forEach(function(verse, index) {
-      //         verse.verse = oldContent[index];
-      //     });
-      //     doc.chapters[AutographaStore.chapterId-1].verses = verses;
-      //     db.put(doc, function(err, response) {
-      //       if (err) {
-      //           console.log(err);
-      //       } else {
-      //         AutographaStore.showModalSearch = false;
-      //         swal('Replaced Information', `Book: ${Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]}
-      //                                       Total word replaced: ${replaceCount} `, 'success');
-      //         replaceCount = 0;
-      //         allChapterReplaceCount = [];
-      //       }
-      //     });
-      // })
     }
 
 

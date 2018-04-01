@@ -18,51 +18,50 @@ class DownloadModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showModalDownload: this.props.show,
             stageChange: '',
-            buttonStage: 'Choose Stage'
-        };
+            buttonStage: 'dynamic-msg-stage-trans',
+            
+        }
     }
-
     onChange = (e) => { 
         this.setState({[e.target.name]: e.target.value})
     }
   
     clickStage = (e) => {
-        this.setState({ buttonStage: e, stageChange: e });
+        this.setState({ buttonStage: "label-stage", stageChange: e });
     }
     
     exportUsfm = (e) => {
-        let stageInput = this.state.stageChange;
-        session.defaultSession.cookies.get({ url: 'http://book.autographa.com' }, (error, cookie) => {
-            if (error) {
-                swal("Error", "Please enter Translation Details in the Settings to continue with Export.", "error");
-            }
-            let book = {};
-            db.get('targetBible').then(function(doc) {
-                book.bookNumber = cookie[0].value;
-                book.bookName = constants.booksList[parseInt(book.bookNumber, 10) - 1];
-                book.bookCode = constants.bookCodeList[parseInt(book.bookNumber, 10) - 1];
-                book.outputPath = doc.targetPath;
-                let filepath = bibUtil.toUsfm(book, stageInput, doc);
-                return filepath;
-            }).then((filepath) => {
-                AutographaStore.showModalDownload = false;
-                swal("Book Exported", "Exported file at : " + filepath); 
-            }).catch((err) => {
-                swal("Error", "Cannot get details from DB", "error");
-            });
+        let stageInput = `Stage ${this.state.stageChange}`;
+        let book = {};
+        const currentTrans = AutographaStore.currentTrans;
+        db.get('targetBible').then(function(doc) {
+            book.bookNumber = AutographaStore.bookId.toString();
+            book.bookName = constants.booksList[parseInt(book.bookNumber, 10) - 1];
+            book.bookCode = constants.bookCodeList[parseInt(book.bookNumber, 10) - 1];
+            book.outputPath = doc.targetPath;
+            let filepath = bibUtil.toUsfm(book, stageInput, doc);
+            return filepath;
+        }).then((filepath) => {
+            AutographaStore.showModalDownload = false;
+            swal({title: currentTrans["tooltip-export-usfm"], text: `${currentTrans["label-exported-file"]}:${filepath}`})
+        }).catch((err) => {
+            console.log(err)
+            AutographaStore.showModalDownload = false;
+            swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-enter-translation"])
         });
     }
 
     render (){
         let closeSearchUSFM = () => AutographaStore.showModalDownload = false
+        const {stageChange} = this.state;
         return ( 
             <Modal show={AutographaStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
                 <Modal.Header closeButton>
                     <Modal.Title id="export-heading"><FormattedMessage id="tooltip-export-usfm" /></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+              
                 <div className="row">
                     <div className="col-lg-6">
                         <div className="input-group">
@@ -74,7 +73,7 @@ class DownloadModal extends React.Component {
                                 id="stageText" 
                                 placeholder={message}
                                 name="stageChange"
-                                value={this.state.stageChange}
+                                value={stageChange ? `Stage ${stageChange}` : ""}
                                 onChange={this.onChange}
                             />}
                             </FormattedMessage>
@@ -85,33 +84,33 @@ class DownloadModal extends React.Component {
                                     className="btn btn-default dropdown-toggle"
                                     data-toggle="dropdown"
                                     aria-haspopup="true"
-                                    aria-expanded="false"><FormattedMessage id={this.state.buttonStage} /> 
+                                    aria-expanded="false"><FormattedMessage id={this.state.buttonStage} />&nbsp;{this.state.stageChange} 
                                     <span className="caret"></span>
                                 </button>
                                 <ul className="dropdown-menu dropdown-menu-right" id="trans-stage">
                                     <li>
 
-                                        <a href="#" value="stage1" onClick={() => this.clickStage("Stage 1")}>
+                                        <a href="#"  onClick={() => this.clickStage("1")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 1 
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" value="stage2" onClick={() => this.clickStage("Stage 2")}>
+                                        <a href="#"  onClick={() => this.clickStage("2")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 2 
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" value="stage3" onClick={() => this.clickStage("Stage 3")}>
+                                        <a href="#"  onClick={() => this.clickStage("3")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 3
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" value="stage4" onClick={() => this.clickStage("Stage 4")}>
+                                        <a href="#"  onClick={() => this.clickStage("4")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 4
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#" value="stage5" onClick={() => this.clickStage("Stage 5")}>
+                                        <a href="#"  onClick={() => this.clickStage("5")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 5
                                         </a>
                                     </li>

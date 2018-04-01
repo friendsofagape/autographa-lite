@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { remote } from 'electron';
-import { TextField, RaisedButton } from 'material-ui';
+import { TextField, RaisedButton, SelectField, MenuItem } from 'material-ui';
 import swal from 'sweetalert';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
@@ -20,7 +20,6 @@ const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
 import { FormattedMessage } from 'react-intl';
 import Loader from './Loader';
-
 
 @observer
 class SettingsModal extends React.Component {
@@ -41,19 +40,21 @@ class SettingsModal extends React.Component {
       hideAlert: "hidemessage",
       showLoader: false,
       refIndex: 0,
-      refName: ""
+      refName: "",
+      showMsg: false,
+      msgId: "",
+      filepath: "",
+      modalBody: "",
+      title: ""
+
     };
     db.get('targetBible').then((doc) => {
-        if(doc.langScript.toUpperCase() == "RTL"){
-            AutographaStore.scriptDirection = "RTL"
-        }else{
-          AutographaStore.scriptDirection = "LTR"
-        }
+      AutographaStore.scriptDirection = doc.langScript.toUpperCase();
     }, (err) => {
+      AutographaStore.scriptDirection = "LTR";
     })
     AutographaStore.refList = []
     this.loadSetting();
-    // this.loadReference();
   }
 
   getStuffAsync = (param) => {
@@ -69,10 +70,11 @@ class SettingsModal extends React.Component {
     const settingData = this.state.settingData;
     db.get('targetBible').then((doc) =>{
       settingData.langCode = doc.targetLang;
+      settingData.langCodeValue = doc.targetLang;
       settingData.langVersion = doc.targetVersion;
       settingData.folderPath = doc.targetPath;
     }, (err) => {
-      console.log(err);
+      // console.log(err);
     });
   }
 
@@ -102,6 +104,7 @@ class SettingsModal extends React.Component {
   onChangeList = (event) => {
     let settingData = Object.assign({}, this.state.settingData);
         settingData.langCode = event.target.value;
+        settingData.langCodeValue = event.target.value;
         this.setState({ settingData, visibleList: true });
         this.listLanguage(event.target.value);
         this.setState({});
@@ -121,7 +124,7 @@ class SettingsModal extends React.Component {
               if (!filteredResults.hasOwnProperty(response.rows[index].doc['lang_code'])) {
                 filteredResults[response.rows[index].doc['lang_code']] = response.rows[index].doc['name'];
               } else {
-                existingValue = filteredResults[response.rows[index].doc['lang_code']]
+                let existingValue = filteredResults[response.rows[index].doc['lang_code']]
                 filteredResults[response.rows[index].doc['lang_code']] = (existingValue + " , " + response.rows[index].doc['name']);
               }
             }
@@ -192,6 +195,7 @@ class SettingsModal extends React.Component {
 
   saveSetting = () => {
     if (this.target_setting() == false) return;
+    const currentTrans = AutographaStore.currentTrans;
     const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
     const settingData = { 
       _id: 'targetBible',
@@ -203,14 +207,13 @@ class SettingsModal extends React.Component {
     db.get('targetBible').then((doc) => {
       settingData._rev = doc._rev;
       db.put(settingData).then((res) => {
-        swal("Translation Data", "Successfully saved data in database", "success");
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-saved-change"], "success");
       }); 
     }, (err) => {
       db.put(settingData).then((res) => {
-        swal("Translation Data", "Successfully saved data in database", "success");
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-saved-change"], "success");
       }, (err) => {
-        swal("Translation Data", "Oops....", "error");
-                    
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-went-wrong"], "success");
       });
     });
   }
@@ -393,15 +396,11 @@ class SettingsModal extends React.Component {
         }, (err)=>{
           return err;
         })
-        // bibUtil_to_json.toJson(options);
       }
     }).then((res) => {
       window.location.reload();
-      // swal("Import Reference Text", "Successfully loaded new refs", "success");
     }, (err) => {
-      console.log(err)
-      // window.location.reload();
-      // swal("Import Reference Text", "Error: While loading new refs.", "error");
+      window.location.reload();
     })
   }
 
@@ -433,9 +432,10 @@ class SettingsModal extends React.Component {
   //Remove
   onReferenceRemove = (element) => {
     var ref_ids = [];
+    const currentTrans = AutographaStore.currentTrans;
     swal({
-        title: "Confirmation",
-        text: "Are you sure you want to delete this reference text?",
+        title: currentTrans["label-heading-confirmation"],
+        text: currentTrans["dynamic-msg-del-ref-text"],
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -451,34 +451,28 @@ class SettingsModal extends React.Component {
               doc.ref_ids = ref_ids;
               return refDb.put(doc);
           },(err) => {
-            swal("Error", "Unable to delete please try again.", "error")
+            swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-del-unable"], "error");
           }).then((res) => {
-            
-            swal("Proof! Your reference text has been deleted!", {
-              icon: "success",
-            }).then((res) => {
               window.location.reload();
-            });  
           });
-        } else {
-          swal("Your reference text is safe!");
         }
       });
   }
   //Save
   onReferenceSave = (docId, e) => {
     // this.setState({bibleReference: !this.state.bibleReference});
+    const currentTrans = AutographaStore.currentTrans;
     let bibleNameLen = this.state.refName.length;
     if( bibleNameLen >= 10 ){
-      swal("Bible Name", "Name can't more than 10 characters", "error"); 
+      swal(currentTrans["label-bible-name"], currentTrans["ref_name_max_valid"], "error")
       return
     }
     else if(bibleNameLen < 3){
-      swal("Bible Name", "Name can't less than 3 characters or blank", "error");
+      swal(currentTrans["label-bible-name"], currentTrans["ref_name_min_valid"], "error")
       return
     }
     else if(bibleNameLen == 0){
-      swal("Bible Name", "Name can't be blank", "error");
+      swal(currentTrans["label-bible-name"], currentTrans["ref_name_blank"], "error")
       return
     }
     let ref_ids = [];
@@ -504,13 +498,13 @@ class SettingsModal extends React.Component {
         
     }).then((res) => {
         if (res == true) {
-            swal("Bible Name", "Name already taken", "success");
+          swal(currentTrans["label-bible-name"], currentTrans["dynamic-msg-name-taken"], "success");
         } else {
             this.loadReference();
             this.setState({bibleReference: !this.state.bibleReference, refName: ""});
         }
     }, (err) => {
-        swal("Bible Name", "Unable to rename. Please try later", "error");
+      swal(currentTrans["label-bible-name"], currentTrans["dynamic-msg-ren-unable"], "error")
     })
   }
 
@@ -524,11 +518,12 @@ class SettingsModal extends React.Component {
     this.setState({refName: e.target.value});
   }
 
-  changeLangauge = (event) => {
-    AutographaStore.appLang = event.target.value;
+  changeLangauge = (event, index, value) => {
+    AutographaStore.appLang = value;
   }
 
   saveAppLanguage = (e) => {
+    const currentTrans = AutographaStore.currentTrans;
     refDb.get('app_locale').then((doc) => {
       doc.appLang = AutographaStore.appLang;
       refDb.put(doc);
@@ -543,9 +538,9 @@ class SettingsModal extends React.Component {
             appLang: AutographaStore.appLang
         };
         refDb.put(locale).then(function(res) {
-          swal("Title", "dynamic-msg-save-language", "success"); 
+          swal(currentTrans["btn-save-changes"], currentTrans["dynamic-msg-save-language"], "success")
         }).catch(function(internalErr) {
-            swal("dynamic-msg-went-wrong");
+          swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-went-wrong"], "success")
         });
       } 
     });
@@ -557,9 +552,11 @@ class SettingsModal extends React.Component {
   onChangeRefScriptDir = (value) => {
     AutographaStore.refScriptDirection = value;
   }
-
+  hideCodeList = () => {
+   this.setState({_listArray: []}) 
+  }
+ 
   render(){
-
     var errorStyle = {
       margin: 'auto',
       textAlign: 'center',
@@ -567,6 +564,8 @@ class SettingsModal extends React.Component {
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
+    const {showMsg, modalBody, title} = this.state;
+
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
    
@@ -603,7 +602,7 @@ class SettingsModal extends React.Component {
                     <NavItem eventKey="second">
                       <FormattedMessage id="label-import-translation" />
                     </NavItem>
-                    <NavItem eventKey="third">
+                    <NavItem eventKey="third" onClick={this.hideCodeList}>
                       <FormattedMessage id="label-import-ref-text" />
                     </NavItem>
                     <NavItem eventKey="fourth" onClick={this.loadReference}>
@@ -623,8 +622,10 @@ class SettingsModal extends React.Component {
                           <TextField 
                             hintText="eng"
                             onChange={this.onChangeList.bind(this)}
-                            value={langCodeValue || langCode}
+                            value={langCodeValue || ""}
                             name="langCode"
+                            className = "textbox-width-70 margin-top-24"
+
                           />
                         </div>
                         <div id="target-lang-result" className="lang-code" style={{display: displayCSS}}>
@@ -650,6 +651,7 @@ class SettingsModal extends React.Component {
                             onChange={this.onChange.bind(this)}
                             value={langVersion || ""}
                             name="langVersion"
+                            className = "margin-top-24 textbox-width-70"
                           />
                         </div>
                         <div>
@@ -663,6 +665,7 @@ class SettingsModal extends React.Component {
                                 value={folderPath || ""}
                                 name="folderPath"
                                 onClick={this.openFileDialogSettingData}
+                                className = "margin-top-24 textbox-width-70"
                               />
                             }
                           </FormattedMessage>
@@ -716,6 +719,8 @@ class SettingsModal extends React.Component {
                             value={this.state.folderPathImport}
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
+                            className = "margin-top-24 textbox-width-70"
+
                           />}
                           </FormattedMessage>
                           <FormattedMessage id="btn-import" >
@@ -741,7 +746,7 @@ class SettingsModal extends React.Component {
                                 onChange={this.onReferenceChange.bind(this)}
                                 value={bibleName || ""}
                                 name="bibleName"
-                                
+                                className = "margin-top-24 textbox-width-70"
                             />}
                           </FormattedMessage>
                         </div>
@@ -753,6 +758,8 @@ class SettingsModal extends React.Component {
                             onChange={this.onReferenceChangeList.bind(this)}
                             value={refLangCode || ""}
                             name="refLangCode"
+                            className = "margin-top-24 textbox-width-70"
+
                           />
                         </div>
                         <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
@@ -775,6 +782,8 @@ class SettingsModal extends React.Component {
                             onChange={this.onReferenceChange.bind(this)}
                             value={refVersion || ""}
                             name="refVersion"
+                            className = "margin-top-24 textbox-width-70"
+
                           />
                         </div>
                         <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -788,7 +797,7 @@ class SettingsModal extends React.Component {
                           <RadioButtonGroup
                             valueSelected={AutographaStore.refScriptDirection}
                             name="refscriptDir"
-                            style={{display: "flex", marginBottom:"-8%"}}
+                            style={{display: "flex", marginBottom:"-6%"}}
                             onChange={(event, value) => this.onChangeRefScriptDir(value)}
                           >
                             <RadioButton
@@ -796,13 +805,11 @@ class SettingsModal extends React.Component {
                               label={<FormattedMessage id="label-ltr" />}
                               style={{width: "70%"}}
                             />
-
                             <RadioButton
                               value="RTL"
                               label={<FormattedMessage id="label-rtl" />}
                               style={{width: "70%"}} 
                             />
-
                           </RadioButtonGroup>
                         </div>
                         <div>
@@ -817,6 +824,7 @@ class SettingsModal extends React.Component {
                               value={refFolderPath || ""}
                               ref="refFolderPath"
                               onClick={this.openFileDialogRefSetting}
+                              className = "margin-top-24 textbox-width-70"
                             />}
                           </FormattedMessage>
                         </div>
@@ -942,13 +950,13 @@ class SettingsModal extends React.Component {
                             <div className="form-group">
                                 <div className="mdl-selectfield mdl-js-selectfield">
                                     <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
-                                    <select className="mdl-selectfield__select" id="localeList" value = {AutographaStore.appLang} onChange = {this.changeLangauge}>
-                                        <option value="ar">Arabic</option>
-                                        <option value="en">English</option>
-                                        <option value="hi">Hindi</option>
-                                        <option value="pt">Portuguese</option>
-                                        <option value="es">Spanish</option>
-                                    </select>
+                                    <SelectField className="mdl-selectfield__select" id="localeList" value = {AutographaStore.appLang} onChange = {this.changeLangauge}>
+                                        <MenuItem value={"ar"} primaryText="Arabic" /> 
+                                        <MenuItem value={"en"} primaryText="English" /> 
+                                        <MenuItem value={"hi"} primaryText="Hindi" />
+                                        <MenuItem value={"pt"} primaryText="Portuguese" />
+                                        <MenuItem value={"es"} primaryText="Spanish" />
+                                    </SelectField>
                                 </div>
                             </div>
                             <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>

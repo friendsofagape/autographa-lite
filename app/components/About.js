@@ -35,15 +35,15 @@ var AboutUsModel = function(props) {
                         </div>
                         <div className="col-xs-6">
                             <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>
-                            <p><FormattedMessage id="label-version" /> <span>0.1</span></p>
-                            <p><FormattedMessage id="label-hosted-url" />: https://github.com/Bridgeconn/autographa-lite</p>
+                            <p><FormattedMessage id="label-version" /> <span>1.0.0-Beta.1</span></p>
+                            <p><FormattedMessage id="label-hosted-url" />: https://github.com/friendsofagape/autographa-lite.git</p>
                         </div>
                     </div>
                 </Tab>
                 <Tab eventKey={2} title={<FormattedMessage id="label-license-tab"/>}>
                     <div style={{overflowY: "scroll", height: "255px"}}>
                         <h4> The MIT License (MIT)</h4>
-                        <p>Released in 2017 by Friends of Agape (www.friendsofagape.org) in partnership with RUN Ministries (www.runministries.org). </p>
+                        <p>Released in 2018 by Friends of Agape (www.friendsofagape.org) in partnership with RUN Ministries (www.runministries.org). </p>
                         <br />
                         <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
                         <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
