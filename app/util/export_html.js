@@ -238,7 +238,7 @@ module.exports = {
                         width: 3%;
                         float: right;
                         font-weight: bold;
-                        content: counter(item, ${column == 2 ? 'arabic-indic' : 'decimal'}) "  ";
+                        content: counter(item, decimal) "  ";
                         counter-increment: item;
                         margin-top: 3px;
                         font-size:14px : 14px;
@@ -268,7 +268,7 @@ module.exports = {
 	                    	htmlContent += 
 	                                `<ul class="list">
 	                                    <li>
-	                                        <p class="firstLi"><span class="chapter">${obj.chapter.toLocaleString( column == 2 ? 'ar' : 'en')}</span></p>
+	                                        <p class="firstLi"><span class="chapter">${obj.chapter}</span></p>
 	                                    </li><li><ol>`
 	                        for( let i=0; i<obj.verses.length; i++){
 	                            if (obj.verses[i].verse !== "" && obj.verses[i].verse !== null){
