@@ -93,6 +93,8 @@ class SettingsModal extends React.Component {
         }
       });
     })
+    console.log(AutographaStore.refListEdit)
+
   }
 
   onChange = (event) => {
@@ -145,6 +147,9 @@ class SettingsModal extends React.Component {
       autoCompleteResult.then((res)  => {
         if (res != null) {
           this.setState({_listArray: res})
+          document.addEventListener('click', this.handleOutsideClick, false);
+        }else{
+          document.removeEventListener('click', this.handleOutsideClick, false);
         }
       });  
     }
@@ -159,6 +164,7 @@ class SettingsModal extends React.Component {
   onReferenceChangeList = (event) => {
     let refSetting = Object.assign({}, this.state.refSetting);
         refSetting.refLangCode = event.target.value;
+        refSetting.refLangCodeValue = event.target.value;
         this.setState({ refSetting, visibleList: true });
         this.listLanguage(event.target.value);
         this.setState({});
@@ -323,13 +329,17 @@ class SettingsModal extends React.Component {
     if (this.reference_setting() == false)
     return;
     this.setState({showLoader: true})
-    const {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
+    let {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
+    if(refLangCodeValue === null){
+      refLangCodeValue = refLangCode
+    }
     var ref_id_value = bibleName + '_' + refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
         ref_entry = {},
         ref_arr = [],
         files = fs.readdirSync(refFolderPath[0]);
         ref_entry.ref_id = ref_id_value;
         ref_entry.ref_name = bibleName;
+        ref_entry.ref_lang_code = refLangCodeValue.toLowerCase();
         ref_entry.isDefault = false;
         ref_arr.push(ref_entry);
         refDb.get('refs').then((doc) => {
@@ -342,6 +352,7 @@ class SettingsModal extends React.Component {
             }
             ref_entry.ref_id = ref_doc.ref_id;
             ref_entry.ref_name = ref_doc.ref_name;
+            ref_entry.ref_lang_code = ref_doc.ref_lang_code;
             ref_entry.isDefault = ref_doc.isDefault;
             ref_arr.push(ref_entry)
             ref_entry= {};
@@ -555,6 +566,18 @@ class SettingsModal extends React.Component {
   hideCodeList = () => {
    this.setState({_listArray: []}) 
   }
+
+  handleOutsideClick = (e) => {
+      // ignore clicks on the component itself
+      if (this.node && this.node.contains(e.target)) {
+        return;
+      }
+      this.hideCodeList();
+  }
+  clearList = () => {
+    this.hideCodeList();
+  }
+  
  
   render(){
     var errorStyle = {
@@ -565,7 +588,6 @@ class SettingsModal extends React.Component {
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
     const {showMsg, modalBody, title} = this.state;
-
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
    
@@ -625,13 +647,12 @@ class SettingsModal extends React.Component {
                             value={langCodeValue || ""}
                             name="langCode"
                             className = "textbox-width-70 margin-top-24"
-
                           />
                         </div>
-                        <div id="target-lang-result" className="lang-code" style={{display: displayCSS}}>
+                        <div id="target-lang-result" className="lang-code" style={{display: displayCSS}}  ref={node => { this.node = node; }}>
                           <ul>
                             {
-                              (listCode != null) ? (
+                              (this.state.visibleList && listCode != null) ? (
                                 Object.keys(listCode).map((key, index) => {
                                  return <li
                                           key={index}
@@ -652,6 +673,7 @@ class SettingsModal extends React.Component {
                             value={langVersion || ""}
                             name="langVersion"
                             className = "margin-top-24 textbox-width-70"
+                            onFocus = {this.clearList}
                           />
                         </div>
                         <div>
@@ -759,10 +781,10 @@ class SettingsModal extends React.Component {
                             value={refLangCode || ""}
                             name="refLangCode"
                             className = "margin-top-24 textbox-width-70"
-
+                            
                           />
                         </div>
-                        <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}}>
+                        <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}} ref={node => { this.node = node; }}>
                           <ul>
                             {
                               (listCode != null) ? (
@@ -783,7 +805,7 @@ class SettingsModal extends React.Component {
                             value={refVersion || ""}
                             name="refVersion"
                             className = "margin-top-24 textbox-width-70"
-
+                            onFocus = {this.clearList}
                           />
                         </div>
                         <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -898,7 +920,7 @@ class SettingsModal extends React.Component {
                                               )
                                         }                         
                                       </td>
-                                      <td>{ref_first}</td>
+                                      <td>{ref.ref_lang_code}</td>
                                       <td>{ref_except_first}</td>
                                       <td>
                                         {<div>
@@ -933,7 +955,7 @@ class SettingsModal extends React.Component {
                                   return(
                                     <tr key={index}>
                                       <td>{ref.ref_name}</td>
-                                      <td>{ref_first}</td>
+                                      <td>{ref.ref_lang_code}</td>
                                       <td>{ref_except_first}</td>
                                       <td>{}</td>
                                     </tr>
