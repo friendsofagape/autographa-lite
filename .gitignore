@@ -11,6 +11,9 @@ Thumbs.db
 /app/background.js
 /app/**/*.map
 
+/src/app.js
+/src/app.js.map
+
 
 # Logs
 logs
