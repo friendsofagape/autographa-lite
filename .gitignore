@@ -1,3 +1,20 @@
+node_modules
+.DS_Store
+Thumbs.db
+*.log
+
+/dist
+/temp
+
+# ignore everything in 'app' folder what had been generated from 'src' folder
+/app/app.js
+/app/background.js
+/app/**/*.map
+
+/src/app.js
+/src/app.js.map
+
+
 # Logs
 logs
 *.log
@@ -34,10 +51,7 @@ bower_components
 .node_repl_history
 
 # User-defined
-database
-test-data
-reference
-app/assets/
+
 db/referenceDB
 db/targetDB
 db/
