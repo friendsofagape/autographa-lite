@@ -18,6 +18,8 @@ import  Footer  from '../components/Footer';
 import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
+const DiffMatchPatch = require('diff-match-patch');
+const dmp_diff = new DiffMatchPatch();
 
 
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
@@ -44,6 +46,7 @@ class Navbar extends React.Component {
             refList: [],
             searchVal: "", 
             replaceVal:"",
+            toggled: false
         };
        
         var verses, chunks, chapter;
@@ -85,6 +88,40 @@ class Navbar extends React.Component {
         });
     }
 
+    getDiffText = (refId1, refId2, book, chapter) => {
+        let id1 = refId1 + '_' +Constant.bookCodeList[parseInt(book, 10) - 1],
+        id2 = refId2 + '_' + Constant.bookCodeList[parseInt(book, 10) - 1],
+        i;
+        return refDb.get(id1).then((doc) => {
+            for (i = 0; i < doc.chapters.length; i++) {
+                if (doc.chapters[i].chapter == parseInt(chapter, 10)) {
+                    break;
+                }
+            }
+            return doc.chapters[i].verses
+        }).then((response) => {
+            let ref1 = response;
+            let i;
+            return refDb.get(id2).then((doc) => {
+                for ( i = 0; i < doc.chapters.length; i++) {
+                    if (doc.chapters[i].chapter == parseInt(chapter, 10)) {
+                        break;
+                    }
+                }
+                let ref2 = doc.chapters[i].verses
+                var refString = "";
+                for (let i = 1; i <= ref1.length; i++) {
+                    var d = dmp_diff.diff_main(ref1[i - 1].verse, ref2[i - 1].verse);
+                    dmp_diff.diff_cleanupSemantic(d);
+                    var ds = dmp_diff.diff_prettyHtml(d);
+                    refString += '<div data-verse="r' + (i) + '"><span class="verse-num">' + (i) + '</span><span>' + ds + '</span></div>';
+                }
+                return refString;
+            });
+        });
+    }
+    
+
     getRefContents = (id,chapter) => {
 
         refDb.get('targetReferenceLayout').then((doc) => {
@@ -96,13 +133,26 @@ class Navbar extends React.Component {
                     this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.content = content;
                     })
+                    break;
                 case 2:
+                if(AutographaStore.toggle){
+                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                        AutographaStore.content = content;
+                    })
+                    this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
+                        AutographaStore.contentOne = content;
+                    })
+
+                }else{
                     this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.content = content;
                     }) 
                     this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.contentOne = content;
                     })
+                }
+                    break;
+                    
                 case 3:
                     this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.content = content;
@@ -113,6 +163,7 @@ class Navbar extends React.Component {
                     this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.contentTwo = content;
                     })
+                    break;
             }
         })
        //  AutographaStore.aId  = "";
@@ -393,7 +444,117 @@ class Navbar extends React.Component {
             console.log(error);
         });
 
-    } 
+    }
+    setDiff = (e, toggled) => {
+        console.log(toggled)
+            refDb.get('targetReferenceLayout').then((doc) => {
+                AutographaStore.layout = doc.layout;
+                AutographaStore.layoutContent = doc.layout;
+                let chapter = AutographaStore.chapterId.toString();
+                const transDiffRef = doc.layout -1
+                switch(doc.layout){
+                    case 1:
+                    if(toggled){
+                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+                    }
+                    else {
+                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.content = content;
+                        })
+                    }
+                        break;
+                    case 2:
+                    if(toggled){
+                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.content = content;
+                        })
+                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+    
+                    }else{
+                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.content = content;
+                        }) 
+                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+                    }
+                        break;
+                        
+                    case 3:
+                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.content = content;
+                        }) 
+                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+                        this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.contentTwo = content;
+                        })
+                        break;
+                }
+            })
+           //  AutographaStore.aId  = "";
+            var translationContent = [];
+            var i;
+            var chunkIndex = 0;
+            var chunkVerseStart; 
+            var chunkVerseEnd;
+            var chunkGroup = [];
+            var chunks = AutographaStore.chunks;
+            var verses = AutographaStore.verses;
+            var chapter = AutographaStore.chapterId;
+            for (i = 0; i < chunks.length; i++) {
+                if (parseInt(chunks[i].chp, 10) === parseInt(chapter, 10)) {
+                    chunkIndex = i + 1;
+                    chunkVerseStart = parseInt(chunks[i].firstvs, 10);
+                    chunkVerseEnd = parseInt(chunks[i + 1].firstvs, 10) - 1;
+                    break;
+                }
+            }
+            db.get(AutographaStore.bookId).then((targetDoc) => {
+                let id = AutographaStore.activeRefs[AutographaStore.layout-1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1]
+                refDb.get(id).then(function(refdoc) {
+                    for (i = 0; i < refdoc.chapters.length; i++) {
+                        if (refdoc.chapters[i].chapter == parseInt(chapter, 10)) {
+                            break;
+                        }
+                    }
+                    let book_verses = refdoc.chapters[i].verses
+                    for (i = 1; i <= verses.length; i++) {
+                        var spanVerseNum = '';
+                        if (i > chunkVerseEnd) {
+                            chunkVerseStart = parseInt(chunks[chunkIndex].firstvs, 10);
+                            if (chunkIndex === chunks.length - 1 || parseInt((chunks[chunkIndex + 1].chp), 10) != chapter) {
+                                chunkVerseEnd = verses.length;
+                                
+                            } else {
+                                chunkIndex++;
+                                chunkVerseEnd = parseInt(chunks[chunkIndex].firstvs, 10) - 1;
+                            }
+                        }
+                        var chunk = chunkVerseStart + '-' + chunkVerseEnd;
+                        var d = dmp_diff.diff_main(targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse, book_verses[i - 1].verse);
+                        dmp_diff.diff_cleanupSemantic(d);
+                        var ds = dmp_diff.diff_prettyHtml(d);
+                        translationContent.push(ds).toString();
+                        var spanVerse = chunk 
+                        chunkGroup.push(spanVerse);
+                    }
+                    AutographaStore.chunkGroup = chunkGroup;
+                    AutographaStore.translationContent= translationContent;
+                }).catch(function(err) {
+                    console.log(err);
+                });
+                    
+                
+            })
+            
+        
+    }
     
     render() {
         // const layout = AutographaStore.layout;
@@ -542,7 +703,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -550,12 +711,14 @@ class Navbar extends React.Component {
                                         <Toggle
                                           defaultToggled={true}
                                           style={{marginTop:"17px"}}
+                                          onToggle = {this.setDiff}
+                                          
                                         />
                                     }
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                            */}
+                           
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>

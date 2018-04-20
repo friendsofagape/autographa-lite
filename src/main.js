@@ -28,7 +28,7 @@ function createWindow() {
     'webPreferences': {'session': session},
     show: false
     });
-    // win.openDevTools();
+    win.openDevTools();
     
     // and load the index.html of the app.
     // win.loadURL(`file:${__dirname}/views/index.html`);
