@@ -135,22 +135,14 @@ class Navbar extends React.Component {
                     })
                     break;
                 case 2:
-                if(AutographaStore.toggle){
-                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.content = content;
-                    })
-                    this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
-                        AutographaStore.contentOne = content;
-                    })
-
-                }else{
+               
                     this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.content = content;
                     }) 
                     this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                         AutographaStore.contentOne = content;
                     })
-                }
+                
                     break;
                     
                 case 3:
@@ -443,12 +435,11 @@ class Navbar extends React.Component {
 
     }
     setDiff = (e, toggled) => {
-        console.log(toggled)
             refDb.get('targetReferenceLayout').then((doc) => {
                 AutographaStore.layout = doc.layout;
                 AutographaStore.layoutContent = doc.layout;
                 let chapter = AutographaStore.chapterId.toString();
-                const transDiffRef = doc.layout -1
+                const transDiffRef = doc.layout -1;
                 switch(doc.layout){
                     case 1:
                     if(toggled){
@@ -482,6 +473,17 @@ class Navbar extends React.Component {
                         break;
                         
                     case 3:
+                    if(toggled){
+                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.content = content;
+                        }) 
+                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+                        this.getDiffText(AutographaStore.activeRefs[1], AutographaStore.activeRefs[2], AutographaStore.bookId, chapter).then((content)=>{
+                            AutographaStore.contentTwo= content;
+                        })
+                    }else{
                         this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                             AutographaStore.content = content;
                         }) 
@@ -491,7 +493,8 @@ class Navbar extends React.Component {
                         this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                             AutographaStore.contentTwo = content;
                         })
-                        break;
+                    }
+                    break;
                 }
             })
            //  AutographaStore.aId  = "";
@@ -533,13 +536,16 @@ class Navbar extends React.Component {
                                 chunkVerseEnd = parseInt(chunks[chunkIndex].firstvs, 10) - 1;
                             }
                         }
-                        var chunk = chunkVerseStart + '-' + chunkVerseEnd;
-                        var d = dmp_diff.diff_main(targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse, book_verses[i - 1].verse);
-                        dmp_diff.diff_cleanupSemantic(d);
-                        var ds = dmp_diff.diff_prettyHtml(d);
-                        translationContent.push(ds).toString();
-                        var spanVerse = chunk 
-                        chunkGroup.push(spanVerse);
+                        let chunk = chunkVerseStart + '-' + chunkVerseEnd;
+                        if(toggled){
+                            let verseDiff = dmp_diff.diff_main(targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse, book_verses[i - 1].verse);
+                            dmp_diff.diff_cleanupSemantic(verseDiff);
+                            let ds = dmp_diff.diff_prettyHtml(verseDiff);
+                            translationContent.push(ds).toString();
+                        }else{
+                            translationContent.push(verses[i - 1].verse).toString();
+                        }
+                        chunkGroup.push(chunk);
                     }
                     AutographaStore.chunkGroup = chunkGroup;
                     AutographaStore.translationContent= translationContent;
@@ -706,7 +712,7 @@ class Navbar extends React.Component {
                                 <FormattedMessage id="tooltip-compare-mode">
                                     {(message) =>
                                         <Toggle
-                                          defaultToggled={true}
+                                          defaultToggled={false}
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
                                           
