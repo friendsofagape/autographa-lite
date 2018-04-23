@@ -60,9 +60,16 @@ class Footer extends React.Component {
                 fontSize = multiplier + fontSize
             }
         }
-        AutographaStore.currentFontValue = fontSize
+        AutographaStore.currentFontValue = fontSize;
         for (var i = 0; i <= elements; i++) {
+
             document.getElementsByClassName("col-ref")[i].style.fontSize = fontSize + "px";
+            let colRef = document.getElementsByClassName("col-ref")[i]
+            let verseNum = colRef.getElementsByClassName('verse-num');
+            for (let i = 0; i < verseNum.length ; i++) {
+                verseNum[i].style.fontSize = fontSize-4 + "px";
+            }
+            
         };
         
     }
