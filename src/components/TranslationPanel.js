@@ -20,7 +20,7 @@ class TranslationPanel extends React.Component {
   }
 
   highlightRef(obj) {
-    var content = ReactDOM.findDOMNode(this);
+    {/*var content = ReactDOM.findDOMNode(this);
     let verses = content.getElementsByClassName("verse-input")[0].querySelectorAll("span[id^=v]");
     var refContent = document.getElementsByClassName('ref-contents');
     for (var a=0; a< refContent.length; a++) {
@@ -41,7 +41,7 @@ class TranslationPanel extends React.Component {
         $('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
         $('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
       }
-    }           
+    }*/}           
   }
 
   handleKeyUp =(e)=> {
@@ -56,9 +56,9 @@ class TranslationPanel extends React.Component {
     for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
       var vid="v"+(i+1);  
       verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
-          <span className='verse-num' key={i}>{(i+1).toLocaleString(AutographaStore.appLang)}</span>
+          <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
-           <span dangerouslySetInnerHTML={{ __html: AutographaStore.translationContent[i] }} />
+           <span> {AutographaStore.translationContent[i]} </span>
           </span>
         </div>
       ); 
