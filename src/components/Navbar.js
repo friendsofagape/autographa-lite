@@ -80,7 +80,7 @@ class Navbar extends React.Component {
                 }
             }
             let refString = doc.chapters[i].verses.map((verse, verseNum) => {
-                return `<div type="ref" class="col-12 col-ref ref-contents ${doc.scriptDirection.toLowerCase()}" dir=${doc.scriptDirection}><div data-verse=r${(verseNum + 1)}><span class="verse-num"> ${doc.scriptDirection == "LTR" ? (verseNum + 1) : (verseNum + 1).toLocaleString('ar')} </span><span> ${verse.verse}</span></div></div`;
+                return `<div type="ref" class="col-12 col-ref ref-contents ${doc.scriptDirection.toLowerCase()}" dir=${doc.scriptDirection}><div data-verse=r${(verseNum + 1)}><span class="verse-num"> ${doc.scriptDirection == "LTR" ? (verseNum + 1) : (verseNum + 1)} </span><span> ${verse.verse}</span></div></div`;
             }).join('');
             return refString;
         }, (err) => {
@@ -385,7 +385,6 @@ class Navbar extends React.Component {
             let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
-                translationContent.push(document.getElementById(vId).textContent).toString();
                 verse.verse = document.getElementById(vId).textContent;
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
@@ -394,20 +393,18 @@ class Navbar extends React.Component {
                 db.put(doc).then((response) => {
                     let dateTime = new Date();
                     AutographaStore.transSaveTime = that.formatDate(dateTime);
-                    AutographaStore.translationContent = translationContent;
                     clearInterval("#saved-time");
                 }, (err) => {
                     db.put(doc).then((response) => {
                         let dateTime = new Date();
                         AutographaStore.transSaveTime = that.formatDate(dateTime)
-                        AutographaStore.translationContent = translationContent;
                     },(err) => {
                         clearInterval("#saved-time");
                     });
                     clearInterval("#saved-time");
                 });
             });
-
+           
            
         }, (err) => {
             console.log('Error: While retrieving document. ' + err);
@@ -572,7 +569,7 @@ class Navbar extends React.Component {
         const test = (AutographaStore.activeTab == 1);
         var chapterList = [];
         for(var i=0; i<AutographaStore.bookChapter["chapterLength"]; i++){
-            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == AutographaStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, AutographaStore.bookChapter["bookId"]) } >{(i+1).toLocaleString(AutographaStore.appLang)}</a></li> );
+            chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == AutographaStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, AutographaStore.bookChapter["bookId"]) } >{(i+1)}</a></li> );
         }
         return (
             <div>
@@ -696,7 +693,7 @@ class Navbar extends React.Component {
                                     {bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
-                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(AutographaStore.chapterId).toLocaleString(AutographaStore.appLang)}
+                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(AutographaStore.chapterId)}
                                         </a>
                                     </span>
                                 </div>                               
