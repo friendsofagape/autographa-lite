@@ -3,7 +3,7 @@ import swal from 'sweetalert';
 var fs = require("fs");
 module.exports = {
 	exportHtml: function(id, currentBook, db, direction, column){
-			console.log(direction)
+			console.log(currentBook)
 	    	if(direction !== "RTL"){
 	        	let htmlContent = '';
 	        	let inlineData = `<!DOCTYPE html>
@@ -160,7 +160,7 @@ module.exports = {
 	                inlineData+= '</div></body></html>'
 	                
 	                db.get('targetBible').then((doc) => {
-	                    let filepath = path.join(doc.targetPath[0], `${currentBook.book_name}${getTimeStamp(new Date())}.html`);
+	                    let filepath = path.join(doc.targetPath[0], `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 	                    fs.writeFile(filepath, inlineData , function (err) {
 		                    if (err) {
 								console.log(err)
@@ -285,7 +285,7 @@ module.exports = {
 	                     })
 	                    inlineData+= '</div></body></html>'
 	                    db.get('targetBible').then((doc) => {
-	                        let filepath = path.join(doc.targetPath[0], `${currentBook.book_name}${getTimeStamp(new Date())}.html`);
+	                        let filepath = path.join(doc.targetPath[0], `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 	                        fs.writeFile(filepath, inlineData , function (err) {
 		                        if (err) {
 				                    swal("export", "Oops! error occured. Please try later", "error");
