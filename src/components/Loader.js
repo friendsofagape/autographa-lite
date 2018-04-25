@@ -5,8 +5,7 @@ class Loader extends React.Component {
 		return(
         	<div id="loading-img">
 		        <div>
-		        	<img className="loader-css" src={"../assets/images/loader.gif"} />
-		            <p className="loading">This may take a few minutes. Please wait</p>
+		            <p className="loading">This may take a few minutes. <br/>Please wait</p>
 		        </div>
     		</div>
 		)

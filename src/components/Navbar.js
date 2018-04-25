@@ -113,6 +113,7 @@ class Navbar extends React.Component {
                 for (let i = 1; i <= ref1.length; i++) {
                     var d = dmp_diff.diff_main(ref1[i - 1].verse, ref2[i - 1].verse);
                     dmp_diff.diff_cleanupSemantic(d);
+                    this.getDifferenceCount(d);
                     var ds = dmp_diff.diff_prettyHtml(d);
                     refString += '<div data-verse="r' + (i) + '"><span class="verse-num">' + (i) + '</span><span>' + ds + '</span></div>';
                 }
@@ -434,7 +435,63 @@ class Navbar extends React.Component {
         });
 
     }
-    setDiff = (e, toggled) => {
+    isSameLanguage = async() => {
+        const verseLangCode = "",
+            check_value = false;
+        return db.get('targetBible').then((doc) => {
+            let verseLangCode = doc.targetLang;
+            let languagedropDown = AutographaStore.layout;
+            for (var i = 0; i < 2 ; i++) {
+                let v1 =  AutographaStore.activeRefs[i].split("_")[0];
+                let v2 = "";
+
+                if (AutographaStore.activeRefs[i+1].length) {
+                    v2 = AutographaStore.activeRefs[i+1].split("_")[0];
+                }
+                console.log(v1, v2)
+                if ((verseLangCode != v1) || (verseLangCode != v2)) {
+                    return false;
+                }
+            }
+            if (languagedropDown == 1) {
+                if (verseLangCode != AutographaStore.activeRefs[0].split("_")[0]) {
+                    return false;
+                }
+            }
+            return true;
+        }, (err) => {
+            return false;
+        })
+    }
+    getDifferenceCount = (verse_diff) => {
+        let insertions = 0, deletions = 0;
+        for (let x = 0; x < verse_diff.length; x++) {
+            var op = verse_diff[x][0];
+            var data = verse_diff[x][1];
+            switch (op) {
+                case DiffMatchPatch.DIFF_INSERT:
+                    insertions += data.length;
+                    break;
+                case DiffMatchPatch.DIFF_DELETE:
+                    deletions += data.length;
+                    break;
+                case DiffMatchPatch.DIFF_EQUAL:
+                    break;
+            }
+        }
+        AutographaStore.tIns = insertions;
+        AutographaStore.tDel = deletions;
+    }
+    setDiff = async(e, toggled) => {
+            let isSameLanguage = await this.isSameLanguage();
+            if(toggled){
+                if(!isSameLanguage){
+                    AutographaStore.toggle = false;
+                    swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-compare-mode"], "error");
+                    return;
+                }
+            }
+            AutographaStore.toggle = toggled;
             refDb.get('targetReferenceLayout').then((doc) => {
                 AutographaStore.layout = doc.layout;
                 AutographaStore.layoutContent = doc.layout;
@@ -450,10 +507,17 @@ class Navbar extends React.Component {
                     else {
                         this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                             AutographaStore.content = content;
+                        }) 
+                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.contentOne = content;
+                        })
+                        this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                            AutographaStore.contentTwo = content;
                         })
                     }
                         break;
                     case 2:
+                    console.log("dakakdak")
                     if(toggled){
                         this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
                             AutographaStore.content = content;
@@ -538,7 +602,7 @@ class Navbar extends React.Component {
                         }
                         let chunk = chunkVerseStart + '-' + chunkVerseEnd;
                         if(toggled){
-                            let verseDiff = dmp_diff.diff_main(targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse, book_verses[i - 1].verse);
+                            let verseDiff = dmp_diff.diff_main(book_verses[i - 1].verse, targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse);
                             dmp_diff.diff_cleanupSemantic(verseDiff);
                             let ds = dmp_diff.diff_prettyHtml(verseDiff);
                             translationContent.push(ds).toString();
@@ -555,8 +619,6 @@ class Navbar extends React.Component {
                     
                 
             })
-            
-        
     }
     
     render() {
@@ -574,6 +636,7 @@ class Navbar extends React.Component {
         let close = () => AutographaStore.showModalBooks = false;
         const test = (AutographaStore.activeTab == 1);
         var chapterList = [];
+        const toggle = AutographaStore.toggle;
         for(var i=0; i<AutographaStore.bookChapter["chapterLength"]; i++){
             chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == AutographaStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, AutographaStore.bookChapter["bookId"]) } >{(i+1)}</a></li> );
         }
@@ -690,7 +753,7 @@ class Navbar extends React.Component {
                                     <a
                                         onClick={() => this.openpopupBooks(1)}
                                         href="#"
-                                        className="btn btn-default"
+                                        className={`btn btn-default ${toggle ? "disabled" : "" }`}
                                         data-toggle="tooltip"
                                         data-placement="bottom"
                                         title="Select Book"
@@ -699,20 +762,20 @@ class Navbar extends React.Component {
                                     {bookName}
                                     </a>
                                     <span id="chapterBtnSpan">
-                                        <a onClick={() => this.openpopupBooks(2)} className="btn btn-default" id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(AutographaStore.chapterId)}
+                                        <a onClick={() => this.openpopupBooks(2)} className={`btn btn-default ${toggle ? "disabled" : "" }`} id="chapterBtn" data-target="#myModal"  data-toggle="modal" data-placement="bottom"  title="Select Chapter" >{(AutographaStore.chapterId)}
                                         </a>
                                     </span>
                                 </div>                               
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
                                     {(message) =>
                                         <Toggle
-                                          defaultToggled={false}
+                                          defaultToggled={toggle}
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
                                           
@@ -721,17 +784,18 @@ class Navbar extends React.Component {
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
+                                */}
                            
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>
-                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText">
+                                <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText" disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}>
                                 <i className="fa fa-search fa-2x"></i>
                                 </a>}
                                 </FormattedMessage>
                             </li>
                             <li>
-                                <a href="#" className="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="fa fa-cloud-download fa-2x"></i>
+                                <a href="#" className="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}><i className="fa fa-cloud-download fa-2x"></i>
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
@@ -747,13 +811,13 @@ class Navbar extends React.Component {
                             <li>
                                 <FormattedMessage id="tooltip-about" >
                                 {(message) =>
-                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title={message} id="btnAbout"><i className="fa fa-info fa-2x"></i></a>}
+                                <a onClick={() => this.openpopupAboutUs()} href="#" data-target="#aboutmodal" data-toggle="tooltip" data-placement="bottom" title={message} id="btnAbout" disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}><i className="fa fa-info fa-2x"></i></a>}
                                 </FormattedMessage>
                             </li>
                             <li>
                                 <FormattedMessage id="tooltip-settings" >
                                 {(message) =>
-                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message}><i className="fa fa-cog fa-2x"></i>
+                                <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message} disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}><i className="fa fa-cog fa-2x"></i>
                                 </a>}
                                 </FormattedMessage>
                             </li>
