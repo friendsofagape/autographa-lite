@@ -129,35 +129,15 @@ class Navbar extends React.Component {
             AutographaStore.layout = doc.layout;
             AutographaStore.layoutContent = doc.layout;
             let chapter = AutographaStore.chapterId.toString();
-            switch(doc.layout){
-                case 1:
-                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.content = content;
-                    })
-                    break;
-                case 2:
-               
-                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.content = content;
-                    }) 
-                    this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.contentOne = content;
-                    })
-                
-                    break;
-                    
-                case 3:
-                    this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.content = content;
-                    }) 
-                    this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.contentOne = content;
-                    })
-                    this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                        AutographaStore.contentTwo = content;
-                    })
-                    break;
-            }
+            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                AutographaStore.content = content;
+            }) 
+            this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                AutographaStore.contentOne = content;
+            })
+            this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                AutographaStore.contentTwo = content;
+            })
         })
        //  AutographaStore.aId  = "";
         var translationContent = [];
