@@ -71,6 +71,7 @@ class Navbar extends React.Component {
             AutographaStore.chapterId = "1";
             console.log(err)
         });
+        this.resetDiffValue();        
     }
     getContent = (id, chapter) => {
         return refDb.get(id).then( (doc) => { 
@@ -88,10 +89,10 @@ class Navbar extends React.Component {
         });
     }
 
-    getDiffText = (refId1, refId2, book, chapter) => {
+    getDiffText = (refId1, refId2, book, chapter, layout) => {
         let id1 = refId1 + '_' +Constant.bookCodeList[parseInt(book, 10) - 1],
         id2 = refId2 + '_' + Constant.bookCodeList[parseInt(book, 10) - 1],
-        i;
+        i, tIns=0, tDel=0;
         return refDb.get(id1).then((doc) => {
             for (i = 0; i < doc.chapters.length; i++) {
                 if (doc.chapters[i].chapter == parseInt(chapter, 10)) {
@@ -113,10 +114,18 @@ class Navbar extends React.Component {
                 for (let i = 1; i <= ref1.length; i++) {
                     var d = dmp_diff.diff_main(ref1[i - 1].verse, ref2[i - 1].verse);
                     dmp_diff.diff_cleanupSemantic(d);
-                    this.getDifferenceCount(d);
-                    var ds = dmp_diff.diff_prettyHtml(d);
+                    let diffCount = this.getDifferenceCount(d, layout);
+                    tIns += diffCount["ins"];
+                    tDel += diffCount["del"];
+                    let ds = dmp_diff.diff_prettyHtml(d);
                     refString += '<div data-verse="r' + (i) + '"><span class="verse-num">' + (i) + '</span><span>' + ds + '</span></div>';
                 }
+                if(layout != 0){
+                    AutographaStore.tIns[layout] = tIns;
+                    AutographaStore.tDel[layout] = tDel;
+                }
+                tIns = 0;
+                tDel = 0;
                 return refString;
             });
         });
@@ -421,20 +430,19 @@ class Navbar extends React.Component {
         return db.get('targetBible').then((doc) => {
             let verseLangCode = doc.targetLang;
             let languagedropDown = AutographaStore.layout;
-            for (var i = 0; i < 2 ; i++) {
+            if (languagedropDown == 1) {
+                if (verseLangCode != AutographaStore.activeRefs[0].split("_")[0]) {
+                    return false;
+                }
+            }
+            for (var i = 0; i < languagedropDown -1 ; i++) {
                 let v1 =  AutographaStore.activeRefs[i].split("_")[0];
                 let v2 = "";
 
                 if (AutographaStore.activeRefs[i+1].length) {
                     v2 = AutographaStore.activeRefs[i+1].split("_")[0];
                 }
-                console.log(v1, v2)
                 if ((verseLangCode != v1) || (verseLangCode != v2)) {
-                    return false;
-                }
-            }
-            if (languagedropDown == 1) {
-                if (verseLangCode != AutographaStore.activeRefs[0].split("_")[0]) {
                     return false;
                 }
             }
@@ -443,7 +451,7 @@ class Navbar extends React.Component {
             return false;
         })
     }
-    getDifferenceCount = (verse_diff) => {
+    getDifferenceCount = (verse_diff, layout) => {
         let insertions = 0, deletions = 0;
         for (let x = 0; x < verse_diff.length; x++) {
             var op = verse_diff[x][0];
@@ -459,10 +467,10 @@ class Navbar extends React.Component {
                     break;
             }
         }
-        AutographaStore.tIns = insertions;
-        AutographaStore.tDel = deletions;
+        return { ins: insertions, del: deletions }
     }
     setDiff = async(e, toggled) => {
+            let that = this;
             let isSameLanguage = await this.isSameLanguage();
             if(toggled){
                 if(!isSameLanguage){
@@ -479,71 +487,73 @@ class Navbar extends React.Component {
                 const transDiffRef = doc.layout -1;
                 switch(doc.layout){
                     case 1:
-                    if(toggled){
-                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-                    }
-                    else {
-                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.content = content;
-                        }) 
-                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-                        this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.contentTwo = content;
-                        })
-                    }
+                        if(toggled){
+                            this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter, 0).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                        }
+                        else {
+                            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.content = content;
+                            }) 
+                            this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                            this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.contentTwo = content;
+                            })
+                            this.resetDiffValue();  
+                        }
                         break;
                     case 2:
-                    console.log("dakakdak")
-                    if(toggled){
-                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.content = content;
-                        })
-                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-    
-                    }else{
-                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.content = content;
-                        }) 
-                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-                    }
+                        if(toggled){
+                            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.content = content;
+                            })
+                            this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter, 1).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                            
+                        }else{
+                            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.content = content;
+                            }) 
+                            this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                            this.resetDiffValue();
+                        }
                         break;
                         
                     case 3:
-                    if(toggled){
-                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.content = content;
-                        }) 
-                        this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-                        this.getDiffText(AutographaStore.activeRefs[1], AutographaStore.activeRefs[2], AutographaStore.bookId, chapter).then((content)=>{
-                            AutographaStore.contentTwo= content;
-                        })
-                    }else{
-                        this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.content = content;
-                        }) 
-                        this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.contentOne = content;
-                        })
-                        this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                            AutographaStore.contentTwo = content;
-                        })
-                    }
-                    break;
+                        if(toggled){
+                            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.content = content;
+                            }) 
+                            this.getDiffText(AutographaStore.activeRefs[0], AutographaStore.activeRefs[1], AutographaStore.bookId, chapter, 1).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                            this.getDiffText(AutographaStore.activeRefs[1], AutographaStore.activeRefs[2], AutographaStore.bookId, chapter, 2).then((content)=>{
+                                AutographaStore.contentTwo= content;
+                            })
+                        }else{
+                            this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.content = content;
+                            }) 
+                            this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.contentOne = content;
+                            })
+                            this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
+                                AutographaStore.contentTwo = content;
+                            })
+                            this.resetDiffValue();                            
+                        }
+                        break;
                 }
             })
            //  AutographaStore.aId  = "";
             var translationContent = [];
-            var i;
+            var i, tIns=0, tDel=0;
             var chunkIndex = 0;
             var chunkVerseStart; 
             var chunkVerseEnd;
@@ -551,6 +561,7 @@ class Navbar extends React.Component {
             var chunks = AutographaStore.chunks;
             var verses = AutographaStore.verses;
             var chapter = AutographaStore.chapterId;
+
             for (i = 0; i < chunks.length; i++) {
                 if (parseInt(chunks[i].chp, 10) === parseInt(chapter, 10)) {
                     chunkIndex = i + 1;
@@ -583,6 +594,9 @@ class Navbar extends React.Component {
                         let chunk = chunkVerseStart + '-' + chunkVerseEnd;
                         if(toggled){
                             let verseDiff = dmp_diff.diff_main(book_verses[i - 1].verse, targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse);
+                            let diffCount = that.getDifferenceCount(verseDiff, 0);
+                            tIns += diffCount["ins"];
+                            tDel += diffCount["del"];
                             dmp_diff.diff_cleanupSemantic(verseDiff);
                             let ds = dmp_diff.diff_prettyHtml(verseDiff);
                             translationContent.push(ds).toString();
@@ -591,14 +605,20 @@ class Navbar extends React.Component {
                         }
                         chunkGroup.push(chunk);
                     }
+                    AutographaStore.tIns[0] = tIns
+                    AutographaStore.tDel[0] = tDel;
                     AutographaStore.chunkGroup = chunkGroup;
                     AutographaStore.translationContent= translationContent;
                 }).catch(function(err) {
                     console.log(err);
                 });
-                    
-                
-            })
+            });
+    }
+    resetDiffValue = () => {
+        for(let i=0; i<3; i++){
+            AutographaStore.tIns[i] = 0;
+            AutographaStore.tDel[i] = 0;
+        }
     }
     
     render() {
@@ -620,6 +640,7 @@ class Navbar extends React.Component {
         for(var i=0; i<AutographaStore.bookChapter["chapterLength"]; i++){
             chapterList.push( <li key={i} value={i+1} ><a href="#"  className={(i+1 == AutographaStore.chapterActive) ? 'link-active': ""} onClick = { this.getValue.bind(this,  i+1, AutographaStore.bookChapter["bookId"]) } >{(i+1)}</a></li> );
         }
+
         return (
             <div>
                 <Modal show={AutographaStore.showModalBooks} onHide = {close} id="tab-books">
@@ -749,7 +770,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -763,8 +784,8 @@ class Navbar extends React.Component {
                                     }
                                 </FormattedMessage>                               
                             </li>
-                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                                */}
+                                <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
+                                
                            
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
@@ -809,7 +830,7 @@ class Navbar extends React.Component {
                     AutographaStore.layout == 1   &&
                         <div className="parentdiv">
                             <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
-                            <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} /></div>
+                            <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                         </div>
                 } 
                 {
@@ -817,8 +838,8 @@ class Navbar extends React.Component {
                     <div className="parentdiv">
                         <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]}/></div>
-                        <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]}/></div>
+                        <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                     </div>
                 }
                 {
@@ -826,10 +847,10 @@ class Navbar extends React.Component {
                     <div className="parentdiv">
                         <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={AutographaStore.activeRefs[2]}/></div>
-                        <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} /></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={AutographaStore.activeRefs[2]} tIns = {AutographaStore.tIns[2]} tDel = {AutographaStore.tDel[2]}/></div>
+                        <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                     </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
