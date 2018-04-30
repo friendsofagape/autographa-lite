@@ -28,7 +28,9 @@ function createWindow() {
     'webPreferences': {'session': session},
     show: false
     });
-    win.openDevTools();
+    if (env.name === "development") {
+        win.openDevTools();
+    }
     
     // and load the index.html of the app.
     // win.loadURL(`file:${__dirname}/views/index.html`);
