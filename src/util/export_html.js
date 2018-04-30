@@ -3,7 +3,6 @@ import swal from 'sweetalert';
 var fs = require("fs");
 module.exports = {
 	exportHtml: function(id, currentBook, db, direction, column){
-			console.log(currentBook)
 	    	if(direction !== "RTL"){
 	        	let htmlContent = '';
 	        	let inlineData = `<!DOCTYPE html>
