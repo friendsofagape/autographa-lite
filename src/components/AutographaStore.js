@@ -55,8 +55,8 @@ export class AutographaStore {
   @observable transSaveTime = ""
   @observable replaceOption = "chapter"
   @observable toggle = false
-  @observable tIns = 0
-  @observable tDel = 0
+  @observable tIns = []
+  @observable tDel = []
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  

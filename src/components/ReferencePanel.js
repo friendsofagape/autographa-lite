@@ -37,14 +37,16 @@ class ReferencePanel extends React.Component {
         });
     }
     render (){
-        const tIns = AutographaStore.tIns;
-        const tDel = AutographaStore.tDel;
+        const layout = AutographaStore.layout;
+        const {tIns, tDel} = this.props;
         return (        
             <div className="container-fluid">
                 <div className="row row-col-fixed rmvflex" style={{display: 'flex'}}>
-                    <div className="col-sm-12 col-fixed" id="section-0"> 
-                    {/*<span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span>*/}
-                        <div dangerouslySetInnerHTML={{__html: this.props.refContent}} ></div>
+                    <div className="col-sm-12 col-fixed" id="section-0">
+                        {tIns || tDel ? <div style={{textAlign: 'center'}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : ""}
+                        <div className="row">
+                            <div dangerouslySetInnerHTML={{__html: this.props.refContent}} className="col-12 col-ref"></div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -63,7 +63,8 @@ class TranslationPanel extends React.Component {
         </div>
       ); 
     }
-    return (  
+    const {tIns, tDel} = this.props;
+    return (
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
@@ -71,6 +72,7 @@ class TranslationPanel extends React.Component {
           </div>
         </div>
         <div className="row">
+          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : "" }
           <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
         </div>
       </div>
