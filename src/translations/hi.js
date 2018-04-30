@@ -116,6 +116,7 @@
 	"label-auto-update": "स्वत: सुधार (ऑटो-अपडेट)",
 	"label-radio-enable": "चालित किया गया (ऍनेबल्ड)",
 	"label-radio-disable": "बंद किया गया (डिसएबल्ड)",
+	"label-please-wait": "इसमें कुछ मिनट लग सकते हैं। <br/> कृपया प्रतीक्षा करें",
 	"book-genesis" : "उत्पाति",
 	"book-exodus" : "निर्गमन",
 	"book-leviticus" : "लैव्यव्यवस्थ",
