@@ -29,7 +29,7 @@ function createWindow() {
     show: false
     });
     if (env.name === "development") {
-        win.openDevTools();
+        //win.openDevTools();
     }
     
     // and load the index.html of the app.

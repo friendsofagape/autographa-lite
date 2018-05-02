@@ -31,8 +31,8 @@
     "preunit": "webpack --config=build/webpack.unit.config.js --env=test --display=none",
     "unit": "electron-mocha tests/test.js --renderer --require source-map-support/register",
     "pree2e": "webpack --config=build/webpack.app.config.js --env=test --display=none && webpack --config=build/webpack.e2e.config.js --env=test --display=none",
-    "e2e": "mocha tests/test.js --require source-map-support/register",
-    "test": "npm run unit && npm run e2e",
+    "e2e": "mocha --timeout 50000 tests/test.js --require source-map-support/register",
+    "test": "npm run e2e",
     "start": "node build/start.js",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
   },
