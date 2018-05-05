@@ -95,7 +95,7 @@
 	"dynamic-msg-bib-name-validation" : "O nome da Bíblia é obrigatório",
 	"dynamic-msg-bib-code-validation" : "O código de língua da Bíblia é obrigatório",
 	"dynamic-msg-bib-version-validation" : "A versão da Bíblia é obrigatória",
-	"dynamic-msg-bib-path-validation" : "O caminho bíblico é obrigatório",
+	"dynamic-msg-bib-path-validation" : "A localização da pasta é obrigatória",
 	"dynamic-msg-saved-trans" : "Salvos os detalhes da tradução com sucesso.",
 	"dynamic-msg-went-wrong" : "Algo deu errado. Favor tentar de novo",
 	"dynamic-msg-imp-ref-text" : "Texto de referência importado com sucesso",

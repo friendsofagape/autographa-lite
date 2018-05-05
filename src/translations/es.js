@@ -95,7 +95,7 @@
 	"dynamic-msg-bib-name-validation" : "Se requiere el nombre de la Biblia.",
 	"dynamic-msg-bib-code-validation" : "Se requiere el código de idioma de la Biblia.",
 	"dynamic-msg-bib-version-validation" : "Se requiere la versión de la Biblia.",
-	"dynamic-msg-bib-path-validation" : "Se requiere el camino bíblico.",
+	"dynamic-msg-bib-path-validation" : "La ubicación de la carpeta es obligatoria.",
 	"dynamic-msg-saved-trans" : "Se han guardado los detalles de la traducción correctamente.",
 	"dynamic-msg-went-wrong" : "Algo salió mal. Por favor, inténtelo de nuevo.",
 	"dynamic-msg-imp-ref-text" : "Texto de referencia importado correctamente.",

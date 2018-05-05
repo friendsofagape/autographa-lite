@@ -96,7 +96,7 @@
 	"dynamic-msg-bib-name-validation" : "बाइबल से नाम की आवश्यकता है",
 	"dynamic-msg-bib-code-validation" : "बाइबल भाषा कोड की आवश्यकता है",
 	"dynamic-msg-bib-version-validation" : "बाइबल संस्करण की आवश्यकता है",
-	"dynamic-msg-bib-path-validation" : "बाइबल मार्ग की आवश्यकता है",
+	"dynamic-msg-bib-path-validation" : "फ़ोल्डर स्थान आवश्यक है",
 	"dynamic-msg-saved-trans" : "बाइबल विवरण सफलतापूर्वक संचित किए",
 	"dynamic-msg-went-wrong" : "कुछ गढ़बढ़ हुई. दोबारा प्रयत्न करें",
 	"dynamic-msg-imp-ref-text" : "कुछ गढ़बढ़ हुई. दोबारा प्रयत्न करें",

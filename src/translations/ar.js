@@ -95,7 +95,7 @@
 	"dynamic-msg-bib-name-validation" : "مطلوب اسم الكتاب المقدس",
 	"dynamic-msg-bib-code-validation" : "مطلوب رمز لغة الكتاب المقدس",
 	"dynamic-msg-bib-version-validation" : "مطلوب نسخة الكتاب المقدس",
-	"dynamic-msg-bib-path-validation" : "مطلوب مسار الكتاب المقدس",
+	"dynamic-msg-bib-path-validation" : "مطلوب مسار الكتاب",
 	"dynamic-msg-saved-trans" : "تم حفظ تفاصيل الترجمة بنجاح",
 	"dynamic-msg-went-wrong" : "هناك خطأ ما. حاول مرة اخرى",
 	"dynamic-msg-imp-ref-text" : "تم استيراد النص المرجعي بنجاح",
