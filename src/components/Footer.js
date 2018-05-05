@@ -76,7 +76,12 @@ class Footer extends React.Component {
     sliderFontChange(obj){
         var elements = (document.getElementsByClassName("col-ref").length - 1)
         for (var i = 0; i <= elements; i++) {
-        document.getElementsByClassName("col-ref")[i].style.fontSize = obj.target.value + "px";
+            document.getElementsByClassName("col-ref")[i].style.fontSize = obj.target.value + "px";
+            let colRef = document.getElementsByClassName("col-ref")[i]
+            let verseNum = colRef.getElementsByClassName('verse-num');
+            for (let i = 0; i < verseNum.length ; i++) {
+                verseNum[i].style.fontSize = obj.target.value-4 + "px";
+            }
         }
     }
 
