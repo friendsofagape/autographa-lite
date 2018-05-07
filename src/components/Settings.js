@@ -273,8 +273,9 @@ class SettingsModal extends React.Component {
 
   importTranslation = () => {
     let that = this;
-    this.setState({showLoader: true})
     if (this.import_sync_setting() == false) return;
+    this.setState({showLoader: true})
+    
     const {langCode, langVersion} = this.state.settingData;
     let inputPath = this.state.folderPathImport;
     var files = fs.readdirSync(inputPath[0]);
@@ -701,7 +702,7 @@ class SettingsModal extends React.Component {
                           <FormattedMessage id="label-script-direction" />
                           </label>
                           <RadioButtonGroup
-                            valueSelected={AutographaStore.scriptDirection}
+                            valueSelected={AutographaStore.scriptDirection.toUpperCase()}
                             name="scriptDir"
                             style={{display: "flex", marginBottom:"6%"}}
                             onChange={(event, value) => this.onChangeScriptDir(value)}

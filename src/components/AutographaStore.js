@@ -54,6 +54,9 @@ export class AutographaStore {
   @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
   @observable transSaveTime = ""
   @observable replaceOption = "chapter"
+  @observable toggle = false
+  @observable tIns = []
+  @observable tDel = []
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  

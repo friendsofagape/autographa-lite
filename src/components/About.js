@@ -33,10 +33,11 @@ var AboutUsModel = function(props) {
                         <div className="col-xs-6">
                             <img src="../assets/images/autographa_lite_large.png" className="img-circle" alt="Cinque Terre" width="215" height="200" />
                         </div>
-                        <div className="col-xs-6">
+        <div className="col-xs-6" style={{padding:"5px"}}>
                             <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>
-                            <p><FormattedMessage id="label-version" /> <span>1.0.0-Beta.1</span></p>
-                            <p><FormattedMessage id="label-hosted-url" />: https://github.com/friendsofagape/autographa-lite.git</p>
+                            <p><FormattedMessage id="label-version" /> <span>1.0.0</span></p>
+        <p><FormattedMessage id="label-hosted-url" /></p>
+	<p>https://github.com/friendsofagape/autographa-lite.git</p>
                         </div>
                     </div>
                 </Tab>

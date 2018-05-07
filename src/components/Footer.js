@@ -60,21 +60,34 @@ class Footer extends React.Component {
                 fontSize = multiplier + fontSize
             }
         }
-        AutographaStore.currentFontValue = fontSize
+        AutographaStore.currentFontValue = fontSize;
         for (var i = 0; i <= elements; i++) {
+
             document.getElementsByClassName("col-ref")[i].style.fontSize = fontSize + "px";
+            let colRef = document.getElementsByClassName("col-ref")[i]
+            let verseNum = colRef.getElementsByClassName('verse-num');
+            for (let i = 0; i < verseNum.length ; i++) {
+                verseNum[i].style.fontSize = fontSize-4 + "px";
+            }
+            
         };
         
     }
     sliderFontChange(obj){
         var elements = (document.getElementsByClassName("col-ref").length - 1)
         for (var i = 0; i <= elements; i++) {
-        document.getElementsByClassName("col-ref")[i].style.fontSize = obj.target.value + "px";
+            document.getElementsByClassName("col-ref")[i].style.fontSize = obj.target.value + "px";
+            let colRef = document.getElementsByClassName("col-ref")[i]
+            let verseNum = colRef.getElementsByClassName('verse-num');
+            for (let i = 0; i < verseNum.length ; i++) {
+                verseNum[i].style.fontSize = obj.target.value-4 + "px";
+            }
         }
     }
 
     render() {
         const layout = AutographaStore.layout;
+        const toggle = AutographaStore.toggle;
         return (
         <nav className="navbar navbar-default navbar-fixed-bottom">
             <div className="container-fluid">
@@ -83,7 +96,7 @@ class Footer extends React.Component {
                             <span>
                             <FormattedMessage id="tooltip-minus-font-size" >
                             {(message) =>
-                                <a className="btn btn-default font-button minus" data-toggle="tooltip" data-placement="top" title={message} onClick= {this.fontChange.bind(this, (-2))}>A-</a>
+                                <a className={`btn btn-default font-button minus ${toggle ? "disabled" : "" }`} data-toggle="tooltip" data-placement="top" title={message} onClick= {this.fontChange.bind(this, (-2))}>A-</a>
                             }
                             </FormattedMessage>
                             </span>
@@ -94,11 +107,12 @@ class Footer extends React.Component {
                                     max={AutographaStore.fontMax}
                                     min={AutographaStore.fontMin}
                                     orientation="horizontal"
+                                    disabled={toggle ? "disabled" : "" }
                                 />
                             <span>
                             <FormattedMessage id="tooltip-plus-font-size" >
                             {(message) =>
-                                <a className="btn btn-default font-button plus" data-toggle="tooltip" data-placement="top" title={message} onClick= {this.fontChange.bind(this, (+2))}>A+</a>
+                                <a className={`btn btn-default font-button plus ${toggle ? "disabled" : "" }`} data-toggle="tooltip" data-placement="top" title={message} onClick= {this.fontChange.bind(this, (+2))}>A+</a>
                             }
                             </FormattedMessage>
                             </span>
@@ -107,19 +121,19 @@ class Footer extends React.Component {
                         <div className="btn-group navbar-btn layout" role="group" aria-label="...">
                             <FormattedMessage id="tooltip-2-column">
                                 { (message) =>
-                                  <a className={`btn btn-primary btn-default ${layout == 1 ? "active" : ""}`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                  <a className={`btn btn-primary btn-default ${layout == 1 ? "active" : ""} ${toggle ? "disabled" : "" }`} id="btn-2x" onClick = {this.handleChange.bind(this,1)} href="#" data-output="2x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message} >2x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                   </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-3-column">
                                 { (message) =>
-                                <a className={`btn btn-primary btn-default ${layout == 2 ? "active" : ""}`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${layout == 2 ? "active" : ""} ${toggle ? "disabled" : "" }`} id="btn-3x" onClick = {this.handleChange.bind(this,2)} href="#" data-output="3x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>3x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                                 }
                             </FormattedMessage>
                             <FormattedMessage id="tooltip-4-column">
                                 { (message) =>                            
-                                <a className={`btn btn-primary btn-default ${layout == 3 ? "active" : ""}`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
+                                <a className={`btn btn-primary btn-default ${layout == 3 ? "active" : ""} ${toggle ? "disabled" : "" }`} id="btn-4x" onClick = {this.handleChange.bind(this,3)} href="#" data-output="4x" role="multi-window-btn" data-toggle="tooltip" data-placement="top" title={message}>4x &nbsp;<i className="fa fa-columns fa-lg"></i>
                                 </a>
                             }
                             </FormattedMessage>
@@ -130,7 +144,7 @@ class Footer extends React.Component {
                             <li>
                                 <FormattedMessage id="btn-save" >
                                 {(message) =>
-                                <a id="save-btn" data-toggle="tooltip" data-placement="top" title={message} className="btn btn-success btn-save navbar-btn navbar-right" href="#" role="button" onClick={this.state.onSave}><FormattedMessage id="btn-save" /></a>}
+                                <a id="save-btn" data-toggle="tooltip" data-placement="top" title={message} className={`btn btn-success btn-save navbar-btn navbar-right ${toggle ? "disabled" : "" }`} href="#" role="button" onClick={this.state.onSave}><FormattedMessage id="btn-save" /></a>}
                                 </FormattedMessage>
                             </li>
                         </ul>

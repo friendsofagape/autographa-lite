@@ -20,7 +20,7 @@ class TranslationPanel extends React.Component {
   }
 
   highlightRef(obj) {
-    var content = ReactDOM.findDOMNode(this);
+    {/*var content = ReactDOM.findDOMNode(this);
     let verses = content.getElementsByClassName("verse-input")[0].querySelectorAll("span[id^=v]");
     var refContent = document.getElementsByClassName('ref-contents');
     for (var a=0; a< refContent.length; a++) {
@@ -41,7 +41,7 @@ class TranslationPanel extends React.Component {
         $('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
         $('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
       }
-    }           
+    }*/}           
   }
 
   handleKeyUp =(e)=> {
@@ -56,14 +56,15 @@ class TranslationPanel extends React.Component {
     for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
       var vid="v"+(i+1);  
       verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
-          <span className='verse-num' key={i}>{(i+1).toLocaleString(AutographaStore.appLang)}</span>
+          <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
-            {AutographaStore.translationContent[i]}
+           <span dangerouslySetInnerHTML={{__html: AutographaStore.translationContent[i]}} />
           </span>
         </div>
       ); 
     }
-    return (  
+    const {tIns, tDel} = this.props;
+    return (
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
@@ -71,6 +72,7 @@ class TranslationPanel extends React.Component {
           </div>
         </div>
         <div className="row">
+          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : "" }
           <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
         </div>
       </div>
