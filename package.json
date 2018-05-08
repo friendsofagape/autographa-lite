@@ -2,7 +2,7 @@
   "name": "Autographa",
   "productName": "Autographa Lite",
   "description": "A Bible translation editor for everyone.",
-  "version": "1.0.0-Beta.1",
+  "version": "1.0.0",
   "main": "src/app.js",
   "build": {
     "extends": null,
@@ -24,7 +24,8 @@
     "USFM",
     "USFM Editor",
     "React.js",
-    "Translation"
+    "Translation",
+    "Open Source"
   ],
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
