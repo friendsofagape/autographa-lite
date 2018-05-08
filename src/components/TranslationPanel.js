@@ -58,7 +58,7 @@ class TranslationPanel extends React.Component {
       verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
           <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
-           <span dangerouslySetInnerHTML={{__html: AutographaStore.translationContent[i]}} />
+          {AutographaStore.translationContent[i]}
           </span>
         </div>
       ); 

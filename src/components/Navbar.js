@@ -41,8 +41,8 @@ class Navbar extends React.Component {
             data: Constant,
             chapData: [],
             bookNo:1,
-            defaultRef: 'eng_ulb',
-            defaultRefOne: 'eng_ulb',
+            defaultRef: 'eng_irv',
+            defaultRefOne: 'eng_irv',
             refList: [],
             searchVal: "", 
             replaceVal:"",
@@ -179,7 +179,7 @@ class Navbar extends React.Component {
                 }
             }
             var chunk = chunkVerseStart + '-' + chunkVerseEnd;
-            translationContent.push(verses[i - 1].verse).toString();
+            translationContent.push(verses[i - 1].verse.toString())
             var spanVerse = chunk 
             chunkGroup.push(spanVerse);
         }
@@ -316,7 +316,7 @@ class Navbar extends React.Component {
                     AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
                     AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
                     chapter = AutographaStore.chapterId;
-                    that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
+                    that.getRefContents('eng_irv'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
                 });
             })
             }    
@@ -367,6 +367,7 @@ class Navbar extends React.Component {
             let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
+                translationContent.push(document.getElementById(vId).textContent).toString();
                 verse.verse = document.getElementById(vId).textContent;
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
@@ -375,11 +376,13 @@ class Navbar extends React.Component {
                 db.put(doc).then((response) => {
                     let dateTime = new Date();
                     AutographaStore.transSaveTime = that.formatDate(dateTime);
+                    AutographaStore.translationContent = translationContent;
                     clearInterval("#saved-time");
                 }, (err) => {
                     db.put(doc).then((response) => {
                         let dateTime = new Date();
                         AutographaStore.transSaveTime = that.formatDate(dateTime)
+                        AutographaStore.translationContent = translationContent;
                     },(err) => {
                         clearInterval("#saved-time");
                     });
@@ -570,7 +573,7 @@ class Navbar extends React.Component {
                     break;
                 }
             }
-            db.get(AutographaStore.bookId).then((targetDoc) => {
+            db.get(AutographaStore.bookId.toString()).then((targetDoc) => {
                 let id = AutographaStore.activeRefs[AutographaStore.layout-1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1]
                 refDb.get(id).then(function(refdoc) {
                     for (i = 0; i < refdoc.chapters.length; i++) {
@@ -770,7 +773,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -784,9 +787,8 @@ class Navbar extends React.Component {
                                     }
                                 </FormattedMessage>                               
                             </li>
-                                <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                                
-                           
+                            <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
+                            */}
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>
@@ -808,7 +810,7 @@ class Navbar extends React.Component {
                                         
                                     </li>
                                 </ul>
-                            </li>
+                                </li>
                             <li>
                                 <FormattedMessage id="tooltip-about" >
                                 {(message) =>
