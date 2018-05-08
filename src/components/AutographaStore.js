@@ -21,7 +21,7 @@ export class AutographaStore {
   // @observable contentThree =''
   @observable bookActive = 1;
   @observable chapterActive = 1
-  @observable currentRef = 'eng_ulb'
+  @observable currentRef = 'eng_irv'
   @observable bookData = Constant.booksList
   @observable bookName = ''
   @observable translationContent =  ''
@@ -51,7 +51,7 @@ export class AutographaStore {
   @observable refList = []
   @observable refListEdit = []
   @observable refListExist = []
-  @observable activeRefs = {0: "eng_ulb", 1: "eng_ulb", 2: "eng_ulb"}
+  @observable activeRefs = {0: "eng_irv", 1: "eng_irv", 2: "eng_irv"}
   @observable transSaveTime = ""
   @observable replaceOption = "chapter"
   @observable toggle = false

@@ -11,7 +11,7 @@ class Reference extends React.Component {
 
 	constructor(props){
 		super(props);
-		this.state = { verses: [], defaultRef: 'eng_ulb', refList: [] } ;
+		this.state = { verses: [], defaultRef: 'eng_irv', refList: [] } ;
 		let existRef = [];
 		AutographaStore.refList = [];
      	let refLists = refDb.get('refs').then((doc) => {

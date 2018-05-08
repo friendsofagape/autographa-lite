@@ -41,8 +41,8 @@ class Navbar extends React.Component {
             data: Constant,
             chapData: [],
             bookNo:1,
-            defaultRef: 'eng_ulb',
-            defaultRefOne: 'eng_ulb',
+            defaultRef: 'eng_irv',
+            defaultRefOne: 'eng_irv',
             refList: [],
             searchVal: "", 
             replaceVal:"",
@@ -316,7 +316,7 @@ class Navbar extends React.Component {
                     AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
                     AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
                     chapter = AutographaStore.chapterId;
-                    that.getRefContents('eng_ulb'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
+                    that.getRefContents('eng_irv'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
                 });
             })
             }    
