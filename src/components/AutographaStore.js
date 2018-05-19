@@ -12,6 +12,7 @@ export class AutographaStore {
   @observable showModalAboutUs = false
   @observable showModalSearch = false
   @observable showModalDownload = false
+  @observable  showModalStat = false
   @observable bookChapterContent = ''
   @observable chunkGroup = ''
   @observable content = ''
@@ -57,6 +58,12 @@ export class AutographaStore {
   @observable toggle = false
   @observable tIns = []
   @observable tDel = []
+  @observable emptyChapter = []
+  @observable incompleteVerse = {}
+  @observable multipleSpaces = {}
+
+
+
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 
   }  

@@ -10,6 +10,7 @@ import AboutUsModal from "./About"
 import SearchModal from "./Search"
 import DownloadModal from "./Download"
 import TranslationPanel  from '../components/TranslationPanel';
+import Statistic  from '../components/Statistic';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const injectTapEventPlugin = require("react-tap-event-plugin");
@@ -367,7 +368,7 @@ class Navbar extends React.Component {
             let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
-                translationContent.push(document.getElementById(vId).textContent).toString();
+                translationContent.push(document.getElementById(vId).textContent.toString());
                 verse.verse = document.getElementById(vId).textContent;
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
@@ -389,8 +390,6 @@ class Navbar extends React.Component {
                     clearInterval("#saved-time");
                 });
             });
-           
-           
         }, (err) => {
             console.log('Error: While retrieving document. ' + err);
         });
@@ -425,7 +424,6 @@ class Navbar extends React.Component {
             if (error)
             console.log(error);
         });
-
     }
     isSameLanguage = async() => {
         const verseLangCode = "",
@@ -564,7 +562,6 @@ class Navbar extends React.Component {
             var chunks = AutographaStore.chunks;
             var verses = AutographaStore.verses;
             var chapter = AutographaStore.chapterId;
-
             for (i = 0; i < chunks.length; i++) {
                 if (parseInt(chunks[i].chp, 10) === parseInt(chapter, 10)) {
                     chunkIndex = i + 1;
@@ -574,6 +571,7 @@ class Navbar extends React.Component {
                 }
             }
             db.get(AutographaStore.bookId.toString()).then((targetDoc) => {
+                AutographaStore.verses = targetDoc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
                 let id = AutographaStore.activeRefs[AutographaStore.layout-1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1]
                 refDb.get(id).then(function(refdoc) {
                     for (i = 0; i < refdoc.chapters.length; i++) {
@@ -581,8 +579,8 @@ class Navbar extends React.Component {
                             break;
                         }
                     }
-                    let book_verses = refdoc.chapters[i].verses
-                    for (i = 1; i <= verses.length; i++) {
+                    let book_verses = refdoc.chapters[i].verses;
+                    for (i = 1; i <= AutographaStore.verses.length; i++) {
                         var spanVerseNum = '';
                         if (i > chunkVerseEnd) {
                             chunkVerseStart = parseInt(chunks[chunkIndex].firstvs, 10);
@@ -602,9 +600,9 @@ class Navbar extends React.Component {
                             tDel += diffCount["del"];
                             dmp_diff.diff_cleanupSemantic(verseDiff);
                             let ds = dmp_diff.diff_prettyHtml(verseDiff);
-                            translationContent.push(ds).toString();
+                            translationContent.push(<span dangerouslySetInnerHTML={{__html: ds}}></span>);
                         }else{
-                            translationContent.push(verses[i - 1].verse).toString();
+                            translationContent.push(AutographaStore.verses[i - 1].verse.toString());
                         }
                         chunkGroup.push(chunk);
                     }
@@ -612,9 +610,7 @@ class Navbar extends React.Component {
                     AutographaStore.tDel[0] = tDel;
                     AutographaStore.chunkGroup = chunkGroup;
                     AutographaStore.translationContent= translationContent;
-                }).catch(function(err) {
-                    console.log(err);
-                });
+                })
             });
     }
     resetDiffValue = () => {
@@ -622,6 +618,48 @@ class Navbar extends React.Component {
             AutographaStore.tIns[i] = 0;
             AutographaStore.tDel[i] = 0;
         }
+    }
+    openStatPopup() {
+        this.showReport();
+        AutographaStore.showModalStat = true
+    }
+    showReport = () => {
+        let emptyChapter = [];
+        let incompleteVerseChapter = {};
+        let multipleSpacesChapter = {};     
+        db.get(AutographaStore.bookId.toString()).then((doc) =>{
+            doc.chapters.forEach((chapter) => {
+                let emptyVerse = [];
+                let verseLength = chapter.verses.length;
+                let incompleteVerse = [];
+                let multipleSpaces = [];
+                for(let i=0; i < verseLength; i++){
+                    let verseObj = chapter.verses[i];
+                    let checkSpace = verseObj["verse"].match(/\s\s+/g, ' ');
+                    if(verseObj["verse"].length == 0){
+                        emptyVerse.push(i);
+                    }
+                    else if(verseObj["verse"].length > 0 && verseObj["verse"].trim().split(" ").length === 1){
+                        incompleteVerse.push(verseObj["verse_number"])
+                    }
+                    else if(checkSpace != null && checkSpace.length > 0) {
+                        multipleSpaces.push(verseObj["verse_number"])
+                    }
+                }
+                if(incompleteVerse.length > 0){
+                    incompleteVerseChapter[chapter["chapter"]] = incompleteVerse;
+                }
+                if(multipleSpaces.length > 0){
+                    multipleSpacesChapter[chapter["chapter"]] = multipleSpaces;
+                }
+                if(emptyVerse.length === verseLength){
+                    emptyChapter.push(chapter["chapter"])
+                }
+            })
+            AutographaStore.emptyChapter = emptyChapter;
+            AutographaStore.incompleteVerse = incompleteVerseChapter;
+            AutographaStore.multipleSpaces = multipleSpacesChapter;      
+        })  
     }
     
     render() {
@@ -728,6 +766,7 @@ class Navbar extends React.Component {
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
+                <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
                 <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div className="container-fluid">
                     <div className="navbar-header">
@@ -773,7 +812,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -788,7 +827,9 @@ class Navbar extends React.Component {
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                            */}
+                            <li>
+                                <button onClick={() => this.openStatPopup()}>Test</button>
+                            </li>
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>
