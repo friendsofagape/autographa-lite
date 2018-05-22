@@ -8,6 +8,9 @@ const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const session = require('electron').remote.session;
 const i18n = new(require('../translations/i18n'));
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
+import Statistic  from '../components/Statistic';
+
 
 @observer
 class TranslationPanel extends React.Component {
@@ -47,9 +50,53 @@ class TranslationPanel extends React.Component {
   handleKeyUp =(e)=> {
     if(this.timeout) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      this.props.onSave();
+      if(!AutographaStore.setDiff){
+        this.props.onSave();
+      }
     }, 3000);
   }
+  openStatPopup =() => {
+        this.showReport();
+        AutographaStore.showModalStat = true
+    }
+    showReport = () => {
+        let emptyChapter = [];
+        let incompleteVerseChapter = {};
+        let multipleSpacesChapter = {};     
+        db.get(AutographaStore.bookId.toString()).then((doc) =>{
+            doc.chapters.forEach((chapter) => {
+                let emptyVerse = [];
+                let verseLength = chapter.verses.length;
+                let incompleteVerse = [];
+                let multipleSpaces = [];
+                for(let i=0; i < verseLength; i++){
+                    let verseObj = chapter.verses[i];
+                    let checkSpace = verseObj["verse"].match(/\s\s+/g, ' ');
+                    if(verseObj["verse"].length == 0){
+                        emptyVerse.push(i);
+                    }
+                    else if(verseObj["verse"].length > 0 && verseObj["verse"].trim().split(" ").length === 1){
+                        incompleteVerse.push(verseObj["verse_number"])
+                    }
+                    else if(checkSpace != null && checkSpace.length > 0) {
+                        multipleSpaces.push(verseObj["verse_number"])
+                    }
+                }
+                if(incompleteVerse.length > 0){
+                    incompleteVerseChapter[chapter["chapter"]] = incompleteVerse;
+                }
+                if(multipleSpaces.length > 0){
+                    multipleSpacesChapter[chapter["chapter"]] = multipleSpaces;
+                }
+                if(emptyVerse.length === verseLength){
+                    emptyChapter.push(chapter["chapter"])
+                }
+            })
+            AutographaStore.emptyChapter = emptyChapter;
+            AutographaStore.incompleteVerse = incompleteVerseChapter;
+            AutographaStore.multipleSpaces = multipleSpacesChapter;      
+        })  
+    }
   
   render (){
     var verseGroup = [];
@@ -68,13 +115,14 @@ class TranslationPanel extends React.Component {
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
-              <p className="translation">Translation</p>
+              <p className="translation">Translation | <a href="javscript:;" onClick={() => this.openStatPopup()} style={{fontSize: "18px"}}><i className="fa fa-lightbulb-o" aria-hidden="true"></i></a></p>
           </div>
         </div>
         <div className="row">
           {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : "" }
           <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
         </div>
+        <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
       </div>
     ) 
   }
