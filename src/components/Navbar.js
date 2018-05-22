@@ -113,7 +113,7 @@ class Navbar extends React.Component {
                 let ref2 = doc.chapters[i].verses
                 var refString = "";
                 for (let i = 1; i <= ref1.length; i++) {
-                    var d = dmp_diff.diff_main(ref1[i - 1].verse, ref2[i - 1].verse);
+                    var d = dmp_diff.diff_main(ref1[i - 1] ? ref1[i - 1].verse : "", ref2[i - 1] ? ref2[i - 1].verse : "");
                     dmp_diff.diff_cleanupSemantic(d);
                     let diffCount = this.getDifferenceCount(d, layout);
                     tIns += diffCount["ins"];
@@ -454,15 +454,16 @@ class Navbar extends React.Component {
     }
     getDifferenceCount = (verse_diff, layout) => {
         let insertions = 0, deletions = 0;
+        let re = /\b(\w+)'?(\w+)?\b/g;
         for (let x = 0; x < verse_diff.length; x++) {
             var op = verse_diff[x][0];
             var data = verse_diff[x][1];
             switch (op) {
                 case DiffMatchPatch.DIFF_INSERT:
-                    insertions += data.length;
+                    insertions += data.match(re) ? data.match(re).length : 0
                     break;
                 case DiffMatchPatch.DIFF_DELETE:
-                    deletions += data.length;
+                    deletions += data.match(re) ? data.match(re).length : 0
                     break;
                 case DiffMatchPatch.DIFF_EQUAL:
                     break;
@@ -594,11 +595,11 @@ class Navbar extends React.Component {
                         }
                         let chunk = chunkVerseStart + '-' + chunkVerseEnd;
                         if(toggled){
-                            let verseDiff = dmp_diff.diff_main(book_verses[i - 1].verse, targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse);
+                            let verseDiff = dmp_diff.diff_main(book_verses[i - 1] ? book_verses[i - 1].verse : "", targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1] ? targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse : "");
+                            dmp_diff.diff_cleanupSemantic(verseDiff);
                             let diffCount = that.getDifferenceCount(verseDiff, 0);
                             tIns += diffCount["ins"];
                             tDel += diffCount["del"];
-                            dmp_diff.diff_cleanupSemantic(verseDiff);
                             let ds = dmp_diff.diff_prettyHtml(verseDiff);
                             translationContent.push(<span dangerouslySetInnerHTML={{__html: ds}}></span>);
                         }else{
