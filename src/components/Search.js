@@ -75,13 +75,10 @@ class SearchModal extends React.Component {
               } else {
                   for (let i = 0; i < doc.chapters.length; i++) {
                       let replaceWord = that.findReplaceSearchInputs(doc.chapters[parseInt(i + 1, 10) - 1].verses, i, searchVal, replaceVal, option);
-                      console.log(replaceWord)
                       allChapterReplaceCount.push(replaceWord)
-                      console.log(totalReplacedWord)
                       replaceWord = 0;
                   }                  
               }
-              console.log(allChapterReplaceCount)
               var replacedCount = allChapterReplaceCount.reduce(function(a, b) {
                     return a + b;
               }, 0);
@@ -100,7 +97,6 @@ class SearchModal extends React.Component {
       for (i = 1; i <= verses.length; i++) {
           if (option == "chapter") {
               let originalVerse = verses[i - 1].verse;
-              console.log(searchVal)
               replacedVerse[i] = i;
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
@@ -145,7 +141,6 @@ class SearchModal extends React.Component {
       verses_arr = [];
       allChapters = {};
       // highlightRef();
-      console.log(replaceCount)
       return replaceCount;
     }
 
