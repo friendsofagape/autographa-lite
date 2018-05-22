@@ -10,7 +10,6 @@ import AboutUsModal from "./About"
 import SearchModal from "./Search"
 import DownloadModal from "./Download"
 import TranslationPanel  from '../components/TranslationPanel';
-import Statistic  from '../components/Statistic';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const injectTapEventPlugin = require("react-tap-event-plugin");
@@ -47,7 +46,8 @@ class Navbar extends React.Component {
             refList: [],
             searchVal: "", 
             replaceVal:"",
-            toggled: false
+            toggled: false,
+            setDiff: false
         };
        
         var verses, chunks, chapter;
@@ -377,13 +377,13 @@ class Navbar extends React.Component {
                 db.put(doc).then((response) => {
                     let dateTime = new Date();
                     AutographaStore.transSaveTime = that.formatDate(dateTime);
-                    AutographaStore.translationContent = translationContent;
+                    // AutographaStore.translationContent = translationContent;
                     clearInterval("#saved-time");
                 }, (err) => {
                     db.put(doc).then((response) => {
                         let dateTime = new Date();
                         AutographaStore.transSaveTime = that.formatDate(dateTime)
-                        AutographaStore.translationContent = translationContent;
+                        // AutographaStore.translationContent = translationContent;
                     },(err) => {
                         clearInterval("#saved-time");
                     });
@@ -475,11 +475,15 @@ class Navbar extends React.Component {
             let that = this;
             let isSameLanguage = await this.isSameLanguage();
             if(toggled){
+                this.saveTarget();
+                AutographaStore.setDiff = true
                 if(!isSameLanguage){
                     AutographaStore.toggle = false;
                     swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-compare-mode"], "error");
                     return;
                 }
+            }else{
+                AutographaStore.setDiff = false;
             }
             AutographaStore.toggle = toggled;
             refDb.get('targetReferenceLayout').then((doc) => {
@@ -620,48 +624,7 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
-    openStatPopup() {
-        this.showReport();
-        AutographaStore.showModalStat = true
-    }
-    showReport = () => {
-        let emptyChapter = [];
-        let incompleteVerseChapter = {};
-        let multipleSpacesChapter = {};     
-        db.get(AutographaStore.bookId.toString()).then((doc) =>{
-            doc.chapters.forEach((chapter) => {
-                let emptyVerse = [];
-                let verseLength = chapter.verses.length;
-                let incompleteVerse = [];
-                let multipleSpaces = [];
-                for(let i=0; i < verseLength; i++){
-                    let verseObj = chapter.verses[i];
-                    let checkSpace = verseObj["verse"].match(/\s\s+/g, ' ');
-                    if(verseObj["verse"].length == 0){
-                        emptyVerse.push(i);
-                    }
-                    else if(verseObj["verse"].length > 0 && verseObj["verse"].trim().split(" ").length === 1){
-                        incompleteVerse.push(verseObj["verse_number"])
-                    }
-                    else if(checkSpace != null && checkSpace.length > 0) {
-                        multipleSpaces.push(verseObj["verse_number"])
-                    }
-                }
-                if(incompleteVerse.length > 0){
-                    incompleteVerseChapter[chapter["chapter"]] = incompleteVerse;
-                }
-                if(multipleSpaces.length > 0){
-                    multipleSpacesChapter[chapter["chapter"]] = multipleSpaces;
-                }
-                if(emptyVerse.length === verseLength){
-                    emptyChapter.push(chapter["chapter"])
-                }
-            })
-            AutographaStore.emptyChapter = emptyChapter;
-            AutographaStore.incompleteVerse = incompleteVerseChapter;
-            AutographaStore.multipleSpaces = multipleSpacesChapter;      
-        })  
-    }
+    
     
     render() {
         // const layout = AutographaStore.layout;
@@ -767,7 +730,6 @@ class Navbar extends React.Component {
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
-                <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
                 <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div className="container-fluid">
                     <div className="navbar-header">
@@ -828,9 +790,6 @@ class Navbar extends React.Component {
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                            <li>
-                                <button onClick={() => this.openStatPopup()}>Test</button>
-                            </li>
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>

@@ -61,6 +61,7 @@ export class AutographaStore {
   @observable emptyChapter = []
   @observable incompleteVerse = {}
   @observable multipleSpaces = {}
+  @observable setDiff = false
 
 
 
