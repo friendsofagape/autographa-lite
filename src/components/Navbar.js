@@ -46,7 +46,8 @@ class Navbar extends React.Component {
             refList: [],
             searchVal: "", 
             replaceVal:"",
-            toggled: false
+            toggled: false,
+            setDiff: false
         };
        
         var verses, chunks, chapter;
@@ -112,7 +113,7 @@ class Navbar extends React.Component {
                 let ref2 = doc.chapters[i].verses
                 var refString = "";
                 for (let i = 1; i <= ref1.length; i++) {
-                    var d = dmp_diff.diff_main(ref1[i - 1].verse, ref2[i - 1].verse);
+                    var d = dmp_diff.diff_main(ref1[i - 1] ? ref1[i - 1].verse : "", ref2[i - 1] ? ref2[i - 1].verse : "");
                     dmp_diff.diff_cleanupSemantic(d);
                     let diffCount = this.getDifferenceCount(d, layout);
                     tIns += diffCount["ins"];
@@ -367,7 +368,7 @@ class Navbar extends React.Component {
             let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
-                translationContent.push(document.getElementById(vId).textContent).toString();
+                translationContent.push(document.getElementById(vId).textContent.toString());
                 verse.verse = document.getElementById(vId).textContent;
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
@@ -376,21 +377,19 @@ class Navbar extends React.Component {
                 db.put(doc).then((response) => {
                     let dateTime = new Date();
                     AutographaStore.transSaveTime = that.formatDate(dateTime);
-                    AutographaStore.translationContent = translationContent;
+                    // AutographaStore.translationContent = translationContent;
                     clearInterval("#saved-time");
                 }, (err) => {
                     db.put(doc).then((response) => {
                         let dateTime = new Date();
                         AutographaStore.transSaveTime = that.formatDate(dateTime)
-                        AutographaStore.translationContent = translationContent;
+                        // AutographaStore.translationContent = translationContent;
                     },(err) => {
                         clearInterval("#saved-time");
                     });
                     clearInterval("#saved-time");
                 });
             });
-           
-           
         }, (err) => {
             console.log('Error: While retrieving document. ' + err);
         });
@@ -425,7 +424,6 @@ class Navbar extends React.Component {
             if (error)
             console.log(error);
         });
-
     }
     isSameLanguage = async() => {
         const verseLangCode = "",
@@ -456,15 +454,16 @@ class Navbar extends React.Component {
     }
     getDifferenceCount = (verse_diff, layout) => {
         let insertions = 0, deletions = 0;
+        let re = /\b(\w+)'?(\w+)?\b/g;
         for (let x = 0; x < verse_diff.length; x++) {
             var op = verse_diff[x][0];
             var data = verse_diff[x][1];
             switch (op) {
                 case DiffMatchPatch.DIFF_INSERT:
-                    insertions += data.length;
+                    insertions += data.match(re) ? data.match(re).length : 0
                     break;
                 case DiffMatchPatch.DIFF_DELETE:
-                    deletions += data.length;
+                    deletions += data.match(re) ? data.match(re).length : 0
                     break;
                 case DiffMatchPatch.DIFF_EQUAL:
                     break;
@@ -476,11 +475,15 @@ class Navbar extends React.Component {
             let that = this;
             let isSameLanguage = await this.isSameLanguage();
             if(toggled){
+                this.saveTarget();
+                AutographaStore.setDiff = true
                 if(!isSameLanguage){
                     AutographaStore.toggle = false;
                     swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-compare-mode"], "error");
                     return;
                 }
+            }else{
+                AutographaStore.setDiff = false;
             }
             AutographaStore.toggle = toggled;
             refDb.get('targetReferenceLayout').then((doc) => {
@@ -564,7 +567,6 @@ class Navbar extends React.Component {
             var chunks = AutographaStore.chunks;
             var verses = AutographaStore.verses;
             var chapter = AutographaStore.chapterId;
-
             for (i = 0; i < chunks.length; i++) {
                 if (parseInt(chunks[i].chp, 10) === parseInt(chapter, 10)) {
                     chunkIndex = i + 1;
@@ -574,6 +576,7 @@ class Navbar extends React.Component {
                 }
             }
             db.get(AutographaStore.bookId.toString()).then((targetDoc) => {
+                AutographaStore.verses = targetDoc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
                 let id = AutographaStore.activeRefs[AutographaStore.layout-1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1]
                 refDb.get(id).then(function(refdoc) {
                     for (i = 0; i < refdoc.chapters.length; i++) {
@@ -581,8 +584,8 @@ class Navbar extends React.Component {
                             break;
                         }
                     }
-                    let book_verses = refdoc.chapters[i].verses
-                    for (i = 1; i <= verses.length; i++) {
+                    let book_verses = refdoc.chapters[i].verses;
+                    for (i = 1; i <= AutographaStore.verses.length; i++) {
                         var spanVerseNum = '';
                         if (i > chunkVerseEnd) {
                             chunkVerseStart = parseInt(chunks[chunkIndex].firstvs, 10);
@@ -596,15 +599,15 @@ class Navbar extends React.Component {
                         }
                         let chunk = chunkVerseStart + '-' + chunkVerseEnd;
                         if(toggled){
-                            let verseDiff = dmp_diff.diff_main(book_verses[i - 1].verse, targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse);
+                            let verseDiff = dmp_diff.diff_main(book_verses[i - 1] ? book_verses[i - 1].verse : "", targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1] ? targetDoc.chapters[parseInt(chapter, 10) - 1].verses[i - 1].verse : "");
+                            dmp_diff.diff_cleanupSemantic(verseDiff);
                             let diffCount = that.getDifferenceCount(verseDiff, 0);
                             tIns += diffCount["ins"];
                             tDel += diffCount["del"];
-                            dmp_diff.diff_cleanupSemantic(verseDiff);
                             let ds = dmp_diff.diff_prettyHtml(verseDiff);
-                            translationContent.push(ds).toString();
+                            translationContent.push(<span dangerouslySetInnerHTML={{__html: ds}}></span>);
                         }else{
-                            translationContent.push(verses[i - 1].verse).toString();
+                            translationContent.push(AutographaStore.verses[i - 1].verse.toString());
                         }
                         chunkGroup.push(chunk);
                     }
@@ -612,9 +615,7 @@ class Navbar extends React.Component {
                     AutographaStore.tDel[0] = tDel;
                     AutographaStore.chunkGroup = chunkGroup;
                     AutographaStore.translationContent= translationContent;
-                }).catch(function(err) {
-                    console.log(err);
-                });
+                })
             });
     }
     resetDiffValue = () => {
@@ -623,6 +624,7 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
+    
     
     render() {
         // const layout = AutographaStore.layout;
@@ -773,7 +775,7 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
-                            {/*<li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
+                            <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 
                                 <FormattedMessage id="tooltip-compare-mode">
@@ -782,13 +784,12 @@ class Navbar extends React.Component {
                                           defaultToggled={toggle}
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
-                                          
+                                          toggled = {toggle}
                                         />
                                     }
                                 </FormattedMessage>                               
                             </li>
                             <li style={{padding:"17px 0 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-on" /></span></li>
-                            */}
                             <li>
                                 <FormattedMessage id="tooltip-find-and-replace">
                                 {(message) =>

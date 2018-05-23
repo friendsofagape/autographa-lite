@@ -2,7 +2,7 @@
   "name": "Autographa",
   "productName": "Autographa Lite",
   "description": "A Bible translation editor for everyone.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "src/app.js",
   "build": {
     "extends": null,
@@ -86,7 +86,7 @@
     "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.7",
-    "electron": "1.8.4",
+    "electron": "2.0.1",
     "electron-builder": "^20.8.1",
     "electron-mocha": "^5.0.0",
     "electron-react-devtools": "^0.5.3",
