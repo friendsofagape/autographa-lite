@@ -18,21 +18,23 @@ class DownloadModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            stageName: '',
             stageChange: '',
             buttonStage: 'dynamic-msg-stage-trans',
             
         }
     }
     onChange = (e) => { 
-        this.setState({[e.target.name]: e.target.value})
+        this.setState({stageName: e.target.value, stageChange: ''})
     }
   
     clickStage = (e) => {
-        this.setState({ buttonStage: "label-stage", stageChange: e });
+        this.setState({ buttonStage: "label-stage", stageChange: e, stageName: '' });
     }
     
     exportUsfm = (e) => {
-        let stageInput = `Stage ${this.state.stageChange}`;
+        const {stageChange, stageName} = this.state;
+        let stageInput = stageName ? stageName : `Stage ${stageChange}`;
         let book = {};
         const currentTrans = AutographaStore.currentTrans;
         db.get('targetBible').then(function(doc) {
@@ -54,7 +56,7 @@ class DownloadModal extends React.Component {
 
     render (){
         let closeSearchUSFM = () => AutographaStore.showModalDownload = false
-        const {stageChange} = this.state;
+        const {stageChange, stageName} = this.state;
         return ( 
             <Modal show={AutographaStore.showModalDownload} onHide={closeSearchUSFM} id="tab-search">
                 <Modal.Header closeButton>
@@ -63,7 +65,7 @@ class DownloadModal extends React.Component {
                 <Modal.Body>
               
                 <div className="row">
-                    <div className="col-lg-6">
+                    <div className="col-lg-9">
                         <div className="input-group">
                             <FormattedMessage id="placeholder-stage-trans">
                             {(message) =>
@@ -73,7 +75,7 @@ class DownloadModal extends React.Component {
                                 id="stageText" 
                                 placeholder={message}
                                 name="stageChange"
-                                value={stageChange ? `Stage ${stageChange}` : ""}
+                                value={ stageName ? stageName : (stageChange ? `Stage ${stageChange}` : "")}
                                 onChange={this.onChange}
                             />}
                             </FormattedMessage>
@@ -123,7 +125,7 @@ class DownloadModal extends React.Component {
                 <Modal.Footer>
                 <FormattedMessage id="btn-export">
                 {(message) =>
-                  <RaisedButton style={{float: "right"}} label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                  <RaisedButton style={{float: "right"}} disabled={stageName || stageChange ? false : true} label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
                 }
                 </FormattedMessage>
                 </Modal.Footer>
