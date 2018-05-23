@@ -784,7 +784,7 @@ class Navbar extends React.Component {
                                           defaultToggled={toggle}
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
-                                          
+                                          toggled = {toggle}
                                         />
                                     }
                                 </FormattedMessage>                               
