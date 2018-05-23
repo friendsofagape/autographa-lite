@@ -115,7 +115,7 @@ class TranslationPanel extends React.Component {
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
-              <p className="translation">Translation | <a href="javscript:;" onClick={() => this.openStatPopup()} style={{fontSize: "18px"}}><i className="fa fa-lightbulb-o" aria-hidden="true"></i></a></p>
+              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold"}} onClick={() => this.openStatPopup()}>Translation</a></p>
           </div>
         </div>
         <div className="row">
