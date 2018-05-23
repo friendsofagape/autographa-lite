@@ -1,25 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Tabs from 'react-bootstrap/lib/Tabs';
-import Tab from 'react-bootstrap/lib/Tab';
-const session =  require('electron').remote.session;
 const Constant = require("../util/constants");
-import { dialog } from 'electron';
-import { remote } from 'electron';
 import { observer } from "mobx-react"
 import * as mobx from 'mobx'
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const Modal = require('react-bootstrap/lib/Modal');
-const Button = require('react-bootstrap/lib/Button');
-const Col = require('react-bootstrap/lib/Col');
-const Row = require('react-bootstrap/lib/Row')
-const Grid = require('react-bootstrap/lib/Grid')
-const Nav = require('react-bootstrap/lib/Nav');
-const NavItem = require('react-bootstrap/lib/NavItem');
 import AutographaStore from "./AutographaStore" 
 import { FormattedMessage } from 'react-intl';
 const numberFormat = require("../util/getNumberFormat")
+
 
 @observer
 class Statistic extends React.Component {
@@ -42,13 +32,15 @@ class Statistic extends React.Component {
         return (  
         <Modal show={show} onHide={close} id="tab-about">
             <Modal.Header closeButton>
-                <Modal.Title>Statistics for the book of {bookName}</Modal.Title>
+                <Modal.Title>
+                <FormattedMessage id="label-statistic-heading" />  <FormattedMessage id={`book-${bookName.toLowerCase()}`} />
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 
                 <div className="panel  panel-default">
                   <div className="panel-heading">
-                    Empty Chapters
+                    <FormattedMessage id="label-empty-chapters" />
                   </div>
                   <div className="panel-body">
                     <span>{`${numberFormat.getNumberFormat(emptyChapters)} `}</span>
@@ -57,7 +49,7 @@ class Statistic extends React.Component {
 
                 <div className="panel  panel-default">
                   <div className="panel-heading">
-                    Incomplete Verses
+                    <FormattedMessage id="label-incomplete-verses" />
                   </div>
                   <div className="panel-body">
                     {
@@ -69,7 +61,7 @@ class Statistic extends React.Component {
                 </div>
                 <div className="panel  panel-default">
                   <div className="panel-heading">
-                    Multiple Spaces
+                    <FormattedMessage id="label-multiple-spaces" />
                   </div>
                   <div className="panel-body">
                     {

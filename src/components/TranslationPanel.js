@@ -10,7 +10,7 @@ const session = require('electron').remote.session;
 const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import Statistic  from '../components/Statistic';
-
+import { FormattedMessage } from 'react-intl';
 
 @observer
 class TranslationPanel extends React.Component {
@@ -115,7 +115,7 @@ class TranslationPanel extends React.Component {
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
-              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold"}} onClick={() => this.openStatPopup()}>Translation</a></p>
+              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold"}} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
           </div>
         </div>
         <div className="row">
