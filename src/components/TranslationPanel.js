@@ -119,7 +119,7 @@ class TranslationPanel extends React.Component {
           </div>
         </div>
         <div className="row">
-          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : "" }
+          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) <span id="tIns">{tIns}</span></span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) <span id="tDel">{tDel}</span></span></div> : "" }
           <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
         </div>
         <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>

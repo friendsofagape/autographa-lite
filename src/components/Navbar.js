@@ -785,6 +785,7 @@ class Navbar extends React.Component {
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
                                           toggled = {toggle}
+                                          id="diff"
                                         />
                                     }
                                 </FormattedMessage>                               

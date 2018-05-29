@@ -43,15 +43,15 @@ class Statistic extends React.Component {
                     <FormattedMessage id="label-empty-chapters" />
                   </div>
                   <div className="panel-body">
-                    <span>{`${numberFormat.getNumberFormat(emptyChapters)} `}</span>
+                    <span className="empty-chapter-report">{`${numberFormat.getNumberFormat(emptyChapters)} `}</span>
                   </div>
                 </div>
 
-                <div className="panel  panel-default">
+                <div className="panel panel-default">
                   <div className="panel-heading">
                     <FormattedMessage id="label-incomplete-verses" />
                   </div>
-                  <div className="panel-body">
+                  <div className="panel-body incomplete-verse-report">
                     {
                         Object.keys(incompleteVerse).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(incompleteVerse[key])}`}{  Object.keys(incompleteVerse).length > i+1 ? ";" : ""} </span></span>)
@@ -63,7 +63,7 @@ class Statistic extends React.Component {
                   <div className="panel-heading">
                     <FormattedMessage id="label-multiple-spaces" />
                   </div>
-                  <div className="panel-body">
+                  <div className="panel-body multiple-space-report">
                     {
                         Object.keys(multipleSpaces).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(multipleSpaces[key])} `}{  Object.keys(multipleSpaces).length > i+1 ? ";" : ""}</span></span>)

@@ -44,7 +44,7 @@ describe('Autographa Test', () => {
             .getTitle().should.eventually.equal('Autographa Lite');
     });
  	
-	it('should check reference verse exist', () => {
+	   it('should check reference verse exist', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
 	 		.waitForExist("#v1", 20000)
@@ -60,6 +60,7 @@ describe('Autographa Test', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
 	 		.waitForVisible("#v1", 20000)
+      .click("#v1")
 	 		.setValue("#v1", input)
 	 		.waitForExist("#save-btn", 20000)
 	 		.click('#save-btn')
@@ -106,5 +107,51 @@ describe('Autographa Test', () => {
   		.click("#btn-2x")
   		.getText('.layoutx').should.eventually.exist;
   	});
+
+    it('should check empty chapter report', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".translation > a")
+      .getText(".empty-chapter-report").should.eventually.equal('2-50')
+    });
+
+    it('should check incomplete verse report', () => {
+      return app.client.waitUntilWindowLoaded()
+      .getText(".incomplete-verse-report").should.eventually.equal('1:3');
+    });
+
+    it('should check multiple space in verse report', () => {
+      return app.client.waitUntilWindowLoaded()
+      .getText(".multiple-space-report").should.eventually.equal('1:2');
+    });
+
+    it('close the app', () => {
+      return app.stop();
+    });
+
+    it('open the app', () => {
+      return app.start();
+    });
+
+    it('should click the diff button and count addition', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click("#diff")
+      .waitForExist("#tIns", 20000)
+      .getText("#tIns").should.eventually.equal('7');
+    });
+
+    it('should click of the diff button', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click("#diff");
+    });
+
+    it('should click the diff button and count deletion', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click("#diff")
+      .waitForExist("#tDel", 20000)
+      .getText("#tDel").should.eventually.equal('713');
+    });
+
+
+
 
 }); 
