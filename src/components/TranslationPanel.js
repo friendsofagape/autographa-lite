@@ -102,7 +102,7 @@ class TranslationPanel extends React.Component {
     var verseGroup = [];
     for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
       var vid="v"+(i+1);  
-      verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
+      verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid)}>
           <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
           {AutographaStore.translationContent[i]}
@@ -120,7 +120,7 @@ class TranslationPanel extends React.Component {
         </div>
         <div className="row">
           {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) <span id="tIns">{tIns}</span></span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) <span id="tDel">{tDel}</span></span></div> : "" }
-          <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
+          <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()} ${tIns || tDel ? 'disable-input' : ''}`} dir={AutographaStore.scriptDirection} style={{pointerEvents: tIns || tDel ? 'none': ''}}>{verseGroup}</div>
         </div>
         <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
       </div>

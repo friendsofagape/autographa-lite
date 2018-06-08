@@ -13,6 +13,10 @@ module.exports = {
 	                    <meta name="viewport" content="width=device-width, initial-scale=1">
 	                    <meta name="description" content="">
 	                    <style >
+	                    		body {
+    								margin: 0;
+    								padding: 0;
+								}
 			                    p {
 			                        font-size: 100%;
 			                    }
@@ -56,6 +60,7 @@ module.exports = {
 			                        float: left;
 			                        display: block;
 			                        width: 100%;
+			                        margin-right: 0px;
 			                    }
 
 			                    .newspaper ul li ol {
@@ -67,7 +72,7 @@ module.exports = {
 			                    }
 
 			                    .newspaper ul li ol li {
-			                        display: block;
+			                        display: table;
 			                        float: left;
 			                        width: 100%;
 			                    }
@@ -182,8 +187,11 @@ module.exports = {
                     <meta name="viewport" content="width=device-width, initial-scale=1">
                     <meta name="description" content="">
                     <style>
-
-                        p {
+                    body {
+    					margin: 0;
+    					padding: 0;
+					}
+                    p {
                         font-size: 100%;
                     }
                     .newspaper ul li ol li span {
@@ -229,7 +237,7 @@ module.exports = {
                     }
 
                     .newspaper ul li ol li {
-                        display: block;
+                        display: table;
                         float: right;
                         width: 100%;
                     }
