@@ -22,7 +22,7 @@ class TranslationPanel extends React.Component {
     this.timeout =  0;
   }
 
-  highlightRef(obj) {
+  highlightRef(vId, refId, obj) {
     {/*var content = ReactDOM.findDOMNode(this);
     let verses = content.getElementsByClassName("verse-input")[0].querySelectorAll("span[id^=v]");
     var refContent = document.getElementsByClassName('ref-contents');
@@ -44,7 +44,15 @@ class TranslationPanel extends React.Component {
         $('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
         $('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
       }
-    }*/}           
+    }*/}
+      let refContent = document.getElementsByClassName('ref-contents');
+      let ref = refContent[0].querySelectorAll('div[data-verse^="r"]')
+      for (let i=0; i < ref.length; i++) {
+        if (ref[i] != 'undefined') {
+          ref[i].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
+        }
+      };
+      refContent[0].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;margin-right:10px";
   }
 
   handleKeyUp =(e)=> {
@@ -99,10 +107,10 @@ class TranslationPanel extends React.Component {
     }
   
   render (){
-    var verseGroup = [];
-    for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
-      var vid="v"+(i+1);  
-      verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid)}>
+    let verseGroup = [];
+    for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
+      let vid="v"+(i+1);
+      verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)}>
           <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
           {AutographaStore.translationContent[i]}
