@@ -46,13 +46,15 @@ class TranslationPanel extends React.Component {
       }
     }*/}
       let refContent = document.getElementsByClassName('ref-contents');
-      let ref = refContent[0].querySelectorAll('div[data-verse^="r"]')
-      for (let i=0; i < ref.length; i++) {
-        if (ref[i] != 'undefined') {
-          ref[i].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
-        }
-      };
-      refContent[0].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;margin-right:10px";
+      for(let l=0; l<AutographaStore.layout; l++){
+        let ref = refContent[l].querySelectorAll('div[data-verse^="r"]')
+        for (let i=0; i < ref.length; i++) {
+          if (ref[i] != 'undefined') {
+            ref[i].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
+          }
+        };
+        refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
+      }
   }
 
   handleKeyUp =(e)=> {
