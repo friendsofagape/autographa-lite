@@ -11,8 +11,6 @@ if (process.platform === 'win32') {
 
 var appPath = path.join(__dirname, '..');
 
-console.log(appPath)
-
 var app = new Application({
     path: electronPath,
     args: [appPath]
@@ -59,51 +57,95 @@ describe('Autographa Test', () => {
   	it('should save the target text', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
-	 		.waitForVisible("#v1", 20000)
-      .click("#v1")
-	 		.setValue("#v1", input)
+	 		.waitForVisible("#versediv1", 20000)
+      .click("#versediv1")
+      .keys(input)
+      .click("#versediv2")
+      .keys('check    for spaces')
+      .click("#versediv3")
+      .keys('incompleteVerse')
 	 		.waitForExist("#save-btn", 20000)
 	 		.click('#save-btn')
 	 		.getText("#v1").should.eventually.equal(input);
   	});
 
-  	it('close the app', () => {
-  		return app.stop();
-  	});
+    it('should open the settings popup and save setting', () => {
+      return app.client.waitUntilWindowLoaded()
+      .keys('Escape')
+      .waitForEnabled("#btnSettings", 2000)
+      .click("#btnSettings")
+      .waitForVisible("#lang-code", 2000)
+      .setValue("#lang-code", 'eng')
+      .keys('Tab')
+      .setValue("#lang-version", "NET-S3")
+      .setValue("#export-folder-location", path.join("/"))
+      .waitForExist("#save-setting", 20000)
+      .click("#save-setting")
+      .keys("Escape")
+    });
 
-  	it('open the app', () => {
-  		return app.start();
-  	});
+    it('close the app', () => {
+      return app.stop();
+    });
 
-  	it('should check the saved target verse', ()=>{
-	 	 const input = 'this is a test';
-  		return app.client.waitUntilWindowLoaded()
-  		.getText("#v1").should.eventually.equal(input);
-  	});
+    it('open the app', () => {
+      return app.start();
+    });
 
-  	it('should check chapter button', () => {
-  		return app.client.waitUntilWindowLoaded()
-  		.getText('#chapterBtn').should.eventually.equal('1');
-  	});
+    it('should check the saved target verse', ()=>{
+     const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
 
+    it('should click the diff button and count addition', () => {
+      return app.client.waitUntilWindowLoaded()
+      .waitForEnabled('#diff', 20000)
+      .click('#diff')
+      .waitForExist("#tIns", 20000)
+      .getText("#tIns").should.eventually.equal('9');
+    });
+
+    it('should click off the diff button', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click('#diff');
+    });
+
+    it('should click the diff button and count deletion', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click('#diff')
+      .waitForExist("#tDel", 20000)
+      .getText("#tDel").should.eventually.equal('713');
+    });
+
+    it('should click off the diff button', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click('#diff');
+    });
+
+    it('should check chapter button', () => {
+      return app.client.waitUntilWindowLoaded()
+      .getText('#chapterBtn').should.eventually.equal('1');
+    });
 
   	it('should change layout to 3x', () => {
   		return app.client.waitUntilWindowLoaded()
-  		.waitForExist("#btn-3x", 20000)
+  		.waitForEnabled("#btn-3x", 20000)
   		.click("#btn-3x")
   		.getText('.layout2x').should.eventually.exist;
   	});
 
     it('should change layout to 4x', () => {
   		return app.client.waitUntilWindowLoaded()
-  		.waitForExist("#btn-4x", 20000)
+  		.waitForEnabled("#btn-4x", 20000)
   		.click("#btn-4x")
   		.getText('.layout3x').should.eventually.exist;
   	});
 
   	it('should change layout to 2x', () => {
   		return app.client.waitUntilWindowLoaded()
-  		.waitForExist("#btn-2x", 20000)
+  		.waitForEnabled("#btn-2x", 20000)
   		.click("#btn-2x")
   		.getText('.layoutx').should.eventually.exist;
   	});
@@ -124,34 +166,16 @@ describe('Autographa Test', () => {
       .getText(".multiple-space-report").should.eventually.equal('1:2');
     });
 
-    it('close the app', () => {
-      return app.stop();
-    });
 
-    it('open the app', () => {
-      return app.start();
-    });
-
-    it('should click the diff button and count addition', () => {
-      return app.client.waitUntilWindowLoaded()
-      .click("#diff")
-      .waitForExist("#tIns", 20000)
-      .getText("#tIns").should.eventually.equal('7');
-    });
-
-    it('should click of the diff button', () => {
-      return app.client.waitUntilWindowLoaded()
-      .click("#diff");
-    });
-
-    it('should click the diff button and count deletion', () => {
-      return app.client.waitUntilWindowLoaded()
-      .click("#diff")
-      .waitForExist("#tDel", 20000)
-      .getText("#tDel").should.eventually.equal('713');
-    });
-
-
-
-
+    // it('should clear the save  target text', () => {
+    //   const input = '';
+    // return app.client.waitUntilWindowLoaded()
+    //   .click("#v1")
+    //   .setValue("#v1", '')
+    //   .setValue("#v2", '')
+    //   .setValue("#v3", '')
+    //   .waitForExist("#save-btn", 20000)
+    //   .click('#save-btn')
+    //   .getText("#v1").should.eventually.equal(input);
+    // });
 }); 
