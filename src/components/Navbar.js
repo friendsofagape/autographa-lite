@@ -312,7 +312,6 @@ class Navbar extends React.Component {
                 var chapter;
                 AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1] 
                 db.get(bkId).then(function(doc) {
-                    console.log("else called")
                     refDb.get('refChunks').then(function(chunkDoc) {
                         AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
                         AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
