@@ -110,6 +110,8 @@ class TranslationPanel extends React.Component {
   
   render (){
     let verseGroup = [];
+    const toggle = AutographaStore.toggle;
+
     for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
       let vid="v"+(i+1);
       verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)}>
@@ -125,7 +127,7 @@ class TranslationPanel extends React.Component {
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
-              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold"}} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
+              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
           </div>
         </div>
         <div className="row">
