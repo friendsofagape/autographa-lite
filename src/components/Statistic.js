@@ -44,7 +44,7 @@ class Statistic extends React.Component {
                   </div>
                   <div className="panel-body">
                     <span className="empty-chapter-report">
-                    { emptyChapters.length != 0 ? `${numberFormat.getNumberFormat(emptyChapters)} ` : 'Not Found'}
+                    { emptyChapters.length != 0 ? `${numberFormat.getNumberFormat(emptyChapters)} ` : <FormattedMessage id="label-not-found" />}
                     </span>
                   </div>
                 </div>
@@ -58,7 +58,7 @@ class Statistic extends React.Component {
                       Object.keys(incompleteVerse).length > 0 ?
                         Object.keys(incompleteVerse).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(incompleteVerse[key])}`}{  Object.keys(incompleteVerse).length > i+1 ? ";" : ""} </span></span>)
-                        }) : 'Not Found'
+                        }) : <FormattedMessage id="label-not-found" />
                     }
                   </div>
                 </div>
@@ -71,7 +71,7 @@ class Statistic extends React.Component {
                       Object.keys(multipleSpaces).length > 0 ?
                         Object.keys(multipleSpaces).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(multipleSpaces[key])} `}{  Object.keys(multipleSpaces).length > i+1 ? ";" : ""}</span></span>)
-                        }) : 'Not Found' 
+                        }) : <FormattedMessage id="label-not-found" />
                     }
                   </div>
                 </div>

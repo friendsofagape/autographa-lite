@@ -32,6 +32,7 @@
 	"label-language" : "لغة التطبيق",
 	"label-select-language": "حدد اللغة لإعداد التطبيق",
 	"label-heading-confirmation" : "التأكيد",
+	"label-not-found": "غير معثور عليه",
 	"placeholder-search-text" : "البحث عن النص",
 	"placeholder-replace-text" : "إستبدال",
 	"placeholder-path-to-destination" : "مسار إلى مجلد الوجهة",
