@@ -41,22 +41,53 @@ describe('Autographa Test', () => {
         return app.client.waitUntilWindowLoaded()
             .getTitle().should.eventually.equal('Autographa Lite');
     });
+
+    it('should check empty chapter not found', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".translation > a")
+      .getText(".empty-chapter-report").should.eventually.equal('1-50')
+    });
+
+    it('should check incomplete verse not found', () => {
+      return app.client.waitUntilWindowLoaded()
+      .getText(".incomplete-verse-report").should.eventually.equal('Not found.');
+    });
+
+    it('should check multiple space of verse not found', () => {
+      return app.client.waitUntilWindowLoaded()
+      .getText(".multiple-space-report").should.eventually.equal('Not found.');
+    });
+
+    it('close the app', () => {
+      return app.stop();
+    });
+
+    it('open the app', () => {
+      return app.start();
+    });
  	
-	   it('should check reference verse exist', () => {
-	 	  const input = 'this is a test';
+    it('should check reference verse exist', () => {
 	 	return app.client.waitUntilWindowLoaded()
 	 		.waitForExist("#v1", 20000)
 	 		.getText("div[data-verse='r1']>.verse-num").should.eventually.equal('1')
   	});
 
+    
   	it('should check book button', () => {
   		return app.client.waitUntilWindowLoaded()
   		.getText('#book-chapter-btn').should.eventually.equal('Genesis');
   	});
 
+    it('should click the ref drop down', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".ref-drop-down")
+      .getValue('.ref-drop-down').should.eventually.equal('eng_irv')
+    });
+
   	it('should save the target text', () => {
 	 	  const input = 'this is a test';
 	 	return app.client.waitUntilWindowLoaded()
+      .keys('Tab')
 	 		.waitForVisible("#versediv1", 20000)
       .click("#versediv1")
       .keys(input)
@@ -68,6 +99,35 @@ describe('Autographa Test', () => {
 	 		.click('#save-btn')
 	 		.getText("#v1").should.eventually.equal(input);
   	});
+
+    it('should check highlight verse', () => {
+    return app.client.waitUntilWindowLoaded()
+      .waitForExist("#v1", 20000)
+      .click("#versediv1")
+      .getAttribute("div[data-verse='r1']", 'style').should.eventually.equal('background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;')
+    });    
+
+    it('should change the ref drop down text', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".ref-drop-down")
+      .selectByIndex(".ref-drop-down", 1)
+      .getValue('.ref-drop-down').should.eventually.equal('eng_isv');
+    });
+
+    it('should check the saved target verse', ()=>{
+     const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
+
+
+    it('should change the ref drop down text eng_irv', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".ref-drop-down")
+      .selectByIndex(".ref-drop-down", 0)
+      .getValue('.ref-drop-down').should.eventually.equal('eng_irv');
+    });
 
     it('should open the settings popup and save setting', () => {
       return app.client.waitUntilWindowLoaded()
@@ -165,7 +225,6 @@ describe('Autographa Test', () => {
       return app.client.waitUntilWindowLoaded()
       .getText(".multiple-space-report").should.eventually.equal('1:2');
     });
-
 
     // it('should clear the save  target text', () => {
     //   const input = '';
