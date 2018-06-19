@@ -164,7 +164,8 @@ module.exports = {
 	                inlineData+= '</div></body></html>'
 	                
 	                db.get('targetBible').then((doc) => {
-	                    let filepath = path.join(doc.targetPath[0], `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
+						let targetPath = Array.isArray(doc.targetPath) ? doc.targetPath[0] : doc.targetPath;
+	                    let filepath = path.join(targetPath, `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 	                    fs.writeFile(filepath, inlineData , function (err) {
 		                    if (err) {
 								console.log(err)
