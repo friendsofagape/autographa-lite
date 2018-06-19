@@ -1,7 +1,10 @@
 const Application = require('spectron').Application;
 const path = require('path');
 const chai = require('chai');
+var assert = require('assert')
 const chaiAsPromised = require('chai-as-promised');
+const fs = require("fs");
+
 
 var electronPath = path.join(__dirname, '..', 'node_modules', '.bin', 'electron');
 const electron = require('spectron').remote;
@@ -78,34 +81,35 @@ describe('Autographa Test', () => {
   		.getText('#book-chapter-btn').should.eventually.equal('Genesis');
   	});
 
-    it('should click the ref drop down', () => {
+    it('should save the target text', () => {
+      const input = 'this is a test';
       return app.client.waitUntilWindowLoaded()
-      .click(".ref-drop-down")
-      .getValue('.ref-drop-down').should.eventually.equal('eng_irv')
-    });
-
-  	it('should save the target text', () => {
-	 	  const input = 'this is a test';
-	 	return app.client.waitUntilWindowLoaded()
       .keys('Tab')
-	 		.waitForVisible("#versediv1", 20000)
+      .waitForVisible("#versediv1", 20000)
       .click("#versediv1")
       .keys(input)
       .click("#versediv2")
       .keys('check    for spaces')
       .click("#versediv3")
       .keys('incompleteVerse')
-	 		.waitForExist("#save-btn", 20000)
-	 		.click('#save-btn')
-	 		.getText("#v1").should.eventually.equal(input);
-  	});
+      .waitForExist("#save-btn", 20000)
+      .click('#save-btn')
+      .getText("#v1").should.eventually.equal(input);
+    });
 
-    it('should check highlight verse', () => {
-    return app.client.waitUntilWindowLoaded()
-      .waitForExist("#v1", 20000)
-      .click("#versediv1")
-      .getAttribute("div[data-verse='r1']", 'style').should.eventually.equal('background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;')
-    });    
+    it('should click the ref drop down', () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".ref-drop-down")
+      .getValue('.ref-drop-down').should.eventually.equal('eng_irv')
+    });
+
+    it('should check the verse in translation panel', ()=>{
+     const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
+
 
     it('should change the ref drop down text', () => {
       return app.client.waitUntilWindowLoaded()
@@ -114,13 +118,20 @@ describe('Autographa Test', () => {
       .getValue('.ref-drop-down').should.eventually.equal('eng_isv');
     });
 
-    it('should check the saved target verse', ()=>{
+
+    it('After ref change should check the verse again in translation panel', ()=>{
      const input = 'this is a test';
       return app.client.waitUntilWindowLoaded()
       .waitForVisible("#v1", 20000)
       .getText("#v1").should.eventually.equal(input);
     });
 
+    it('should check highlight verse on 2x', () => {
+    return app.client.waitUntilWindowLoaded()
+      .waitForExist("#v1", 20000)
+      .click("#versediv1")
+      .getAttribute("div[data-verse='r1']", 'style').should.eventually.equal('background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;')
+    });
 
     it('should change the ref drop down text eng_irv', () => {
       return app.client.waitUntilWindowLoaded()
@@ -138,10 +149,11 @@ describe('Autographa Test', () => {
       .setValue("#lang-code", 'eng')
       .keys('Tab')
       .setValue("#lang-version", "NET-S3")
-      .setValue("#export-folder-location", path.join("/"))
+      .setValue("#export-folder-location", appPath)
       .waitForExist("#save-setting", 20000)
       .click("#save-setting")
       .keys("Escape")
+
     });
 
     it('close the app', () => {
@@ -196,6 +208,22 @@ describe('Autographa Test', () => {
   		.getText('.layout2x').should.eventually.exist;
   	});
 
+    it('should check highlight verse on 3x', () => {
+      let style = 'background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;';
+      let matched = true;
+      return app.client.waitUntilWindowLoaded()
+      .waitForExist("#v1", 20000)
+      .click("#versediv1")
+      .getAttribute("div[data-verse='r1']", 'style').then((res) => {
+        res.forEach((data) => {
+          if( style !== data){
+            matched = false
+          }
+        })
+        assert.strictEqual(true, matched, "style matched");
+      })
+    });
+
     it('should change layout to 4x', () => {
   		return app.client.waitUntilWindowLoaded()
   		.waitForEnabled("#btn-4x", 20000)
@@ -203,12 +231,91 @@ describe('Autographa Test', () => {
   		.getText('.layout3x').should.eventually.exist;
   	});
 
+    it('should check highlight verse on 4x', () => {
+      let style = 'background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;';
+      let matched = true;
+      return app.client.waitUntilWindowLoaded()
+      .waitForExist("#v1", 20000)
+      .click("#versediv1")
+      .getAttribute("div[data-verse='r1']", 'style').then((res) => {
+        res.forEach((data) => {
+          if( style !== data){
+            matched = false
+          }
+        })
+        assert.strictEqual(true, matched, "style matched");
+      })
+    });
+
+
   	it('should change layout to 2x', () => {
   		return app.client.waitUntilWindowLoaded()
   		.waitForEnabled("#btn-2x", 20000)
   		.click("#btn-2x")
   		.getText('.layoutx').should.eventually.exist;
   	});
+
+    it("should export the 1 column html file", () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".dropdown-toggle")
+      .click("#export-1-column")
+      .waitForVisible(".swal-text", 2000)
+      .getText(".swal-text").then((res) => {
+        if(fs.existsSync(res.replace("File exported at location: ", ""))) {
+           assert.strictEqual(true, true, "file exported at the saved location");
+        }else {
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+        }
+      },(err) => {
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+      })
+      .keys('Escape')
+    });
+
+    it("should export the 2 column html file", () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".dropdown-toggle")
+      .click("#export-2-column")
+      .waitForVisible(".swal-text", 2000)
+      .getText(".swal-text").then((res) => {
+        if(fs.existsSync(res.replace("File exported at location: ", ""))) {
+           assert.strictEqual(true, true, "file exported at the saved location");
+        }else {
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+        }
+      },(err) => {
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+      })
+      .keys('Escape')
+    })
+
+    it("should export the usfm file", () => {
+      return app.client.waitUntilWindowLoaded()
+      .click(".dropdown-toggle")
+      .click("#export-usfm-file")
+      .waitForVisible("#stageText", 2000)
+      .keys("Tab")
+      .keys("Tab")
+      .keys("Tab")
+      .keys("#stageText", "stage1-export-demo")
+      .keys("Tab")
+      .waitForExist("#btn-export-usfm", 2000)
+      .keys("Tab")
+      .click("#btn-export-usfm > div > div")
+      .waitForVisible(".swal-text", 2000)
+      .getText(".swal-text").then((res) => {
+        if(fs.existsSync(res.replace("Exported file at:", ""))) {
+           assert.strictEqual(true, true, "file exported at the saved location");
+        }else {
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+        }
+      },(err) => {
+        console.log(err)
+          assert.strictEqual(true, false, "file doesn't exported at saved location");
+      })
+      .keys('Escape')
+    })
+
 
     it('should check empty chapter report', () => {
       return app.client.waitUntilWindowLoaded()
@@ -225,16 +332,4 @@ describe('Autographa Test', () => {
       return app.client.waitUntilWindowLoaded()
       .getText(".multiple-space-report").should.eventually.equal('1:2');
     });
-
-    // it('should clear the save  target text', () => {
-    //   const input = '';
-    // return app.client.waitUntilWindowLoaded()
-    //   .click("#v1")
-    //   .setValue("#v1", '')
-    //   .setValue("#v2", '')
-    //   .setValue("#v3", '')
-    //   .waitForExist("#save-btn", 20000)
-    //   .click('#save-btn')
-    //   .getText("#v1").should.eventually.equal(input);
-    // });
 }); 
