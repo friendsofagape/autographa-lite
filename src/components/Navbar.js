@@ -803,11 +803,11 @@ class Navbar extends React.Component {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;"><FormattedMessage id="export-usfm"/></a>
+                                        <a onClick={() => this.openpopupDownload()} href="javascript:;" id="export-usfm-file"><FormattedMessage id="export-usfm"/></a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;"><FormattedMessage id="export-html-1-column"/></a>
-                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;"><FormattedMessage id="export-html-2-column"/></a>
+                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;" id="export-1-column"><FormattedMessage id="export-html-1-column"/></a>
+                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;" id="export-2-column"><FormattedMessage id="export-html-2-column"/></a>
                                         
                                     </li>
                                 </ul>
