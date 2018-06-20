@@ -205,7 +205,7 @@ class Navbar extends React.Component {
         const currentTrans = AutographaStore.currentTrans;
         let id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1];
         db.get('targetBible').then((doc) => {
-            db.get(AutographaStore.bookId).then((book) => {
+            db.get(AutographaStore.bookId.toString()).then((book) => {
                 exportHtml.exportHtml(id, book, db, doc.langScript, column);
             })
         }).catch(function(err) {
@@ -312,14 +312,13 @@ class Navbar extends React.Component {
                 var chapter;
                 AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1] 
                 db.get(bkId).then(function(doc) {
-                    console.log("else called")
                     refDb.get('refChunks').then(function(chunkDoc) {
-                    AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
-                    AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
-                    chapter = AutographaStore.chapterId;
-                    that.getRefContents('eng_irv'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
-                });
-            })
+                        AutographaStore.verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+                        AutographaStore.chunks = chunkDoc.chunks[parseInt(AutographaStore.bookId, 10) - 1];
+                        chapter = AutographaStore.chapterId;
+                        that.getRefContents('eng_irv'+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
+                    });
+                })
             }    
         })
         AutographaStore.showModalBooks = false;
@@ -785,6 +784,7 @@ class Navbar extends React.Component {
                                           style={{marginTop:"17px"}}
                                           onToggle = {this.setDiff}
                                           toggled = {toggle}
+                                          id="diff"
                                         />
                                     }
                                 </FormattedMessage>                               
@@ -803,11 +803,11 @@ class Navbar extends React.Component {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;"><FormattedMessage id="export-usfm"/></a>
+                                        <a onClick={() => this.openpopupDownload()} href="javascript:;" id="export-usfm-file"><FormattedMessage id="export-usfm"/></a>
                                     </li>
                                     <li>
-                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;"><FormattedMessage id="export-html-1-column"/></a>
-                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;"><FormattedMessage id="export-html-2-column"/></a>
+                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;" id="export-1-column"><FormattedMessage id="export-html-1-column"/></a>
+                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;" id="export-2-column"><FormattedMessage id="export-html-2-column"/></a>
                                         
                                     </li>
                                 </ul>

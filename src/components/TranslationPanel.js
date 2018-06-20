@@ -22,7 +22,7 @@ class TranslationPanel extends React.Component {
     this.timeout =  0;
   }
 
-  highlightRef(obj) {
+  highlightRef(vId, refId, obj) {
     {/*var content = ReactDOM.findDOMNode(this);
     let verses = content.getElementsByClassName("verse-input")[0].querySelectorAll("span[id^=v]");
     var refContent = document.getElementsByClassName('ref-contents');
@@ -44,7 +44,17 @@ class TranslationPanel extends React.Component {
         $('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
         $('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
       }
-    }*/}           
+    }*/}
+      let refContent = document.getElementsByClassName('ref-contents');
+      for(let l=0; l<AutographaStore.layout; l++){
+        let ref = refContent[l].querySelectorAll('div[data-verse^="r"]')
+        for (let i=0; i < ref.length; i++) {
+          if (ref[i] != 'undefined') {
+            ref[i].style="background-color:none;font-weight:none;padding-left:10px;padding-right:10px";
+          }
+        };
+        refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
+      }
   }
 
   handleKeyUp =(e)=> {
@@ -99,10 +109,12 @@ class TranslationPanel extends React.Component {
     }
   
   render (){
-    var verseGroup = [];
-    for (var i = 0; i < AutographaStore.chunkGroup.length; i++) {
-      var vid="v"+(i+1);  
-      verseGroup.push(<div key={i} onClick={this.highlightRef.bind(this, vid)}>
+    let verseGroup = [];
+    const toggle = AutographaStore.toggle;
+
+    for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
+      let vid="v"+(i+1);
+      verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)}>
           <span className='verse-num' key={i}>{(i+1)}</span>
           <span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
           {AutographaStore.translationContent[i]}
@@ -115,12 +127,12 @@ class TranslationPanel extends React.Component {
       <div className="col-editor container-fluid">
         <div className="row">
           <div className="col-12 center-align">
-              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold"}} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
+              <p className="translation"><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
           </div>
         </div>
         <div className="row">
-          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : "" }
-          <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()}`} dir={AutographaStore.scriptDirection}>{verseGroup}</div>
+          {tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) <span id="tIns">{tIns}</span></span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) <span id="tDel">{tDel}</span></span></div> : "" }
+          <div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()} ${tIns || tDel ? 'disable-input' : ''}`} dir={AutographaStore.scriptDirection} style={{pointerEvents: tIns || tDel ? 'none': ''}}>{verseGroup}</div>
         </div>
         <Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
       </div>

@@ -25,7 +25,7 @@ class Statistic extends React.Component {
         let close = () => AutographaStore.showModalStat = false
         const incompleteVerse = mobx.toJS(AutographaStore.incompleteVerse);
         const multipleSpaces = mobx.toJS(AutographaStore.multipleSpaces);
-        const emptyChapters = mobx.toJS(AutographaStore.emptyChapter)
+        const emptyChapters = mobx.toJS(AutographaStore.emptyChapter);
         const bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
         const { show } = this.props;
         
@@ -43,19 +43,22 @@ class Statistic extends React.Component {
                     <FormattedMessage id="label-empty-chapters" />
                   </div>
                   <div className="panel-body">
-                    <span>{`${numberFormat.getNumberFormat(emptyChapters)} `}</span>
+                    <span className="empty-chapter-report">
+                    { emptyChapters.length != 0 ? `${numberFormat.getNumberFormat(emptyChapters)} ` : <FormattedMessage id="label-not-found" />}
+                    </span>
                   </div>
                 </div>
 
-                <div className="panel  panel-default">
+                <div className="panel panel-default">
                   <div className="panel-heading">
                     <FormattedMessage id="label-incomplete-verses" />
                   </div>
-                  <div className="panel-body">
+                  <div className="panel-body incomplete-verse-report">
                     {
+                      Object.keys(incompleteVerse).length > 0 ?
                         Object.keys(incompleteVerse).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(incompleteVerse[key])}`}{  Object.keys(incompleteVerse).length > i+1 ? ";" : ""} </span></span>)
-                        })
+                        }) : <FormattedMessage id="label-not-found" />
                     }
                   </div>
                 </div>
@@ -63,11 +66,12 @@ class Statistic extends React.Component {
                   <div className="panel-heading">
                     <FormattedMessage id="label-multiple-spaces" />
                   </div>
-                  <div className="panel-body">
+                  <div className="panel-body multiple-space-report">
                     {
+                      Object.keys(multipleSpaces).length > 0 ?
                         Object.keys(multipleSpaces).map((key, i) => {
                             return (<span key={"c"+i}><span>{key}:</span><span>{`${numberFormat.getNumberFormat(multipleSpaces[key])} `}{  Object.keys(multipleSpaces).length > i+1 ? ";" : ""}</span></span>)
-                        })
+                        }) : <FormattedMessage id="label-not-found" />
                     }
                   </div>
                 </div>

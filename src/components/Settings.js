@@ -648,6 +648,7 @@ class SettingsModal extends React.Component {
                             value={langCodeValue || ""}
                             name="langCode"
                             className = "textbox-width-70 margin-top-24"
+                            id="lang-code"
                           />
                         </div>
                         <div id="target-lang-result" className="lang-code" style={{display: displayCSS}}  ref={node => { this.node = node; }}>
@@ -675,6 +676,7 @@ class SettingsModal extends React.Component {
                             name="langVersion"
                             className = "margin-top-24 textbox-width-70"
                             onFocus = {this.clearList}
+                            id="lang-version"
                           />
                         </div>
                         <div>
@@ -689,6 +691,7 @@ class SettingsModal extends React.Component {
                                 name="folderPath"
                                 onClick={this.openFileDialogSettingData}
                                 className = "margin-top-24 textbox-width-70"
+                                id="export-folder-location"
                               />
                             }
                           </FormattedMessage>
@@ -726,6 +729,7 @@ class SettingsModal extends React.Component {
                               label={message}
                               primary={true}
                               onClick={this.saveSetting}
+                              id="save-setting"
                             />  
                           }
                         </FormattedMessage>

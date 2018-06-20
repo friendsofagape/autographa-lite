@@ -22,7 +22,7 @@ module.exports = {
 		});
 		if(index === chapterLimit-1) {
 		    var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookCode+"_"+stage+ "_" + getTimeStamp(new Date()); 
-		    filePath = path.join(book.outputPath[0], exportName);
+		    filePath = path.join(Array.isArray(book.outputPath) ? book.outputPath[0] : book.outputPath, exportName);
 		    filePath += '.usfm';
 		    fs.writeFileSync(filePath, usfmContent.join('\n'), 'utf8');
 		}

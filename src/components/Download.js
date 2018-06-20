@@ -125,7 +125,7 @@ class DownloadModal extends React.Component {
                 <Modal.Footer>
                 <FormattedMessage id="btn-export">
                 {(message) =>
-                  <RaisedButton style={{float: "right"}} disabled={stageName || stageChange ? false : true} label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                  <RaisedButton style={{float: "right"}} disabled={stageName || stageChange ? false : true} id="btn-export-usfm" label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
                 }
                 </FormattedMessage>
                 </Modal.Footer>

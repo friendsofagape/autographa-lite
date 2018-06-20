@@ -32,6 +32,7 @@
 	"label-language" : "Idioma de la Aplicación",
 	"label-select-language": "Seleccione el idioma para configurar la aplicación en:",
 	"label-heading-confirmation" : "Confirmación",
+	"label-not-found": "Extraviado",
 	"placeholder-search-text" : "Buscar texto",
 	"placeholder-replace-text" : "Reemplazo",
 	"placeholder-path-to-destination" : "Ruta a la carpeta de destino",

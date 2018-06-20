@@ -13,6 +13,10 @@ module.exports = {
 	                    <meta name="viewport" content="width=device-width, initial-scale=1">
 	                    <meta name="description" content="">
 	                    <style >
+	                    		body {
+    								margin: 0;
+    								padding: 0;
+								}
 			                    p {
 			                        font-size: 100%;
 			                    }
@@ -56,6 +60,7 @@ module.exports = {
 			                        float: left;
 			                        display: block;
 			                        width: 100%;
+			                        margin-right: 0px;
 			                    }
 
 			                    .newspaper ul li ol {
@@ -67,7 +72,7 @@ module.exports = {
 			                    }
 
 			                    .newspaper ul li ol li {
-			                        display: block;
+			                        display: table;
 			                        float: left;
 			                        width: 100%;
 			                    }
@@ -159,7 +164,8 @@ module.exports = {
 	                inlineData+= '</div></body></html>'
 	                
 	                db.get('targetBible').then((doc) => {
-	                    let filepath = path.join(doc.targetPath[0], `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
+						let targetPath = Array.isArray(doc.targetPath) ? doc.targetPath[0] : doc.targetPath;
+	                    let filepath = path.join(targetPath, `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 	                    fs.writeFile(filepath, inlineData , function (err) {
 		                    if (err) {
 								console.log(err)
@@ -182,8 +188,11 @@ module.exports = {
                     <meta name="viewport" content="width=device-width, initial-scale=1">
                     <meta name="description" content="">
                     <style>
-
-                        p {
+                    body {
+    					margin: 0;
+    					padding: 0;
+					}
+                    p {
                         font-size: 100%;
                     }
                     .newspaper ul li ol li span {
@@ -229,7 +238,7 @@ module.exports = {
                     }
 
                     .newspaper ul li ol li {
-                        display: block;
+                        display: table;
                         float: right;
                         width: 100%;
                     }
