@@ -263,6 +263,7 @@ describe('Autographa Test', () => {
       .getText(".swal-text").then((res) => {
         if(fs.existsSync(res.replace("File exported at location: ", ""))) {
            assert.strictEqual(true, true, "file exported at the saved location");
+           fs.unlinkSync(res.replace("File exported at location: ", ""))
         }else {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
         }
@@ -280,6 +281,7 @@ describe('Autographa Test', () => {
       .getText(".swal-text").then((res) => {
         if(fs.existsSync(res.replace("File exported at location: ", ""))) {
            assert.strictEqual(true, true, "file exported at the saved location");
+           fs.unlinkSync(res.replace("File exported at location: ", ""))
         }else {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
         }
@@ -287,7 +289,7 @@ describe('Autographa Test', () => {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
       })
       .keys('Escape')
-    })
+    });
 
     it("should export the usfm file", () => {
       return app.client.waitUntilWindowLoaded()
@@ -306,6 +308,7 @@ describe('Autographa Test', () => {
       .getText(".swal-text").then((res) => {
         if(fs.existsSync(res.replace("Exported file at:", ""))) {
            assert.strictEqual(true, true, "file exported at the saved location");
+           fs.unlinkSync(res.replace("Exported file at:", ""))
         }else {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
         }
@@ -314,7 +317,7 @@ describe('Autographa Test', () => {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
       })
       .keys('Escape')
-    })
+    });
 
 
     it('should check empty chapter report', () => {
