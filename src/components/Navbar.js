@@ -134,7 +134,6 @@ class Navbar extends React.Component {
     
 
     getRefContents = (id,chapter) => {
-
         refDb.get('targetReferenceLayout').then((doc) => {
             AutographaStore.layout = doc.layout;
             AutographaStore.layoutContent = doc.layout;
@@ -150,7 +149,6 @@ class Navbar extends React.Component {
             })
         })
        //  AutographaStore.aId  = "";
-        var translationContent = [];
         var i;
         var chunkIndex = 0;
         var chunkVerseStart; 
@@ -180,13 +178,23 @@ class Navbar extends React.Component {
                 }
             }
             var chunk = chunkVerseStart + '-' + chunkVerseEnd;
-            translationContent.push(verses[i - 1].verse.toString())
             var spanVerse = chunk 
             chunkGroup.push(spanVerse);
         }
-
         AutographaStore.chunkGroup = chunkGroup;
-        AutographaStore.translationContent= translationContent;
+        this.updateTransContent();
+    }
+
+    updateTransContent = () => {
+        let translationContent = [];
+        db.get(AutographaStore.bookId.toString()).then((doc) => {
+          let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+          AutographaStore.verses = verses
+          verses.forEach( (verse, index) => {
+            translationContent.push(verse.verse);
+          });
+          AutographaStore.translationContent = translationContent
+        });
     }
 
     openpopupSettings() {
@@ -371,18 +379,17 @@ class Navbar extends React.Component {
                 verse.verse = document.getElementById(vId).textContent;
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
+            AutographaStore.translationContent = translationContent;
             db.get(doc._id).then((book) => {
                 doc._rev = book._rev;
                 db.put(doc).then((response) => {
                     let dateTime = new Date();
                     AutographaStore.transSaveTime = that.formatDate(dateTime);
-                    // AutographaStore.translationContent = translationContent;
                     clearInterval("#saved-time");
                 }, (err) => {
                     db.put(doc).then((response) => {
                         let dateTime = new Date();
                         AutographaStore.transSaveTime = that.formatDate(dateTime)
-                        // AutographaStore.translationContent = translationContent;
                     },(err) => {
                         clearInterval("#saved-time");
                     });

@@ -206,7 +206,16 @@ describe('Autographa Test', () => {
   		.waitForEnabled("#btn-3x", 20000)
   		.click("#btn-3x")
   		.getText('.layout2x').should.eventually.exist;
+
   	});
+
+    it('Should keep newly saved text viewable when layout changes to 3x', ()=>{
+     const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
+
 
     it('should check highlight verse on 3x', () => {
       let style = 'background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;';
@@ -230,6 +239,14 @@ describe('Autographa Test', () => {
   		.click("#btn-4x")
   		.getText('.layout3x').should.eventually.exist;
   	});
+
+    it('Should keep newly saved text viewable when layout changes to 4x', ()=>{
+     const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
+
 
     it('should check highlight verse on 4x', () => {
       let style = 'background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;';
