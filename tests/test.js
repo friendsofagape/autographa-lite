@@ -209,7 +209,7 @@ describe('Autographa Test', () => {
 
   	});
 
-    it('should check the saved target verse', ()=>{
+    it('Should keep newly saved text viewable when layout changes to 3x', ()=>{
      const input = 'this is a test';
       return app.client.waitUntilWindowLoaded()
       .waitForVisible("#v1", 20000)
@@ -240,7 +240,7 @@ describe('Autographa Test', () => {
   		.getText('.layout3x').should.eventually.exist;
   	});
 
-    it('should check the saved target verse', ()=>{
+    it('Should keep newly saved text viewable when layout changes to 4x', ()=>{
      const input = 'this is a test';
       return app.client.waitUntilWindowLoaded()
       .waitForVisible("#v1", 20000)
