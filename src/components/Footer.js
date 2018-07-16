@@ -5,7 +5,9 @@ import { observer } from "mobx-react";
 import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from 'react-intl';
 const Constant = require("../util/constants");
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+// const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+const electron = require('electron').remote;
+const refDb = electron.getCurrentWindow().refDb;
 
 
 
