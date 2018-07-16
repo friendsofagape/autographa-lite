@@ -2,12 +2,24 @@
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
+    <script type="text/javascript">
+         const ipcRenderer = require('electron').ipcRenderer;
+         const configFile = require('${__dirname}/../../package.json');
+         document.title = `Autographa Lite-${configFile["version"]}`;
+         ipcRenderer.on('message', function(event, text) {
+          // var container = document.getElementById('messages');
+          // container.innerHTML = text;
+          document.title = `Autographa Lite-${configFile["version"]} (Downloading update-${text})`;
+    })
+    </script>
+
     <title>Autographa Lite</title>
 
     <!-- Bootstrap core CSS-->
