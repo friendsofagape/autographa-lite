@@ -17,7 +17,9 @@ import it from 'react-intl/locale-data/it';
 import { observer } from "mobx-react";
 import AutographaStore from "../components/AutographaStore";
 const i18n = new(require('../translations/i18n'));
-const refDb = require("../util/data-provider").referenceDb();
+// const refDb = require("../util/data-provider").referenceDb();
+const electron = require('electron').remote;
+const refDb = electron.getCurrentWindow().refDb;
 
 
 addLocaleData([...en, ...es, ...fr, ...it]);
