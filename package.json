@@ -2,7 +2,7 @@
   "name": "Autographa",
   "productName": "Autographa Lite",
   "description": "A Bible translation editor for everyone.",
-  "version": "1.2.0",
+  "version": "1.2.1-Alpha.0",
   "main": "src/app.js",
   "build": {
     "extends": null,
@@ -15,8 +15,7 @@
     ],
     "directories": {
       "buildResources": "resources"
-    },
-    "publish": null
+    }
   },
   "keywords": [
     "Desktop",
@@ -35,7 +34,7 @@
     "e2e": "mocha --timeout 50000 tests/test.js --require source-map-support/register",
     "test": "npm run e2e",
     "start": "node build/start.js",
-    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
+    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder -p always"
   },
   "dependencies": {
     "babel-cli": "^6.11.4",
@@ -47,7 +46,10 @@
     "babel-register": "^6.18.0",
     "chai-as-promised": "^7.1.1",
     "diff-match-patch": "^1.0.0",
+    "electron-auto-updater": "^1.0.0",
+    "electron-builder-http": "^19.27.5",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^2.23.3",
     "fs-jetpack": "^1.0.0",
     "jquery": "2.2.4",
     "material-ui": "^0.17.4",
