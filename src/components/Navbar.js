@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 const { Nav, NavItem, Modal, Button, Col, Row, Grid, Tabs, Tab } = require('react-bootstrap/lib');
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
+const electron = require('electron').remote;
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
 import SettingsModal from "./Settings"
@@ -10,8 +11,10 @@ import AboutUsModal from "./About"
 import SearchModal from "./Search"
 import DownloadModal from "./Download"
 import TranslationPanel  from '../components/TranslationPanel';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
+// const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+// const db = require(`${__dirname}/../util/data-provider`).targetDb();
+const db = electron.getCurrentWindow().targetDb;
+const refDb = electron.getCurrentWindow().refDb;
 const injectTapEventPlugin = require("react-tap-event-plugin");
 import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
@@ -20,7 +23,6 @@ import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
-
 
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
@@ -72,7 +74,7 @@ class Navbar extends React.Component {
             AutographaStore.chapterId = "1";
             console.log(err)
         });
-        this.resetDiffValue();        
+        this.resetDiffValue();     
     }
     getContent = (id, chapter) => {
         return refDb.get(id).then( (doc) => { 
