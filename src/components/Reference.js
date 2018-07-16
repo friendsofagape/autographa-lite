@@ -2,7 +2,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import AutographaStore from "./AutographaStore";
 import Download from "./Download";
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+// const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+const electron = require('electron').remote;
+
+const refDb = electron.getCurrentWindow().refDb;
 const session = require('electron').remote.session;
 const Constant = require("../util/constants");
 
