@@ -56,3 +56,5 @@ db/referenceDB
 db/targetDB
 db/
 .DS_Store
+
+electron-builder.yml
