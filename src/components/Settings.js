@@ -9,9 +9,11 @@ import ReferencePanel from './ReferencePanel';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
+
+const electron = require('electron').remote;
+const refDb = electron.getCurrentWindow().refDb;
+const lookupsDb = electron.getCurrentWindow().lookupsDb;
+const db = electron.getCurrentWindow().targetDb;
 const Constant = require("../util/constants")
 const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
 const session = require('electron').remote.session;
@@ -20,6 +22,8 @@ const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
 import { FormattedMessage } from 'react-intl';
 import Loader from './Loader';
+const ipcRenderer = require('electron').ipcRenderer;
+
 
 @observer
 class SettingsModal extends React.Component {
@@ -45,7 +49,10 @@ class SettingsModal extends React.Component {
       msgId: "",
       filepath: "",
       modalBody: "",
-      title: ""
+      title: "",
+      checkUpdate: false,
+      dwnldUpdateBtnText: "btn-check-for-update"
+
 
     };
     db.get('targetBible').then((doc) => {
@@ -53,7 +60,16 @@ class SettingsModal extends React.Component {
     }, (err) => {
       AutographaStore.scriptDirection = "LTR";
     })
-    AutographaStore.refList = []
+    AutographaStore.refList = [];
+    refDb.get('autoupdate').then((doc) => {
+      if(doc.enable){
+          AutographaStore.autoupdate = true
+      }else{
+          AutographaStore.autoupdate = false
+      }
+    }).catch(function(err){
+        console.log(err)
+    });
     this.loadSetting();
   }
 
@@ -578,13 +594,40 @@ class SettingsModal extends React.Component {
   clearList = () => {
     this.hideCodeList();
   }
+
+  onChangeAutoUpdate = (value) => {
+     refDb.get('autoupdate').then((doc) => {
+       if(value){
+            doc.enable = true
+       }else{
+            doc.enable = false
+       }
+       refDb.put(doc)
+      AutographaStore.autoupdate = value;
+    }).catch(function(err) {
+    });
+  }
   
- 
+  checkForUpdate = ()=> {
+    this.setState({checkUpdate: true, dwnldUpdateBtnText: "btn-checking-for-update"});
+    ipcRenderer.send('checkForUpdates');
+  }
+  componentWillUnmount() {
+     window.removeListener("update-cancel");
+     window.removeListener("downloading-update");  
+  }
+  
   render(){
     var errorStyle = {
       margin: 'auto',
       textAlign: 'center',
     }
+    ipcRenderer.on('update-cancel', (event, text) => {
+      this.setState({checkUpdate: false, dwnldUpdateBtnText: "btn-check-for-update"})     
+    })
+    ipcRenderer.on('downloading-update', (event, text) => {
+      this.setState({checkUpdate: true, dwnldUpdateBtnText: "btn-dwnloading-update"})     
+    })
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
@@ -593,6 +636,7 @@ class SettingsModal extends React.Component {
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
    
     const listCode = this.state._listArray;
+    const autoupdate = AutographaStore.autoupdate;
     let displayCSS = 'none';
     if(listCode != null && Object.keys(listCode).length > 0 && this.state.visibleList) {
       displayCSS = "inline-block";
@@ -632,7 +676,10 @@ class SettingsModal extends React.Component {
                       <FormattedMessage id="label-manage-ref-texts" />
                     </NavItem>
                     <NavItem eventKey="fifth">
-                    <FormattedMessage id="label-language" />
+                      <FormattedMessage id="label-language" />
+                    </NavItem>
+                    <NavItem eventKey="sixth">
+                      <FormattedMessage id="label-auto-update" />
                     </NavItem>
                   </Nav>
                 </Col>
@@ -988,6 +1035,35 @@ class SettingsModal extends React.Component {
                             </div>
                             <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                         </div>
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="sixth" >
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                          <label
+                            style={{"marginTop": "-24px", "fontSize": "14px"}}
+                            className="mdl-textfield__label"
+                            id="label-auto-update"
+                          >
+                          <FormattedMessage id="label-auto-update" />
+                          </label>
+                          <RadioButtonGroup
+                            valueSelected={AutographaStore.autoupdate}
+                            name="autoupdate"
+                            style={{display: "flex", marginBottom:"6%"}}
+                            onChange={(event, value) => this.onChangeAutoUpdate(value)}
+                          >
+                            <RadioButton
+                            value={true}
+                            label={<FormattedMessage id="label-radio-enable" />}
+                            style={{width: "70%"}}
+                            />
+                            <RadioButton
+                            value={false}
+                            label={<FormattedMessage id="label-radio-disable" />}
+                            style={{width: "70%"}} 
+                            />
+                          </RadioButtonGroup>
+                        </div>
+                        <a href="#" className= {`btn btn-success btn-save ${this.state.checkUpdate ? 'disabled' : ''}`} id="btnCheckForUpdate" onClick = {this.checkForUpdate} style={{"marginLeft": "0px", "display": `${autoupdate ? 'inline' : 'none' }`}}><FormattedMessage id={ this.state.dwnldUpdateBtnText } /></a>
                       </Tab.Pane>
                   </Tab.Content>
                 </Col>
