@@ -5,10 +5,13 @@ import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
 const { Modal, Button, Col, Tabs, Tab } = require('react-bootstrap/lib');
 const Constant = require("../util/constants");
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+// const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const session = require('electron').remote.session;
 const i18n = new(require('../translations/i18n'));
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
+// const db = require(`${__dirname}/../util/data-provider`).targetDb();
+const electron = require('electron').remote;
+const db = electron.getCurrentWindow().targetDb;
+const refDb = electron.getCurrentWindow().refDb;
 import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
 
