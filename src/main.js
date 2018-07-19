@@ -1,13 +1,15 @@
 const electron = require('electron');
 const session = require('electron').session;
-
 const {autoUpdater} = require("electron-auto-updater");
 const { CancellationToken } = require("electron-builder-http");
 const cancellationToken = new CancellationToken()
 autoUpdater.autoDownload = false;
 
+
 // Module to control application life.
 const {app} = electron
+
+console.log(app.getVersion())
 // Module to create native browser window.
 const {BrowserWindow, ipcMain, dialog} = electron;
 import path from "path";
@@ -21,14 +23,14 @@ const dir = path.join(app.getPath('temp'), '..', 'Autographa');
 // be closed automatically when the JavaScript object is garbage collected.
 console.log(path.resolve(__dirname))
 let win;
-
+let updateDownloaded = false;
+const autoUpdaterFile = require(`${__dirname}/auto-updater.js`);
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
     icon:'/assets/images/logo.png',
     width: 800,
     height: 600,
-     height: 600,
     'min-width': 600,
     'min-height': 300,
     'accept-first-mouse': true,
@@ -48,19 +50,16 @@ function createWindow() {
     // pathname: path.join(__dirname, '/views/index.html'),
     // slashes:  true}))
     win.loadURL(
-         url.format({
-      pathname: path.join(__dirname, "/views/index.html"),
-      protocol: "file:",
-      slashes: true
-    })
+        url.format({
+            pathname: path.join(__dirname, "/views/index.html"),
+            protocol: "file:",
+            slashes: true
+        })
     )
-
     //loading window gracefully
     win.once('ready-to-show', () => {
 	// Open the DevTools.
 	win.webContents.openDevTools();	
-    // autoUpdater.checkForUpdates();
-
 	win.maximize();
         win.show();
     });
@@ -70,19 +69,33 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        win.refDb.close();
-        win.targetDb.close();
-        win.lookupsDb.close();
-        if(fs.existsSync('db')){
-            copyFolderRecursiveSync('db', app.getPath('userData'));
-            var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
-            copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
-        }
-	   win = null;
+        // win.refDb.close();
+        // win.targetDb.close();
+        // win.lookupsDb.close();
+        // if(fs.existsSync('db')){
+        //     copyFolderRecursiveSync('db', app.getPath('userData'));
+        //     var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
+        //     copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
+        // 
+            if(win.updateDownloaded){
+                win.refDb.close();
+                win.targetDb.close();
+                win.lookupsDb.close();
+                if(fs.existsSync('db')){
+                    copyFolderRecursiveSync('db', app.getPath('userData'));
+                    let ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
+                    copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
+                }
+                win = null;
+            }else{
+                win = null;
+            }
     	if (process.platform !== 'darwin') {
     	    app.quit();
     	}
     });
+
+    
 }
 
 let getLatestRelease = () => {
@@ -235,8 +248,17 @@ function preProcess() {
             win.refDb = require(`${__dirname}/util/data-provider`).referenceDb();
             win.targetDb =  require(`${__dirname}/util/data-provider`).targetDb();
             win.lookupsDb = require(`${__dirname}/util/data-provider`).lookupsDb();
-            // autoUpdaterOptions = {refDb: win.refDb, updateDownloaded: false}
-            // autoUpdater.initialize(autoUpdaterOptions);
+            win.refDb.get("autoupdate").then((doc) =>{
+                if(doc.updateDownloaded && app.getVersion() == doc.currentAppVersion){
+                    autoUpdater.quitAndInstall();
+                }else{
+                    doc.updateDownloaded = false;
+                    doc.currentAppVersion = app.getVersion();
+                    win.updateDownloaded = false;
+                    win.refDb.put(doc);
+                }
+                win.autoupdateEnable = doc.enable
+            }, (err) => {win.updateAvailable = false})
      })
      .catch((err) => {
          console.log('Error while App initialization.' + err);
@@ -251,6 +273,21 @@ function preProcess() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', preProcess);
 
+app.on('before-quit', () => {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        if(win.updateDownloaded){
+            win.refDb.close();
+            win.targetDb.close();
+            win.lookupsDb.close();
+            if(fs.existsSync('db')){
+                copyFolderRecursiveSync('db', app.getPath('userData'));
+                var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
+                copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
+            }
+        }
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -271,10 +308,9 @@ app.on('activate', () => {
 });
 
 
-
 autoUpdater.on('update-available', (info) => {
-    const buttons = ['Update', 'Later'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A new update is ready to install. \n" + "Version  is downloaded and will be automatically installed on restart", title: "Update" }, function (buttonIndex) {
+    const buttons = ['Download', 'Cancel'];
+    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A new version of the app is available. Do you want to download the update now? You may continue working while the update is downloaded in the background.", title: "Autographa Lite Update Available" }, function (buttonIndex) {
       if (buttonIndex == 0) {
         win.webContents.send('downloading-update');
         autoUpdater.downloadUpdate(cancellationToken);
@@ -285,22 +321,41 @@ autoUpdater.on('update-available', (info) => {
     });
    
 });
+
+autoUpdater.on('update-not-available', (info) => {
+    const buttons = ['OK'];
+    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "Autographa Lite is up to date", title: "Auto-update Unavailable" }, function (buttonIndex) {
+        win.webContents.send('update-cancel');
+    });
+});
 // when the update is ready, notify the BrowserWindow
 //path for local db path.join(`${__dirname}`, '..', 'db')
 autoUpdater.on('update-downloaded', (info) => {
     win.setProgressBar(0);
-    const buttons = ['Restart'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A new update  is downloaded and will be automatically installed on restart", title: "Update" }, function (buttonIndex) {
+    const buttons = ['Install and Restart', 'Cancel'];
+    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A newer version of Autographa Lite has finished downloading. Do you want to install the update now? Otherwise, the update would be installed when you restart the application.", title: "Install Updates" }, function (buttonIndex) {
       if (buttonIndex == 0) {
+        win.updateDownloaded = true;
+        win.refDb.get("autoupdate").then((doc) =>{
+            doc.enable = false;
+            win.refDb.put(doc);
+        }, (err) => {win.updateDownloaded = false;})
         win.refDb.close();
         win.targetDb.close();
         win.lookupsDb.close();
         copyFolderRecursiveSync(path.join(app.getPath('userData'), 'db'),  path.resolve(path.join(`${__dirname}`, '../../../' )));
         autoUpdater.quitAndInstall();
-        return false;
+      }else{
+        win.refDb.get("autoupdate").then((doc) =>{
+            win.updateDownloaded = true;
+            doc.updateDownloaded = true;
+            doc.currentAppVersion = app.getVersion();
+            win.autoupdateEnable = false;
+            doc.enable = false;
+            win.refDb.put(doc);
+        }, (err) => {win.updateDownloaded = false;})
       }
     });
-    win.webContents.send('updateReady')
 });
 
 ipcMain.on("update-application", (event, arg) => {
