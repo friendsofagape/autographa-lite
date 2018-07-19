@@ -596,16 +596,33 @@ class SettingsModal extends React.Component {
   }
 
   onChangeAutoUpdate = (value) => {
-     refDb.get('autoupdate').then((doc) => {
-       if(value){
-            doc.enable = true
-       }else{
-            doc.enable = false
-       }
-       refDb.put(doc)
-      AutographaStore.autoupdate = value;
-    }).catch(function(err) {
-    });
+    if(value){
+      swal({
+        title: "Confirm Internet Access",
+        text: "Enabling auto-update would allow Autographa Lite to connect to the internet to check for updates during the start of the application. Are you sure you want to proceed?",
+        icon: "info",
+        buttons: ["Ok", "Cancel"],
+        dangerMode: false,
+        closeOnClickOutside: false,
+        closeOnEsc: false
+      })
+      .then((apply) => {
+        if (!apply) {
+          refDb.get('autoupdate').then((doc) => {
+              doc.enable = true
+              AutographaStore.autoupdate = true;
+              refDb.put(doc)
+            }).catch(function(err) {
+            });
+        } else {
+          AutographaStore.autoupdate = false;
+          this.setState({checkUpdate: false})   
+        }
+      });
+    }else{
+      AutographaStore.autoupdate = false;
+    }
+    
   }
   
   checkForUpdate = ()=> {
@@ -1037,14 +1054,12 @@ class SettingsModal extends React.Component {
                         </div>
                       </Tab.Pane>
                       <Tab.Pane eventKey="sixth" >
+                          <span>
+                            <p className="update-tab" id="label-auto-update-info">
+                              <FormattedMessage id="label-auto-update-info" />
+                            </p>
+                          </span>
                         <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                          <label
-                            style={{"marginTop": "-24px", "fontSize": "14px"}}
-                            className="mdl-textfield__label"
-                            id="label-auto-update"
-                          >
-                          <FormattedMessage id="label-auto-update" />
-                          </label>
                           <RadioButtonGroup
                             valueSelected={AutographaStore.autoupdate}
                             name="autoupdate"
@@ -1063,7 +1078,7 @@ class SettingsModal extends React.Component {
                             />
                           </RadioButtonGroup>
                         </div>
-                        <a href="#" className= {`btn btn-success btn-save ${this.state.checkUpdate ? 'disabled' : ''}`} id="btnCheckForUpdate" onClick = {this.checkForUpdate} style={{"marginLeft": "0px", "display": `${autoupdate ? 'inline' : 'none' }`}}><FormattedMessage id={ this.state.dwnldUpdateBtnText } /></a>
+                        <a href="#" className= {`${this.state.checkUpdate ? 'not-active' : ''}`} id="btnCheckForUpdate" onClick = {this.checkForUpdate} style={{"marginLeft": "0px", "display": `${autoupdate ? 'inline' : 'none' }`}}><FormattedMessage id={ this.state.dwnldUpdateBtnText } /></a>
                       </Tab.Pane>
                   </Tab.Content>
                 </Col>
