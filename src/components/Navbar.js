@@ -23,7 +23,10 @@ import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
-
+const {dialog}  = electron;
+const { CancellationToken } = require("electron-builder-http");
+const cancellationToken = new CancellationToken();
+const ipcRenderer = require('electron').ipcRenderer;
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 
@@ -74,7 +77,10 @@ class Navbar extends React.Component {
             AutographaStore.chapterId = "1";
             console.log(err)
         });
-        this.resetDiffValue();     
+        this.resetDiffValue();
+        if (electron.getCurrentWindow().autoupdateEnable){
+            ipcRenderer.send('checkForUpdates');
+        }
     }
     getContent = (id, chapter) => {
         return refDb.get(id).then( (doc) => { 
