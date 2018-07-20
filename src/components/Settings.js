@@ -11,9 +11,10 @@ const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('reac
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
 const electron = require('electron').remote;
-const refDb = electron.getCurrentWindow().refDb;
-const lookupsDb = electron.getCurrentWindow().lookupsDb;
-const db = electron.getCurrentWindow().targetDb;
+const currentWindow = electron.getCurrentWindow();
+const refDb = currentWindow.refDb;
+const lookupsDb = currentWindow.lookupsDb;
+const db = currentWindow.targetDb;
 const Constant = require("../util/constants")
 const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
 const session = require('electron').remote.session;
@@ -51,7 +52,8 @@ class SettingsModal extends React.Component {
       modalBody: "",
       title: "",
       checkUpdate: false,
-      dwnldUpdateBtnText: "btn-check-for-update"
+      dwnldUpdateBtnText: "btn-check-for-update",
+      updateDownloading: false
 
 
     };
@@ -643,12 +645,15 @@ class SettingsModal extends React.Component {
       this.setState({checkUpdate: false, dwnldUpdateBtnText: "btn-check-for-update"})     
     })
     ipcRenderer.on('downloading-update', (event, text) => {
-      this.setState({checkUpdate: true, dwnldUpdateBtnText: "btn-dwnloading-update"})     
+      this.setState({checkUpdate: true, dwnldUpdateBtnText: "btn-dwnloading-update", updateDownloading: true})     
+    })
+    ipcRenderer.on('update-downloaded', (event, text) => {
+      this.setState({checkUpdate: true, dwnldUpdateBtnText: "btn-update-downloaded"})     
     })
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
-    const {showMsg, modalBody, title} = this.state;
+    const {showMsg, modalBody, title, updateDownloading} = this.state;
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
    
@@ -1078,7 +1083,7 @@ class SettingsModal extends React.Component {
                             />
                           </RadioButtonGroup>
                         </div>
-                        <a href="#" className= {`${this.state.checkUpdate ? 'not-active' : ''}`} id="btnCheckForUpdate" onClick = {this.checkForUpdate} style={{"marginLeft": "0px", "display": `${autoupdate ? 'inline' : 'none' }`}}><FormattedMessage id={ this.state.dwnldUpdateBtnText } /></a>
+                        <a href="#" className= {`${this.state.checkUpdate ? 'not-active' : ''}`} id="btnCheckForUpdate" onClick = {this.checkForUpdate} style={{"marginLeft": "0px", "display": `${autoupdate ? 'inline' : 'none' }`}}>{!currentWindow.updateDownloaded || !updateDownloading ? <FormattedMessage id={ this.state.dwnldUpdateBtnText } /> : ""}</a>
                       </Tab.Pane>
                   </Tab.Content>
                 </Col>
