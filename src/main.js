@@ -4,27 +4,20 @@ const {autoUpdater} = require("electron-auto-updater");
 const { CancellationToken } = require("electron-builder-http");
 const cancellationToken = new CancellationToken()
 autoUpdater.autoDownload = false;
-
-
 // Module to control application life.
 const {app} = electron
-
-console.log(app.getVersion())
 // Module to create native browser window.
 const {BrowserWindow, ipcMain, dialog} = electron;
 import path from "path";
 import url from "url";
 import env from "env";
-
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const dir = path.join(app.getPath('temp'), '..', 'Autographa');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-console.log(path.resolve(__dirname))
 let win;
 let updateDownloaded = false;
-const autoUpdaterFile = require(`${__dirname}/auto-updater.js`);
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
@@ -69,27 +62,15 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        // win.refDb.close();
-        // win.targetDb.close();
-        // win.lookupsDb.close();
-        // if(fs.existsSync('db')){
-        //     copyFolderRecursiveSync('db', app.getPath('userData'));
-        //     var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
-        //     copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
-        // 
-            if(win.updateDownloaded){
-                win.refDb.close();
-                win.targetDb.close();
-                win.lookupsDb.close();
-                if(fs.existsSync('db')){
-                    copyFolderRecursiveSync('db', app.getPath('userData'));
-                    let ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
-                    copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
-                }
-                win = null;
-            }else{
-                win = null;
-            }
+        win.refDb.close();
+        win.targetDb.close();
+        win.lookupsDb.close();
+        if(fs.existsSync('db')){
+            copyFolderRecursiveSync('db', app.getPath('userData'));
+            //let ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
+            //copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
+        }
+        win = null;
     	if (process.platform !== 'darwin') {
     	    app.quit();
     	}
@@ -277,16 +258,14 @@ app.on('before-quit', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        if(win.updateDownloaded){
-            win.refDb.close();
-            win.targetDb.close();
-            win.lookupsDb.close();
-            if(fs.existsSync('db')){
-                copyFolderRecursiveSync('db', app.getPath('userData'));
-                var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
-                copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
-            }
-        }
+    win.refDb.close();
+    win.targetDb.close();
+    win.lookupsDb.close();
+    if(fs.existsSync('db')){
+        copyFolderRecursiveSync('db', app.getPath('userData'));
+        // var ds = (new Date()).toISOString().replace(/[^0-9]/g, "");
+        // copyFolderRecursiveSync('db', path.join(app.getPath('userData'), "DB_backups", "db_backup_"+ds));
+    }
 });
 
 // Quit when all windows are closed.
@@ -312,8 +291,8 @@ autoUpdater.on('update-available', (info) => {
     const buttons = ['Download', 'Cancel'];
     dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A new version of the app is available. Do you want to download the update now? You may continue working while the update is downloaded in the background.", title: "Autographa Lite Update Available" }, function (buttonIndex) {
       if (buttonIndex == 0) {
-        win.webContents.send('downloading-update');
         autoUpdater.downloadUpdate(cancellationToken);
+        win.webContents.send('downloading-update');
         return false;
       }else{
         win.webContents.send('update-cancel');
@@ -321,6 +300,12 @@ autoUpdater.on('update-available', (info) => {
     });
    
 });
+autoUpdater.on('error', (infor) => {
+    const buttons = ['OK'];
+    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "Something went wrong. Please try later", title: "Auto-update error" }, function (buttonIndex) {
+        win.webContents.send('update-cancel');
+    });
+})
 
 autoUpdater.on('update-not-available', (info) => {
     const buttons = ['OK'];
@@ -354,6 +339,7 @@ autoUpdater.on('update-downloaded', (info) => {
             doc.enable = false;
             win.refDb.put(doc);
         }, (err) => {win.updateDownloaded = false;})
+        win.webContents.send('update-downloaded'); 
       }
     });
 });
@@ -423,7 +409,7 @@ function copyFolderRecursiveSync( source, target ) {
         mkdirp.sync( targetFolder );
     }
     if(!fs.existsSync(path.join(app.getPath('userData'), 'DB_backups'))){
-      mkdirp.sync(path.join(app.getPath('userData'), "DB_backups"))
+      // mkdirp.sync(path.join(app.getPath('userData'), "DB_backups"))
     }
 
     //copy
