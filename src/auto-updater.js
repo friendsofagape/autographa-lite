@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const electron = require('electron');
+const {app} = electron;
 
 module.exports = function(win, dialog, autoUpdater, ipcMain, currentTrans, cancellationToken){
 
@@ -99,4 +101,49 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 });
 
+function copyFileSync( source, target ) {
+
+    var targetFile = target;
+
+    //if target is a directory a new file with the same name will be created
+    if ( fs.existsSync( target ) ) {
+        if ( fs.lstatSync( target ).isDirectory() ) {
+            targetFile = path.join( target, path.basename( source ) );
+        }
+    }
+
+    fs.writeFileSync(targetFile, fs.readFileSync(source));
 }
+
+function copyFolderRecursiveSync( source, target ) {
+    var files = [];
+
+    if ( !fs.existsSync( target ) ) {
+        fs.mkdirSync( target );
+    }
+    //check if folder needs to be created or integrated
+    var targetFolder = path.join( target, path.basename( source ) );
+    if ( !fs.existsSync( targetFolder ) ) {
+        mkdirp.sync( targetFolder );
+    }
+    if(!fs.existsSync(path.join(app.getPath('userData'), 'DB_backups'))){
+      // mkdirp.sync(path.join(app.getPath('userData'), "DB_backups"))
+    }
+
+    //copy
+    if ( fs.existsSync( source ) && fs.lstatSync( source ).isDirectory() ) {
+        files = fs.readdirSync( source );
+        files.forEach( function ( file ) {
+            var curSource = path.join( source, file );
+            if ( fs.lstatSync( curSource ).isDirectory() ) {
+                copyFolderRecursiveSync( curSource, targetFolder );
+            } else {
+                copyFileSync( curSource, targetFolder );
+            }
+            return
+        } );
+    }
+}
+
+}
+
