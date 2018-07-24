@@ -598,12 +598,14 @@ class SettingsModal extends React.Component {
   }
 
   onChangeAutoUpdate = (value) => {
+    const currentTrans = AutographaStore.currentTrans;
+
     if(value){
       swal({
-        title: "Confirm Internet Access",
-        text: "Enabling auto-update would allow Autographa Lite to connect to the internet to check for updates during the start of the application. Are you sure you want to proceed?",
+        title: currentTrans["confirm-internet-access"],
+        text: currentTrans["internet-access-desc"],
         icon: "info",
-        buttons: ["Ok", "Cancel"],
+        buttons: [currentTrans["btn-ok"], currentTrans["btn-cancel"]],
         dangerMode: false,
         closeOnClickOutside: false,
         closeOnEsc: false
@@ -637,10 +639,6 @@ class SettingsModal extends React.Component {
   }
   
   render(){
-    var errorStyle = {
-      margin: 'auto',
-      textAlign: 'center',
-    }
     ipcRenderer.on('update-cancel', (event, text) => {
       this.setState({checkUpdate: false, dwnldUpdateBtnText: "btn-check-for-update"})     
     })
