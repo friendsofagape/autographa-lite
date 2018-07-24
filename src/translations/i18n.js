@@ -5,8 +5,8 @@ const fs = require('fs');
 let loadedLanguage;
 let app = electron.app ? electron.app : electron.remote.app;
 const rtlDetect = require('rtl-detect');
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-// const refDb = electronRemote.getCurrentWindow().refDb
+// const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+const refDb = electronRemote.getCurrentWindow().refDb;
 
 module.exports = i18n;
 
