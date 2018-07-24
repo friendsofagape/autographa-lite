@@ -18,6 +18,7 @@ const dir = path.join(app.getPath('temp'), '..', 'Autographa');
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let updateDownloaded = false;
+let currentTrans = {};
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
@@ -110,38 +111,6 @@ function deleteFile(dir, file) {
     });
 };
 
-// var dbSetup = new Promise(
-//     function (resolve, reject) {
-// 	// Setup database.
-// 	var dbUtil = require(`${__dirname}/util/DbUtil.js`);
-// 	dbUtil.setupTargetDb
-// 	    .then((response) => {
-// 		console.log(response);
-// 		return dbUtil.setupRefDb;
-// 	    })
-// 	    .then((response) => {
-// 		console.log(response);
-//         return dbUtil.setupLookupsDb;
-// 	    })
-//         .then((response)=>{
-//             console.log(response)
-//             resolve(response)
-//         })
-//         .catch((err) => {
-// 		console.log('Error while DB setup. ' + err);
-// 		reject(err);
-// 	    });
-//     });
-
-// function preProcess() {
-//     dbSetup
-// 	.then((response) => {
-// 	    createWindow();
-// 	})
-// 	.catch((err) => {
-// 	    console.log('Error while App intialization.' + err);
-// 	});
-// }
 function deleteDirectory(dir) {
     return new Promise(function (resolve, reject) {
         fs.access(dir, function (err) {
@@ -229,6 +198,8 @@ function preProcess() {
             win.refDb = require(`${__dirname}/util/data-provider`).referenceDb();
             win.targetDb =  require(`${__dirname}/util/data-provider`).targetDb();
             win.lookupsDb = require(`${__dirname}/util/data-provider`).lookupsDb();
+            require('./auto-updater.js')(win, dialog, autoUpdater, ipcMain, currentTrans, cancellationToken);
+
             win.refDb.get("autoupdate").then((doc) =>{
                 if(doc.updateDownloaded && app.getVersion() == doc.currentAppVersion){
                     autoUpdater.quitAndInstall();
@@ -286,91 +257,6 @@ app.on('activate', () => {
     // win.openDevTools();    
 });
 
-
-autoUpdater.on('update-available', (info) => {
-    const buttons = ['Download', 'Cancel'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A new version of the app is available. Do you want to download the update now? You may continue working while the update is downloaded in the background.", title: "Autographa Lite Update Available" }, function (buttonIndex) {
-      if (buttonIndex == 0) {
-        autoUpdater.downloadUpdate(cancellationToken);
-        win.webContents.send('downloading-update');
-        return false;
-      }else{
-        win.webContents.send('update-cancel');
-      }
-    });
-   
-});
-autoUpdater.on('error', (infor) => {
-    const buttons = ['OK'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "Something went wrong. Please try later", title: "Auto-update error" }, function (buttonIndex) {
-        win.webContents.send('update-cancel');
-    });
-})
-
-autoUpdater.on('update-not-available', (info) => {
-    const buttons = ['OK'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "Autographa Lite is up to date", title: "Auto-update Unavailable" }, function (buttonIndex) {
-        win.webContents.send('update-cancel');
-    });
-});
-// when the update is ready, notify the BrowserWindow
-//path for local db path.join(`${__dirname}`, '..', 'db')
-autoUpdater.on('update-downloaded', (info) => {
-    win.setProgressBar(0);
-    const buttons = ['Install and Restart', 'Cancel'];
-    dialog.showMessageBox(win, { type: 'info', buttons: buttons, message: "A newer version of Autographa Lite has finished downloading. Do you want to install the update now? Otherwise, the update would be installed when you restart the application.", title: "Install Updates" }, function (buttonIndex) {
-      if (buttonIndex == 0) {
-        win.updateDownloaded = true;
-        win.refDb.get("autoupdate").then((doc) =>{
-            doc.enable = false;
-            win.refDb.put(doc);
-        }, (err) => {win.updateDownloaded = false;})
-        win.refDb.close();
-        win.targetDb.close();
-        win.lookupsDb.close();
-        copyFolderRecursiveSync(path.join(app.getPath('userData'), 'db'),  path.resolve(path.join(`${__dirname}`, '../../../' )));
-        autoUpdater.quitAndInstall();
-      }else{
-        win.refDb.get("autoupdate").then((doc) =>{
-            win.updateDownloaded = true;
-            doc.updateDownloaded = true;
-            doc.currentAppVersion = app.getVersion();
-            win.autoupdateEnable = false;
-            doc.enable = false;
-            win.refDb.put(doc);
-        }, (err) => {win.updateDownloaded = false;})
-        win.webContents.send('update-downloaded'); 
-      }
-    });
-});
-
-ipcMain.on("update-application", (event, arg) => {
-    autoUpdater.downloadUpdate(cancellationToken);
-});
-
-// app.on('ready', function() {
-//   createDefaultWindow();
-//   autoUpdater.checkForUpdates();
-// });
-
-ipcMain.on("quitAndInstall", (event, arg) => {
-    autoUpdater.quitAndInstall();
-});
-
-ipcMain.on("checkForUpdates", (event, arg) => {
-    autoUpdater.checkForUpdates();
-});
-
-
-autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = parseInt(progressObj.percent) + '%';
-  // log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  win.webContents.send('message', log_message);
-  win.setProgressBar(progressObj.percent);
-
-});
-
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (win) {
@@ -426,5 +312,3 @@ function copyFolderRecursiveSync( source, target ) {
         } );
     }
 }
-
-
