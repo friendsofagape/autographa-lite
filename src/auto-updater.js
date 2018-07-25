@@ -93,11 +93,14 @@ autoUpdater.on('update-downloaded', (info) => {
     });
 });
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = parseInt(progressObj.percent) + '%';
-  // log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  win.webContents.send('message', log_message);
-  win.setProgressBar(progressObj.percent);
+    // let log_message = "Download speed: " + progressObj.bytesPerSecond;
+    // log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+    loadedLanguage.then((res) => {
+        let  log_message = parseInt(progressObj.percent) + '%';
+        log_message = `${res[0]["app-name-Autographa-Lite"]}-${app.getVersion()} (${res[0]["btn-dwnloading-update"]}-${log_message})`
+        win.webContents.send('message', log_message);
+        win.setProgressBar(progressObj.percent);
+    });
 
 });
 
