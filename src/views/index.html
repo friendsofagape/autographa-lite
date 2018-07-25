@@ -16,7 +16,7 @@
          ipcRenderer.on('message', function(event, text) {
           // var container = document.getElementById('messages');
           // container.innerHTML = text;
-          document.title = `Autographa Lite-${configFile["version"]} (Downloading update-${text})`;
+          document.title = text//`Autographa Lite-${configFile["version"]} (Downloading update-${text})`;
     })
     </script>
 
