@@ -53,7 +53,7 @@ function createWindow() {
     //loading window gracefully
     win.once('ready-to-show', () => {
 	// Open the DevTools.
-	win.webContents.openDevTools();	
+	// win.webContents.openDevTools();	
 	win.maximize();
         win.show();
     });
