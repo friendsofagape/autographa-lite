@@ -6,12 +6,18 @@ import swal from 'sweetalert';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import ReferencePanel from './ReferencePanel';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
+import axios from 'axios';
+import xml2js from 'xml2js';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
+
 const Constant = require("../util/constants")
 const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
 const session = require('electron').remote.session;
@@ -23,6 +29,7 @@ import Loader from './Loader';
 
 @observer
 class SettingsModal extends React.Component {
+
   constructor(props){
     super(props);
 
@@ -45,8 +52,13 @@ class SettingsModal extends React.Component {
       msgId: "",
       filepath: "",
       modalBody: "",
-      title: ""
-
+      title: "",     
+      paraTextUserName: "",
+      paraTextPassword: "",
+      activeTab: "first",
+      projectData: {},
+      paraTextSignInTxt: "Signin",
+      btnDisabled: false
     };
     db.get('targetBible').then((doc) => {
       AutographaStore.scriptDirection = doc.langScript.toUpperCase();
@@ -578,13 +590,39 @@ class SettingsModal extends React.Component {
   clearList = () => {
     this.hideCodeList();
   }
+
+  importParaTextProject = ()=>{
+    this.setState({paraTextSignInTxt: "Signing...", btnDisabled: true})
+    let userName = this.paraTextUserName.input.value;
+    let password = this.paraTextPassword.input.value;
+    let paraTextReqBody = {username: userName, password: password, grant_type: "password", scope: "projects:read projects.members:read  data_access"}
+    let config = {headers: {'Authorization': "Bearer eyJhbGciOiJFUzI1NiJ9.eyJzY29wZXMiOlsib2F1dGg6cGFzc3dvcmQiXSwianRpIjoiWkFzcTd0NkRwZndmc0FIOEgiLCJhdWQiOlsiaHR0cHM6Ly9yZWdpc3RyeS5wYXJhdGV4dC5vcmciXSwicHJpbWFyeV9vcmdfaWQiOiJmNTQ3YTJmMzU2MWQ3ZGEyZGMyNzZmOWQiLCJzdWIiOiJhMnh2cGt2V3BCc2RRTkFkdCIsImF6cCI6ImEyeHZwa3ZXcEJzZFFOQWR0IiwiaWF0IjoxNTMwMTY0MDMyLCJpc3MiOiJwdHJlZyJ9.90Gor2h-JehL_BFP6Vt25AlSt-Gu5sR0QgINUJ17MttZSGagQu27PKI5LYbMlU2pkyOepB2X238OHY9ytW8Cpg", 'Content-Type': "application/json"}}
+    axios.post(`https://registry.paratext.org/api8/token`, paraTextReqBody, config)
+      .then(res => {
+        let config = {headers: {
+            Authorization: `Bearer ${res.data.access_token}`
+        }}
+        axios.get(`https://data-access.paratext.org/api8/projects`, config).then((res) => {
+            let parser = new xml2js.Parser();
+            parser.parseString(res.data, (err, result) => {
+                this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, projectData: result.repos.repo[0]});
+            },(err) => {
+                this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+            });
+        }, (err) => {
+            this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+        })
+    }).catch((err) => {
+        this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+    })
+
+  }
+  importParatextSrc = () => {
+    console.log("text")
+  }
   
  
   render(){
-    var errorStyle = {
-      margin: 'auto',
-      textAlign: 'center',
-    }
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
@@ -615,7 +653,7 @@ class SettingsModal extends React.Component {
           </div>
         </Modal.Header>
           <Modal.Body>
-            <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+            <Tab.Container id="left-tabs-example" defaultActiveKey={this.state.activeTab}>
               <Row className="clearfix">
                 <Col sm={4}>
                   <Nav bsStyle="pills" stacked>
@@ -633,6 +671,10 @@ class SettingsModal extends React.Component {
                     </NavItem>
                     <NavItem eventKey="fifth">
                     <FormattedMessage id="label-language" />
+                    </NavItem>
+
+                    <NavItem eventKey="seventh">
+                      Sync
                     </NavItem>
                   </Nav>
                 </Col>
@@ -989,6 +1031,60 @@ class SettingsModal extends React.Component {
                             <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                         </div>
                       </Tab.Pane>
+
+                      <Tab.Pane eventKey="seventh">
+                        <div>
+                            <label>User Name</label>
+                            <br />
+                            <TextField
+                                hintText="Username"
+                                name="paraTextUserName"
+                                className = "margin-top-24 textbox-width-70"
+                                ref = {input => this.paraTextUserName = input}
+                            />
+                        </div>
+                        <div>
+                            <label>Password</label>
+                            <br />
+                            <TextField
+                                hintText="Password"
+                                name="paraTextPassword"
+                                className = "margin-top-24 textbox-width-70"
+                                ref = {input => this.paraTextPassword = input}
+                              />
+                            <br/>
+                            <FormattedMessage id="btn-import" >
+                                {(message)=>
+                                  <RaisedButton
+                                    style={{marginTop: "27px"}}
+                                    label={this.state.paraTextSignInTxt}
+                                    primary={true}
+                                    onClick={this.importParaTextProject}
+                                    disabled = {this.state.btnDisabled}
+                                  />
+                                }
+                            </FormattedMessage>
+                        </div>
+                        <br/>
+                        {
+                            Object.keys(this.state.projectData).length > 0 ?
+
+                            <div>
+                                <table className="table table-bordered table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Project Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>{this.state.projectData.proj[0]}</td><td><a href="javascript:;" onClick={this.importParatextSrc(this.state.projectData.projid[0])}>Download Book</a></td></tr>
+                                    </tbody>
+                                </table>
+                            </div> : ""
+                        }
+                        
+                    </Tab.Pane>
                   </Tab.Content>
                 </Col>
               </Row>
