@@ -11,6 +11,8 @@ import { FormattedMessage } from 'react-intl';
 import Loader from './Loader';
 import axios from 'axios';
 import xml2js from 'xml2js';
+import ProjectList from './ProjectList';
+import ProjectListRow from './ProjectListRow';
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
@@ -56,7 +58,7 @@ class SettingsModal extends React.Component {
       paraTextUserName: "",
       paraTextPassword: "",
       activeTab: "first",
-      projectData: {},
+      projectData: [],
       paraTextSignInTxt: "Signin",
       btnDisabled: false
     };
@@ -605,7 +607,7 @@ class SettingsModal extends React.Component {
         axios.get(`https://data-access.paratext.org/api8/projects`, config).then((res) => {
             let parser = new xml2js.Parser();
             parser.parseString(res.data, (err, result) => {
-                this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, projectData: result.repos.repo[0]});
+                this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, projectData: result.repos.repo});
             },(err) => {
                 this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
             });
@@ -616,9 +618,6 @@ class SettingsModal extends React.Component {
         this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
     })
 
-  }
-  importParatextSrc = () => {
-    console.log("text")
   }
   
  
@@ -1067,21 +1066,7 @@ class SettingsModal extends React.Component {
                         </div>
                         <br/>
                         {
-                            Object.keys(this.state.projectData).length > 0 ?
-
-                            <div>
-                                <table className="table table-bordered table-hover table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Project Name</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td>{this.state.projectData.proj[0]}</td><td><a href="javascript:;" onClick={this.importParatextSrc(this.state.projectData.projid[0])}>Download Book</a></td></tr>
-                                    </tbody>
-                                </table>
-                            </div> : ""
+                          <ProjectList projects={this.state.projectData} />
                         }
                         
                     </Tab.Pane>
