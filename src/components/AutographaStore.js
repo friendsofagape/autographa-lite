@@ -62,7 +62,10 @@ export class AutographaStore {
   @observable incompleteVerse = {}
   @observable multipleSpaces = {}
   @observable setDiff = false
-
+  @observable userName = null
+  @observable password = null
+  @observable tempAccessToken = ""
+  @observable selectedParaTextBook = {}
 
 
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){

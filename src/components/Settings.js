@@ -12,7 +12,8 @@ import Loader from './Loader';
 import axios from 'axios';
 import xml2js from 'xml2js';
 import ProjectList from './ProjectList';
-import ProjectListRow from './ProjectListRow';
+import dotenv from 'dotenv';
+dotenv.config();
 const { dialog } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
@@ -34,7 +35,6 @@ class SettingsModal extends React.Component {
 
   constructor(props){
     super(props);
-
     this.state = {
       settingData: {langCodeValue: "", langCode: "", langVersion: "", folderPath: ""},
       refSetting: {bibleName: "", refLangCodeValue: "", refLangCode: "", refVersion: "", refFolderPath: ""},
@@ -67,7 +67,28 @@ class SettingsModal extends React.Component {
     }, (err) => {
       AutographaStore.scriptDirection = "LTR";
     })
+<<<<<<< HEAD
     AutographaStore.refList = []
+=======
+    AutographaStore.refList = [];
+    refDb.get('autoupdate').then((doc) => {
+      if(doc.enable){
+          AutographaStore.autoupdate = true
+      }else{
+          AutographaStore.autoupdate = false
+      }
+    }).catch(function(err){
+        console.log(err)
+    });
+
+    refDb.get('paratext_credential').then((doc) => {
+        console.log(doc)
+        AutographaStore.userName = doc.userName;
+        AutographaStore.password = doc.password;
+    }).catch((err) => {
+        console.log(err);
+    })
+>>>>>>> paratext book import changes
     this.loadSetting();
   }
 
@@ -618,7 +639,74 @@ class SettingsModal extends React.Component {
         this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
     })
 
-  }
+
+    signIn = (userName, password) => {
+
+        let paraTextReqBody = {username: userName, password: password, grant_type: "password", scope: "projects:read projects.members:read  data_access"}
+                let config = {headers: {'Authorization': `Bearer ${process.env.PARATEXT_TOKEN}`, 'Content-Type': "application/json"}}
+                axios.post(`https://registry.paratext.org/api8/token`, paraTextReqBody, config)
+                  .then(res => {
+                    AutographaStore.tempAccessToken = res.data.access_token
+                    let config = {headers: {
+                        Authorization: `Bearer ${res.data.access_token}`
+                    }}
+                    axios.get(`https://data-access.paratext.org/api8/projects`, config).then((res) => {
+                        let parser = new xml2js.Parser();
+                        parser.parseString(res.data, (err, result) => {
+                            this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, projectData: result.repos.repo});
+                        },(err) => {
+                            this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+                        });
+                    }, (err) => {
+                        this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+                    })
+                }).catch((err) => {
+                    this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+                })
+    }
+
+    importParaTextProject = ()=>{
+        console.log("click")
+        if(AutographaStore.userName == null && AutographaStore.password == null){
+            
+            let userName = this.paraTextUserName.input.value;
+            let password = this.paraTextPassword.input.value;
+            let isValid = false
+            if (userName === null || userName == "") {
+              isValid = this.setMessage('UserName is required', false);
+            } else if(password === null || password == "") {
+              isValid = this.setMessage('password is required', false);
+            }else {
+              isValid = true
+            }
+            if(!isValid) {  
+              return
+            }
+            refDb.get('paratext_credential').then((doc) => {
+                AutographaStore.userName = userName;
+                AutographaStore.password = password;
+            }).catch((err) => {
+                let doc = {
+                    _id: 'paratext_credential',
+                    userName: userName,
+                    password: password
+                }
+                refDb.put(doc).then((res) => {
+                    AutographaStore.userName = userName;
+                    AutographaStore.password = password;
+                    this.setState({paraTextSignInTxt: "Signing...", btnDisabled: true})
+                    this.signIn(userName, password)
+                    
+                }).catch((err) => {
+                    swal("Signin error", "Paratext SignIn error. Please try again", "error");
+                    return;
+                });
+            })
+        }else{
+            console.log("dkadk")
+            this.signIn(AutographaStore.userName, AutographaStore.password);
+        }
+    }
   
  
   render(){
@@ -639,6 +727,7 @@ class SettingsModal extends React.Component {
     if(this.state.showLoader){
       return(<Loader />);
     }
+
     return (  
       <Modal show={show} onHide={closeSetting} id="tab-settings">
         <Modal.Header closeButton>
@@ -672,7 +761,7 @@ class SettingsModal extends React.Component {
                     <FormattedMessage id="label-language" />
                     </NavItem>
 
-                    <NavItem eventKey="seventh">
+                    <NavItem eventKey="seventh" onClick={this.importParaTextProject}>
                       Sync
                     </NavItem>
                   </Nav>
@@ -1013,62 +1102,64 @@ class SettingsModal extends React.Component {
                         </div>
                       </Tab.Pane>
 
-                      <Tab.Pane eventKey="fifth" >
-                        <div id="app-lang-setting" className="tabcontent">
-                            <div className="form-group">
-                                <div className="mdl-selectfield mdl-js-selectfield">
-                                    <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
-                                    <SelectField className="mdl-selectfield__select" id="localeList" value = {AutographaStore.appLang} onChange = {this.changeLangauge}>
-                                        <MenuItem value={"ar"} primaryText="Arabic" /> 
-                                        <MenuItem value={"en"} primaryText="English" /> 
-                                        <MenuItem value={"hi"} primaryText="Hindi" />
-                                        <MenuItem value={"pt"} primaryText="Portuguese" />
-                                        <MenuItem value={"es"} primaryText="Spanish" />
-                                    </SelectField>
+                        <Tab.Pane eventKey="fifth" >
+                            <div id="app-lang-setting" className="tabcontent">
+                                <div className="form-group">
+                                    <div className="mdl-selectfield mdl-js-selectfield">
+                                        <label id="language-select" className="mdl-selectfield__label"><FormattedMessage id="label-select-language" /></label><br/>
+                                        <SelectField className="mdl-selectfield__select" id="localeList" value = {AutographaStore.appLang} onChange = {this.changeLangauge}>
+                                            <MenuItem value={"ar"} primaryText="Arabic" /> 
+                                            <MenuItem value={"en"} primaryText="English" /> 
+                                            <MenuItem value={"hi"} primaryText="Hindi" />
+                                            <MenuItem value={"pt"} primaryText="Portuguese" />
+                                            <MenuItem value={"es"} primaryText="Spanish" />
+                                        </SelectField>
+                                    </div>
                                 </div>
+                                <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
                             </div>
-                            <button className="btn btn-success btn-save" id="btnSaveLang" onClick = {this.saveAppLanguage}><FormattedMessage id="btn-save" /></button>
-                        </div>
-                      </Tab.Pane>
-
-                      <Tab.Pane eventKey="seventh">
-                        <div>
-                            <label>User Name</label>
-                            <br />
-                            <TextField
-                                hintText="Username"
-                                name="paraTextUserName"
-                                className = "margin-top-24 textbox-width-70"
-                                ref = {input => this.paraTextUserName = input}
-                            />
-                        </div>
-                        <div>
-                            <label>Password</label>
-                            <br />
-                            <TextField
-                                hintText="Password"
-                                name="paraTextPassword"
-                                className = "margin-top-24 textbox-width-70"
-                                ref = {input => this.paraTextPassword = input}
-                              />
-                            <br/>
-                            <FormattedMessage id="btn-import" >
-                                {(message)=>
-                                  <RaisedButton
-                                    style={{marginTop: "27px"}}
-                                    label={this.state.paraTextSignInTxt}
-                                    primary={true}
-                                    onClick={this.importParaTextProject}
-                                    disabled = {this.state.btnDisabled}
-                                  />
-                                }
-                            </FormattedMessage>
-                        </div>
-                        <br/>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="seventh">
+                            {
+                                AutographaStore.userName == null && AutographaStore.password == null  ?
+                                <div><div>
+                                    <label>User Name</label>
+                                    <br />
+                                    <TextField
+                                        hintText="UserName"
+                                        name="paraTextUserName"
+                                        className = "margin-top-24 textbox-width-70"
+                                        ref = {input => this.paraTextUserName = input}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Password</label>
+                                    <br />
+                                    <TextField
+                                        hintText="Password"
+                                        name="paraTextPassword"
+                                        className = "margin-top-24 textbox-width-70"
+                                        ref = {input => this.paraTextPassword = input}
+                                      />
+                                    
+                                </div>
+                                <br/>
+                                <FormattedMessage id="btn-import" >
+                                    {(message)=>
+                                      <RaisedButton
+                                        style={{marginTop: "27px"}}
+                                        label={this.state.paraTextSignInTxt}
+                                        primary={true}
+                                        onClick={this.importParaTextProject}
+                                        disabled = {this.state.btnDisabled}
+                                      />
+                                    }
+                                </FormattedMessage> </div> : <div></div>
+                            }
+                        <div>ParaText Projects</div>
                         {
                           <ProjectList projects={this.state.projectData} />
                         }
-                        
                     </Tab.Pane>
                   </Tab.Content>
                 </Col>
