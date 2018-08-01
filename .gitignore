@@ -56,3 +56,4 @@ db/referenceDB
 db/targetDB
 db/
 .DS_Store
+.env
