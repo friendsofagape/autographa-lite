@@ -64,7 +64,7 @@ export class AutographaStore {
   @observable setDiff = false
   @observable userName = null
   @observable password = null
-  @observable tempAccessToken = ""
+  @observable tempAccessToken = null
   @observable selectedParaTextBook = {}
 
 
