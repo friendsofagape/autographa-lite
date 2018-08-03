@@ -138,6 +138,8 @@ class ProjectListRow extends React.Component {
 	        }
 	    });
   	}
+  	uploadBook = (projectId) => {
+  	}
   	render (){
   		const {project, index} = this.props;
 	  		return (
@@ -154,6 +156,7 @@ class ProjectListRow extends React.Component {
 						    }
 				    	</FormGroup>
 				    	<Button type="button" onClick={() =>{ this.importBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>{this.state.importText}</Button>
+				    	<Button type="button" onClick={() =>{ this.uploadBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>Upload</Button>
 				    </Panel.Body>
 				</Panel>
 			);

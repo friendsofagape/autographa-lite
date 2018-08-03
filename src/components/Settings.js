@@ -60,27 +60,15 @@ class SettingsModal extends React.Component {
       activeTab: "first",
       projectData: [],
       paraTextSignInTxt: "Signin",
-      btnDisabled: false
+      btnDisabled: false,
+      loadingMsg: "This may take few minutes. Please wait..."
     };
     db.get('targetBible').then((doc) => {
       AutographaStore.scriptDirection = doc.langScript.toUpperCase();
     }, (err) => {
       AutographaStore.scriptDirection = "LTR";
     })
-<<<<<<< HEAD
     AutographaStore.refList = []
-=======
-    AutographaStore.refList = [];
-    refDb.get('autoupdate').then((doc) => {
-      if(doc.enable){
-          AutographaStore.autoupdate = true
-      }else{
-          AutographaStore.autoupdate = false
-      }
-    }).catch(function(err){
-        console.log(err)
-    });
-
     refDb.get('paratext_credential').then((doc) => {
         console.log(doc)
         AutographaStore.userName = doc.userName;
@@ -88,7 +76,6 @@ class SettingsModal extends React.Component {
     }).catch((err) => {
         console.log(err);
     })
->>>>>>> paratext book import changes
     this.loadSetting();
   }
 
@@ -641,12 +628,32 @@ class SettingsModal extends React.Component {
 
 
     signIn = (userName, password) => {
-
+        this.setState({projectData: []});
         let paraTextReqBody = {username: userName, password: password, grant_type: "password", scope: "projects:read projects.members:read  data_access"}
                 let config = {headers: {'Authorization': `Bearer ${process.env.PARATEXT_TOKEN}`, 'Content-Type': "application/json"}}
                 axios.post(`https://registry.paratext.org/api8/token`, paraTextReqBody, config)
                   .then(res => {
+                    AutographaStore.userName = userName;
+                    AutographaStore.password = password;
                     AutographaStore.tempAccessToken = res.data.access_token
+
+                     refDb.get('paratext_credential').then((doc) => {
+                        AutographaStore.userName = userName;
+                        AutographaStore.password = password;
+                    }).catch((err) => {
+                        let doc = {
+                            _id: 'paratext_credential',
+                            userName: userName,
+                            password: password
+                        }
+                        refDb.put(doc).then((res) => {
+                            this.setState({paraTextSignInTxt: "Signing...", btnDisabled: true})
+                            
+                        }).catch((err) => {
+                            swal("Signin error", "Paratext SignIn error. Please try again", "error");
+                            return;
+                        });
+                    })
                     let config = {headers: {
                         Authorization: `Bearer ${res.data.access_token}`
                     }}
@@ -654,21 +661,21 @@ class SettingsModal extends React.Component {
                         let parser = new xml2js.Parser();
                         parser.parseString(res.data, (err, result) => {
                             this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, projectData: result.repos.repo});
-                        },(err) => {
-                            this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
-                        });
-                    }, (err) => {
-                        this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+                        })
+                    }).catch((err) => {
+                        this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, loadingMsg: "ParaText signIn problem. Please check internet connection or try later"});
+                        swal("Project error", "Projects import  error. Please try again", "error");
+
                     })
                 }).catch((err) => {
-                    this.setState({paraTextSignInTxt: "Signin", btnDisabled: false});
+                    swal("Signin error", "Paratext SignIn error. Please try again", "error");
+                    this.setState({paraTextSignInTxt: "Signin", btnDisabled: false, loadingMsg: "ParaText signIn problem. Please check internet connection or try later"});
                 })
     }
 
-    importParaTextProject = ()=>{
-        console.log("click")
-        if(AutographaStore.userName == null && AutographaStore.password == null){
-            
+    importParaTextProject = (clickSrc)=>{
+        if((AutographaStore.userName == null && AutographaStore.password == null) || (clickSrc == "btn" && AutographaStore.tempAccessToken == null)){
+
             let userName = this.paraTextUserName.input.value;
             let password = this.paraTextPassword.input.value;
             let isValid = false
@@ -682,34 +689,17 @@ class SettingsModal extends React.Component {
             if(!isValid) {  
               return
             }
-            refDb.get('paratext_credential').then((doc) => {
-                AutographaStore.userName = userName;
-                AutographaStore.password = password;
-            }).catch((err) => {
-                let doc = {
-                    _id: 'paratext_credential',
-                    userName: userName,
-                    password: password
-                }
-                refDb.put(doc).then((res) => {
-                    AutographaStore.userName = userName;
-                    AutographaStore.password = password;
-                    this.setState({paraTextSignInTxt: "Signing...", btnDisabled: true})
-                    this.signIn(userName, password)
-                    
-                }).catch((err) => {
-                    swal("Signin error", "Paratext SignIn error. Please try again", "error");
-                    return;
-                });
-            })
+            this.signIn(userName, password);
         }else{
-            console.log("dkadk")
-            this.signIn(AutographaStore.userName, AutographaStore.password);
+            if(AutographaStore.userName && AutographaStore.password &&  AutographaStore.tempAccessToken != null)
+                this.signIn(AutographaStore.userName, AutographaStore.password);
         }
     }
-  
+
+  }
  
-  render(){
+    render(){
+    
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
@@ -761,7 +751,7 @@ class SettingsModal extends React.Component {
                     <FormattedMessage id="label-language" />
                     </NavItem>
 
-                    <NavItem eventKey="seventh" onClick={this.importParaTextProject}>
+                    <NavItem eventKey="seventh" onClick={() => {this.importParaTextProject("tab")}}>
                       Sync
                     </NavItem>
                   </Nav>
@@ -1121,7 +1111,7 @@ class SettingsModal extends React.Component {
                         </Tab.Pane>
                         <Tab.Pane eventKey="seventh">
                             {
-                                AutographaStore.userName == null && AutographaStore.password == null  ?
+                                AutographaStore.tempAccessToken == null ?
                                 <div><div>
                                     <label>User Name</label>
                                     <br />
@@ -1129,6 +1119,7 @@ class SettingsModal extends React.Component {
                                         hintText="UserName"
                                         name="paraTextUserName"
                                         className = "margin-top-24 textbox-width-70"
+                                        value = {AutographaStore.userName}
                                         ref = {input => this.paraTextUserName = input}
                                     />
                                 </div>
@@ -1139,6 +1130,7 @@ class SettingsModal extends React.Component {
                                         hintText="Password"
                                         name="paraTextPassword"
                                         className = "margin-top-24 textbox-width-70"
+                                        value = {AutographaStore.password}
                                         ref = {input => this.paraTextPassword = input}
                                       />
                                     
@@ -1150,15 +1142,14 @@ class SettingsModal extends React.Component {
                                         style={{marginTop: "27px"}}
                                         label={this.state.paraTextSignInTxt}
                                         primary={true}
-                                        onClick={this.importParaTextProject}
+                                        onClick={() => {this.importParaTextProject("btn")}}
                                         disabled = {this.state.btnDisabled}
                                       />
                                     }
                                 </FormattedMessage> </div> : <div></div>
                             }
-                        <div>ParaText Projects</div>
                         {
-                          <ProjectList projects={this.state.projectData} />
+                          this.state.projectData.length > 0 ? <ProjectList projects={this.state.projectData} showLoader = {this.state.showLoader} loadingMsg = {this.state.loadingMsg}/> : <div>{AutographaStore.tempAccessToken ? this.state.loadingMsg : ""}</div>
                         }
                     </Tab.Pane>
                   </Tab.Content>
