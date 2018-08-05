@@ -139,6 +139,22 @@ class ProjectListRow extends React.Component {
 	    });
   	}
   	uploadBook = (projectId) => {
+  		let config = {headers: {
+            Authorization: `Bearer ${AutographaStore.tempAccessToken}`
+        }}
+        if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
+        	swal("Book", "Please select book to import", "success");
+  			return
+  		}
+  		AutographaStore.selectedParaTextBook[projectId].map((bookId) => {
+  			axios.get(`https://data-access.paratext.org/api8/revisions/${projectId}/${bookId}`, config).then((res) => {
+  				let parser = new xml2js.Parser();
+	            parser.parseString(res.data, (err, result) => {
+	            	console.log(result.RevisionInfo.ChapterInfo[0].$.revision)
+	            	
+	            });
+  			})
+  		})
   	}
   	render (){
   		const {project, index} = this.props;
