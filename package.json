@@ -16,6 +16,17 @@
     "directories": {
       "buildResources": "resources"
     },
+    "mac": {
+      "category": "public.app-category.Utilities",
+      "target": "dmg",
+      "icon": "resources/icon.icns",
+      "type": "distribution"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ]
+    },
     "publish": null
   },
   "keywords": [

@@ -5,9 +5,11 @@ const session = require('electron').session;
 const {app} = electron
 // Module to create native browser window.
 const {BrowserWindow} = electron;
-import path from "path";
-import url from "url";
-import env from "env";
+import path from 'path';
+import url from 'url';
+import env from 'env';
+
+import {existsSync, mkdirSync} from 'fs'
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -68,7 +70,10 @@ function createWindow() {
 }
 
 var dbSetup = new Promise(
-    function (resolve, reject) {
+  function (resolve, reject) {
+    if ( !existsSync('db') ) {
+      mkdirSync( 'db' );
+    }
 	// Setup database.
 	var dbUtil = require(`${__dirname}/util/DbUtil.js`);
 	dbUtil.setupTargetDb
