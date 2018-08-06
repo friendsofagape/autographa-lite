@@ -100,7 +100,7 @@ describe('Autographa Test', () => {
     it('should click the ref drop down', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".ref-drop-down")
-      .getValue('.ref-drop-down').should.eventually.equal('eng_irv')
+      .getValue('.ref-drop-down').should.eventually.equal('eng_ult')
     });
 
     it('should check the verse in translation panel', ()=>{
@@ -115,7 +115,7 @@ describe('Autographa Test', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".ref-drop-down")
       .selectByIndex(".ref-drop-down", 1)
-      .getValue('.ref-drop-down').should.eventually.equal('eng_isv');
+      .getValue('.ref-drop-down').should.eventually.equal('eng_ust');
     });
 
 
@@ -133,11 +133,11 @@ describe('Autographa Test', () => {
       .getAttribute("div[data-verse='r1']", 'style').should.eventually.equal('background-color: rgba(11, 130, 255, 0.1); padding-left: 10px; padding-right: 10px; border-radius: 10px;')
     });
 
-    it('should change the ref drop down text eng_irv', () => {
+    it('should change the ref drop down text eng_ult', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".ref-drop-down")
       .selectByIndex(".ref-drop-down", 0)
-      .getValue('.ref-drop-down').should.eventually.equal('eng_irv');
+      .getValue('.ref-drop-down').should.eventually.equal('eng_ult');
     });
 
     it('should open the settings popup and save setting', () => {
