@@ -50,8 +50,8 @@ module.exports = {
 		    resolve('ReferenceDB exists.');
 		})
 		.catch(function (err) {
-		    const refEnUlbJson = require(`${__dirname}/../lib/eng_irv.json`),
-			  refEnUdbJson = require(`${__dirname}/../lib/eng_isv.json`),
+		    const refEnUlbJson = require(`${__dirname}/../lib/eng_ult.json`),
+			  refEnUdbJson = require(`${__dirname}/../lib/eng_ust.json`),
 			  refHiUlbJson = require(`${__dirname}/../lib/hin_irv.json`),
 			  refArbVdtJson = require(`${__dirname}/../lib/arb_vdt.json`),
 			  chunksJson = require(`${__dirname}/../lib/chunks.json`),

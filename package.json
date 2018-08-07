@@ -2,8 +2,10 @@
   "name": "Autographa",
   "productName": "Autographa Lite",
   "description": "A Bible translation editor for everyone.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "src/app.js",
+  "author": "Friends of Agape <mathew.joel@protonmail.com>",
+  "license": "MIT" ,
   "build": {
     "extends": null,
     "appId": "oa.autographa.lite",
@@ -15,6 +17,17 @@
     ],
     "directories": {
       "buildResources": "resources"
+    },
+    "mac": {
+      "category": "public.app-category.Utilities",
+      "target": "dmg",
+      "icon": "resources/icon.icns",
+      "type": "distribution"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ]
     },
     "publish": null
   },
