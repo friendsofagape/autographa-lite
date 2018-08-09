@@ -50,8 +50,20 @@ class ProjectListRow extends React.Component {
 			AutographaStore.selectedParaTextBook[projId] = this.state.selectedBook
 		}
 	}
+	resetLoader = () => {
+		this.props.showLoader(false);						
+	    this.setState({importText: "Import", isImporting: false})
+	}
+	
+	
 	
   	importBook = (projectId) => {
+		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
+			if (!res){
+				swal("Login", "Something went wrong ", "error");
+				return
+			}
+		});
   		if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
         	swal("Book", "Please select book to import", "success");
   			return
@@ -72,6 +84,7 @@ class ProjectListRow extends React.Component {
 	      .then((action) => {
 	        if (action) {
 	        } else {
+				this.props.showLoader(true)
 	        	this.setState({importText: "Importing...", isImporting: true})
 	        	AutographaStore.selectedParaTextBook[projectId].map((bookId) => {
  	        		axios.get(`https://data-access.paratext.org/api8/text/${projectId}/${bookId}`, config).then((res) => {
@@ -114,7 +127,6 @@ class ProjectListRow extends React.Component {
 	                                var versesLen = Math.min(book[j].length, doc.chapters[i].verses.length);
 	                                for (let k = 0; k < versesLen; k++) {
 	                                    var verseNum = book[j][k].verse_number;
-	                                    console.log(book[j][k].verse)
 	                                    doc.chapters[i].verses[verseNum - 1].verse = book[j][k].verse;
 	                                    book[j][k] = undefined;
 	                                }
@@ -124,37 +136,76 @@ class ProjectListRow extends React.Component {
 	                        }
 	                    }
 	                    db.put(doc).then((response) => {
-	                    	console.log(response)
-	        				this.setState({importText: "Import", isImporting: false})
-	                    }, (err) => {
-	                    	console.log(err)
-	        				this.setState({importText: "Import", isImporting: false})
-	                        // return callback('Error: While trying to save to DB. ' + err);
-	                    });	
+							this.resetLoader();							
+	                    }).catch((err) => {
+							this.resetLoader();
+							swal("Import", "Import error ", "error");
+						});
                 	});
 					// console.log(book)
-		        	});
+		        	}).catch((err) => {
+						this.resetLoader();
+						swal("Import", "Import error ", "error");
+					})
  	        	})
 	        }
 	    });
   	}
   	uploadBook = (projectId) => {
+		
+        if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
+        	swal("Book", "Please select book to import", "warning");
+  			return
+		}
+		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
+			if (!res){
+				swal("Login", "Something went wrong ", "error");
+				return
+			}
+		});
   		let config = {headers: {
             Authorization: `Bearer ${AutographaStore.tempAccessToken}`
         }}
-        if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
-        	swal("Book", "Please select book to import", "success");
-  			return
-  		}
+		this.props.showLoader(true);		  
   		AutographaStore.selectedParaTextBook[projectId].map((bookId) => {
   			axios.get(`https://data-access.paratext.org/api8/revisions/${projectId}/${bookId}`, config).then((res) => {
   				let parser = new xml2js.Parser();
 	            parser.parseString(res.data, (err, result) => {
-	            	console.log(result.RevisionInfo.ChapterInfo[0].$.revision)
-	            	
+	            	let revision = result.RevisionInfo.ChapterInfo[0].$.revision;
+	            	let usx = `<usx version="3.0">`
+	            	usx += `<book code="${bookId}" style="id"></book>`
+	            	db.get(AutographaStore.bookId).then((doc) => {
+	            		
+	            		doc.chapters.map((chapter) => {
+	            			usx+= `<chapter number="${chapter.chapter}" style="c" />`
+	            			chapter.verses.map((verse) => {
+	            				usx += `<verse number="${verse.verse_number}" style="v" />${verse.verse}`
+	            			})
+	            		})
+	            		usx+=`</usx>`
+
+	            		let postConfig = {headers: {
+            				Authorization: `Bearer ${AutographaStore.tempAccessToken}`,
+            				'Content-Type': "application/x-www-form-urlencoded"
+        				}}
+	            		axios.post(`https://data-access.paratext.org/api8/text/${projectId}/${revision}/${bookId}/`, usx, postConfig).then((res) => {
+							this.props.showLoader(false);
+							swal("Upload", "Book uploaded success", "success");
+	            		}).catch((err) => {
+							this.props.showLoader(false);
+							swal("Upload", "Something went wrong to upload book. Please try later", "error");
+	            		});
+                    	// AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
+            		}).catch((err) => {
+						this.props.showLoader(false);
+						swal("Upload", "Something went wrong to upload book. Please try later", "error");
+            		});
 	            });
-  			})
-  		})
+  			}).catch((err) => {
+				this.props.showLoader(false);
+				swal("Upload", "Something went wrong to upload book. Please try later", "error");
+  			});
+  		});
   	}
   	render (){
   		const {project, index} = this.props;
@@ -171,8 +222,10 @@ class ProjectListRow extends React.Component {
 						    	})
 						    }
 				    	</FormGroup>
-				    	<Button type="button" onClick={() =>{ this.importBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>{this.state.importText}</Button>
-				    	<Button type="button" onClick={() =>{ this.uploadBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>Upload</Button>
+						<div style={{float: "right"}}>
+				    		<Button type="button" className="margin-right-10 btn btn-primary" onClick={() =>{ this.importBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>{this.state.importText}</Button>
+				    		<Button type="button" className = "margin-right-10 btn btn-primary" onClick={() =>{ this.uploadBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>Upload</Button>
+						</div>
 				    </Panel.Body>
 				</Panel>
 			);
