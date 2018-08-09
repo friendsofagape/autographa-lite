@@ -18,6 +18,8 @@ import  Footer  from '../components/Footer';
 import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
+import Loader from './Loader';
+
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
 
@@ -47,7 +49,8 @@ class Navbar extends React.Component {
             searchVal: "", 
             replaceVal:"",
             toggled: false,
-            setDiff: false
+            setDiff: false,
+            showLoader: false
         };
        
         var verses, chunks, chapter;
@@ -73,6 +76,9 @@ class Navbar extends React.Component {
             console.log(err)
         });
         this.resetDiffValue();        
+    }
+    setLoader = (value) => {
+        this.setState({showLoader: value})
     }
     getContent = (id, chapter) => {
         return refDb.get(id).then( (doc) => { 
@@ -732,7 +738,7 @@ class Navbar extends React.Component {
                         </Tabs>
                     </Modal.Body>
                 </Modal>
-                <SettingsModal show={AutographaStore.showModalSettings} />
+                <SettingsModal show={AutographaStore.showModalSettings} showLoader = {this.setLoader}/>
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
@@ -864,6 +870,7 @@ class Navbar extends React.Component {
                     </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
+                {this.state.showLoader ? <Loader /> : ""}
             </div>
         )
     }
