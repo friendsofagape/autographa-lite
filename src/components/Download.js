@@ -1,17 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { RaisedButton, TextField, RadioButton, RadioButtonGroup, Checkbox } from 'material-ui';
+import { RaisedButton } from 'material-ui';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
-import { dialog, remote } from 'electron';
+import { remote } from 'electron';
 import swal from 'sweetalert';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
-const { Tabs, Tab, Modal, Button, Col, Row, ControlLabel,Grid, Radio, FormGroup } = require('react-bootstrap/lib');
-const session = require('electron').remote.session;
+import { Modal } from 'react-bootstrap/lib';
+import { FormattedMessage } from 'react-intl';
+
+const db = remote.getCurrentWindow().targetDb;
 const constants = require("../util/constants");
 let bibUtil = require("../util/json_to_usfm.js");
-import { FormattedMessage } from 'react-intl';
 
 @observer
 class DownloadModal extends React.Component {
