@@ -2,9 +2,11 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 
+
 module.exports = env => {
   return {
     target: "node",
+    mode: `${env}`,
     node: {
       __dirname: false,
       __filename: false
@@ -30,7 +32,7 @@ module.exports = env => {
       ]
     },
     plugins: [
-      new FriendlyErrorsWebpackPlugin({ clearConsole: env === "development" })
+      new FriendlyErrorsWebpackPlugin({ clearConsole: env === "development" }),
     ]
   };
 };
