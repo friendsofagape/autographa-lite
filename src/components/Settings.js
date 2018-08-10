@@ -295,32 +295,31 @@ class SettingsModal extends React.Component {
     importTranslation = () => {
         let that = this;
         if (this.import_sync_setting() == false) return;
-        this.setState({showLoader: true})
-        
+        this.props.showLoader(true)
         const {langCode, langVersion} = this.state.settingData;
         let inputPath = this.state.folderPathImport;
         var files = fs.readdirSync(inputPath[0]);
         Promise.map(files, (file) => {
-        var filePath = path.join(inputPath[0], file);
-        if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
-            var options = {
-            lang: langCode.toLowerCase(),
-            version: langVersion.toLowerCase(),
-            usfmFile: filePath,
-            targetDb: 'target',
-            scriptDirection: AutographaStore.refScriptDirection
+            var filePath = path.join(inputPath[0], file);
+            if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
+                var options = {
+                    lang: langCode.toLowerCase(),
+                    version: langVersion.toLowerCase(),
+                    usfmFile: filePath,
+                    targetDb: 'target',
+                    scriptDirection: AutographaStore.refScriptDirection
+                }
+                return that.getStuffAsync(options).then((res) => {
+                    return res;
+                }).catch((err)=>{
+                    return err;
+                });
             }
-            return that.getStuffAsync(options).then((res) => {
-                return res;
-            }, (err)=>{
-                return err;
-            })
-        }
         }).then(function(res){
-        window.location.reload();
+            window.location.reload();
         }).catch(function(err){
-        window.location.reload();
-        console.log(err)
+            window.location.reload();
+            console.log(err)
         })
     }
 
@@ -332,15 +331,15 @@ class SettingsModal extends React.Component {
         let path = refFolderPath;
         let isValid = true;
         if (name == "") {
-        isValid = this.setMessage('dynamic-msg-bib-name-validation', false);
+            isValid = this.setMessage('dynamic-msg-bib-name-validation', false);
         } else if (langCode === null || langCode === "") {
-        isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
+            isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
         } else if(langCode.match(/^\d/)) {      
-        isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+            isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
         } else if (version === null || version === "") {
-        isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
+            isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
         } else if (path === null || path === "") {
-        isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
+            isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
         } else {
             isValid = true;
         }
@@ -350,10 +349,10 @@ class SettingsModal extends React.Component {
     importReference = () => {
         if (this.reference_setting() == false)
         return;
-        this.setState({showLoader: true})
+        this.props.showLoader(true);
         let {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;
         if(refLangCodeValue === null){
-        refLangCodeValue = refLangCode
+            refLangCodeValue = refLangCode
         }
         var ref_id_value = bibleName + '_' + refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
             ref_entry = {},
@@ -369,8 +368,8 @@ class SettingsModal extends React.Component {
             var refExistsFlag = false;
             var updatedDoc = doc.ref_ids.forEach((ref_doc) => {
                 if (ref_doc.ref_id === ref_id_value) {
-                refExistsFlag = true;
-                // return
+                    refExistsFlag = true;
+                    // return
                 }
                 ref_entry.ref_id = ref_doc.ref_id;
                 ref_entry.ref_name = ref_doc.ref_name;
@@ -414,26 +413,26 @@ class SettingsModal extends React.Component {
         const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
         let that = this;
         Promise.map(files, (file) => {
-        var filePath = path.join(refFolderPath[0], file);
-        if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
-            var options = {
-            bibleName: bibleName,
-            lang: refLangCodeValue.toLowerCase(),
-            version: refVersion.toLowerCase(),
-            usfmFile: filePath,
-            targetDb: 'refs',
-            scriptDirection: AutographaStore.refScriptDirection
+            var filePath = path.join(refFolderPath[0], file);
+            if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
+                var options = {
+                    bibleName: bibleName,
+                    lang: refLangCodeValue.toLowerCase(),
+                    version: refVersion.toLowerCase(),
+                    usfmFile: filePath,
+                    targetDb: 'refs',
+                    scriptDirection: AutographaStore.refScriptDirection
+                }
+                return that.getStuffAsync(options).then((res) => {
+                    return res;
+                }, (err)=>{
+                    return err;
+                })
             }
-            return that.getStuffAsync(options).then((res) => {
-            return res;
-            }, (err)=>{
-            return err;
-            })
-        }
         }).then((res) => {
-        window.location.reload();
+            window.location.reload();
         }, (err) => {
-        window.location.reload();
+            window.location.reload();
         })
     }
 
@@ -442,21 +441,19 @@ class SettingsModal extends React.Component {
             settingData.langCodeValue = evt + " " + obj;
             settingData.langCode = obj.slice(1,-1);
         this.setState({ 
-        settingData,
-        visibleList: false
+            settingData,
+            visibleList: false
         });
     }
-
     clickListrefSetting = (evt, obj) => {
         let refSetting = Object.assign({}, this.state.refSetting);
             refSetting.refLangCode = evt + " " + obj;
             refSetting.refLangCodeValue = obj.slice(1,-1);
         this.setState({ 
-        refSetting,
-        visibleList: false
+            refSetting,
+            visibleList: false
         });
     }
-
     //Rename
     onReferenceRename = (name, index, e) => {
         this.setState({bibleReference: !this.state.bibleReference, refIndex: index})
@@ -1175,14 +1172,14 @@ class SettingsModal extends React.Component {
                                 <FormattedMessage id="btn-import" >
                                     {(message)=>
                                       <RaisedButton
-                                        style={{marginTop: "27px", float: 'right', 'margin-right': '33px'}}
+                                        style={{marginTop: "27px", float: 'right', 'marginRight': '33px'}}
                                         label={this.state.paraTextSignInTxt}
                                         primary={true}
                                         onClick={() => {this.importParaTextProject("btn")}}
                                         disabled = {this.state.btnDisabled}
                                       />
                                     }
-                                </FormattedMessage> </div> : <div><a href="javascript:;" onClick = { this.editCredential } style={{"float" : "right"}}>Update</a></div>
+                                </FormattedMessage> </div> : <div><a href="javascript:;" onClick = { this.editCredential } style={{"float" : "right"}}>Edit / Username-password </a></div>
                             }
                         {
                           this.state.projectData.length > 0 && !this.state.editCredential ? <ProjectList projects={this.state.projectData} showLoader = {this.props.showLoader} loadingMsg = {this.state.loadingMsg} setToken = {this.setToken}/> : <div></div>
