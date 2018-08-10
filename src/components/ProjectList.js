@@ -8,7 +8,7 @@ const ProjectList = ({ projects, showLoader, loadingMsg, setToken }) => {
         <Tabs id="projectList">
             <Tab eventKey={1} title="Paratext">
                 { projects.length > 0 ?
-                    <div>
+                    <div style={{marginTop: '10px'}}>
                         <PanelGroup accordion id = "projectList" > 
                             {
                                 projects.map((project, i) => {
@@ -19,7 +19,7 @@ const ProjectList = ({ projects, showLoader, loadingMsg, setToken }) => {
                     </div> : <div>{loadingMsg}</div>
                 }
             </Tab>
-            <Tab eventKey={2} title="Door 43">
+            <Tab eventKey={2} title="Door43">
                 <div>Coming Soon...</div>
             </Tab>
         </Tabs>
