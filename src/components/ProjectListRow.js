@@ -136,7 +136,9 @@ class ProjectListRow extends React.Component {
 	                        }
 	                    }
 	                    db.put(doc).then((response) => {
-							this.resetLoader();							
+							this.resetLoader();
+							swal("Import", "Import process success ", "success");
+
 	                    }).catch((err) => {
 							this.resetLoader();
 							swal("Import", "Import error ", "error");
@@ -223,8 +225,8 @@ class ProjectListRow extends React.Component {
 						    }
 				    	</FormGroup>
 						<div style={{float: "right"}}>
-				    		<Button type="button" className="margin-right-10 btn btn-primary" onClick={() =>{ this.importBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>{this.state.importText}</Button>
-				    		<Button type="button" className = "margin-right-10 btn btn-primary" onClick={() =>{ this.uploadBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>Upload</Button>
+				    		<Button type="button" className="margin-right-10 btn btn-success" onClick={() =>{ this.importBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>{this.state.importText}</Button>
+				    		<Button type="button" className = "margin-right-10 btn btn-success" onClick={() =>{ this.uploadBook(project.projid[0])} } disabled={this.state.isImporting ? true : false}>Upload</Button>
 						</div>
 				    </Panel.Body>
 				</Panel>
