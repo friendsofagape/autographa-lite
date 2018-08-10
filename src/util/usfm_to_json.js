@@ -1,4 +1,5 @@
 
+import { remote } from 'electron';
 module.exports = {
     /*
       All keys of options are required!
@@ -13,8 +14,8 @@ module.exports = {
             patterns = require('fs').readFileSync(`${__dirname}/patterns.prop`, 'utf8');
             var book = {},
                 verse = [],
-               	db = require(`${__dirname}/../util/data-provider`).targetDb(),
-				refDb = require(`${__dirname}/../util/data-provider`).referenceDb(),
+                db = remote.getCurrentWindow().targetDb,
+                refDb = remote.getCurrentWindow().refDb,
                 c = 0,
                 v = 0,
                 usfmBibleBook = false,
