@@ -1,11 +1,8 @@
+import { remote } from 'electron';
 module.exports = {
     toUsfm: function (book, stage, targetLangDoc) {
-	const PouchDB = require('pouchdb-core')
-	      .plugin(require('pouchdb-adapter-leveldb'));
-//	const PouchDB = require('pouchdb');
-	var db = require(`${__dirname}/data-provider`).targetDb()
-	//var db = new PouchDB(`${__dirname}/../../db/targetDB`);
-	var fs = require("fs"),
+	var db = remote.getCurrentWindow().targetDb,
+	 	fs = require("fs"),
 	    path = require("path"),
 	    usfmContent = [];
 	var filePath;
