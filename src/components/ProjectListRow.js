@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import swal from 'sweetalert';
 import AutographaStore from "./AutographaStore";
 import BookList from './BookList';
-import { Panel, FormGroup, Checkbox, Button } from 'react-bootstrap/lib';
+import { Panel,  FormGroup, Checkbox, Button } from 'react-bootstrap/lib';
 import axios from 'axios';
 import xml2js from 'xml2js';
 const electron = require('electron').remote;
@@ -60,12 +60,12 @@ class ProjectListRow extends React.Component {
   	importBook = (projectId) => {
 		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
 			if (!res){
-				swal("Login", "Something went wrong ", "error");
+				swal("Error", "Something went wrong. Please try again.", "error");
 				return
 			}
 		});
   		if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
-        	swal("Book", "Please select book to import", "success");
+        	swal("Error", "Please make a selection to continue", "error");
   			return
   		}
 	    const currentTrans = AutographaStore.currentTrans;
@@ -74,7 +74,7 @@ class ProjectListRow extends React.Component {
         }}
 	    swal({
 	        title: "Warning",
-	        text: "This will overwrite any existing text in the selected books",
+	        text: "This will overwrite any existing text in the selected books.",
 	        icon: "warning",
 	        buttons: [currentTrans["btn-ok"], currentTrans["btn-cancel"]],
 	        dangerMode: false,
@@ -156,12 +156,12 @@ class ProjectListRow extends React.Component {
   	uploadBook = (projectId) => {
 		
         if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
-        	swal("Book", "Please select book to import", "warning");
+        	swal("Error", "Please make a selection to continue", "error");
   			return
 		}
 		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
 			if (!res){
-				swal("Login", "Something went wrong ", "error");
+				swal("Error", "Something went wrong. Please try again.", "error");
 				return
 			}
 		});
@@ -192,27 +192,27 @@ class ProjectListRow extends React.Component {
         				}}
 	            		axios.post(`https://data-access.paratext.org/api8/text/${projectId}/${revision}/${bookId}/`, usx, postConfig).then((res) => {
 							this.props.showLoader(false);
-							swal("Upload", "Book uploaded success", "success");
+							swal("Success", "Successfully uploaded data.", "success");
 	            		}).catch((err) => {
 							this.props.showLoader(false);
-							swal("Upload", "Something went wrong to upload book. Please try later", "error");
+							swal("Error", "Something went wrong. Please try again.", "error");
 	            		});
                     	// AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
             		}).catch((err) => {
 						this.props.showLoader(false);
-						swal("Upload", "Something went wrong to upload book. Please try later", "error");
+						swal("Error", "Something went wrong. Please try again.", "error");
             		});
 	            });
   			}).catch((err) => {
 				this.props.showLoader(false);
-				swal("Upload", "Something went wrong to upload book. Please try later", "error");
+				swal("Error", "Something went wrong to upload book. Please try later", "error");
   			});
   		});
   	}
   	render (){
   		const {project, index} = this.props;
 	  		return (
-	  			<Panel eventKey={index}>
+	  			<Panel eventKey={index+1}>
 				    <Panel.Heading>
 				      <Panel.Title toggle>{ project.proj[0] }</Panel.Title>
 				    </Panel.Heading>

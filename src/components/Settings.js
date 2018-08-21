@@ -669,11 +669,11 @@ class SettingsModal extends React.Component {
                       }
                       refDb.put(doc).then((res) => {
                           this.props.showLoader(false);
-                          this.setState({paraTextSignInTxt: "Signing...", btnDisabled: true})
+                          this.setState({paraTextSignInTxt: "Signing in...", btnDisabled: true})
                           
                       }).catch((err) => {
                           this.props.showLoader(false);
-                          swal("Signin error", "Paratext Sign in error. Please try again", "error");
+                          swal("Error", "There was an issue while trying to sign in to Paratext. Please ensure username and password are correct and your device is connected to the internet before trying again.", "error");
                           return;
                       });
                   })
@@ -689,16 +689,16 @@ class SettingsModal extends React.Component {
                   }).catch((err) => {
                       this.props.showLoader(false);
                       this.setState({paraTextSignInTxt: "Sign in", btnDisabled: false, loadingMsg: "Paratext sign in problem. Please check internet connection or try later"});
-                      swal("Project error", "Projects import  error. Please try again", "error");
+                      swal("Error", "Something went wrong. Please try again.", "error");
 
                   })
               }).catch((err) => {
                   this.props.showLoader(false);
                   this.setState({paraTextSignInTxt: "Sign in", btnDisabled: false, loadingMsg: "Paratext sign in problem. Please check internet connection or try later"});
                   if(!err.response){
-                    swal("Signin error", "Paratext Sign in probelm. Make sure username and password is correct and internet connection is working." , "error");
+                    swal("Error", "There was an issue while trying to sign in to Paratext. Please ensure username and password are correct and your device is connected to the internet before trying again." , "error");
                   }else{
-                    swal("Signin error", err.response.data.error_description , "error");
+                    swal("Error", err.response.data.error_description , "error");
                   }
 
               })
@@ -712,9 +712,9 @@ class SettingsModal extends React.Component {
           let password = this.paraTextPassword.input.value;
           let isValid = false
           if (userName === null || userName == "") {
-            isValid = this.setMessage('UserName is required', false);
+            isValid = this.setMessage('Username is required.', false);
           } else if(password === null || password == "") {
-            isValid = this.setMessage('password is required', false);
+            isValid = this.setMessage('Password is required.', false);
           }else {
             isValid = true
           }
@@ -1141,50 +1141,64 @@ class SettingsModal extends React.Component {
                             </div>
                         </Tab.Pane>
                         <Tab.Pane eventKey="seventh">
-                            {
-                                this.state.editCredential || (AutographaStore.userName == null && AutographaStore.password ==  null)?
-                                <div><div>
-                                    <label>Username</label>
-                                    <br />
-                                    <TextField
-                                        hintText="Username"
-                                        name="paraTextUserName"
-                                        className = "margin-top-24 textbox-width-70"
-                                        value = {AutographaStore.userName && !this.state.editCredential ? AutographaStore.userName : this.state.paraTextUserName}
-                                        ref = {input => this.paraTextUserName = input}
-                                        onChange = {this.handleCredential}
-                                    />
-                                </div>
-                                <div>
-                                    <label>Password</label>
-                                    <br />
-                                    <TextField
-                                        hintText="Password"
-                                        name="paraTextPassword"
-                                        className = "margin-top-24 textbox-width-70"
-                                        value = {AutographaStore.password && !this.state.editCredential ? AutographaStore.password : this.state.paraTextPassword}
-                                        ref = {input => this.paraTextPassword = input}
-                                        onChange = {this.handleCredential}
-                                      />
-                                    
-                                </div>
-                                <br/>
-                                <FormattedMessage id="btn-import" >
-                                    {(message)=>
-                                      <RaisedButton
-                                        style={{marginTop: "27px", float: 'right', 'marginRight': '33px'}}
-                                        label={this.state.paraTextSignInTxt}
-                                        primary={true}
-                                        onClick={() => {this.importParaTextProject("btn")}}
-                                        disabled = {this.state.btnDisabled}
-                                      />
-                                    }
-                                </FormattedMessage> </div> : <div><a href="javascript:;" onClick = { this.editCredential } style={{"float" : "right"}}>Edit / Username-password </a></div>
-                            }
-                        {
-                          this.state.projectData.length > 0 && !this.state.editCredential ? <ProjectList projects={this.state.projectData} showLoader = {this.props.showLoader} loadingMsg = {this.state.loadingMsg} setToken = {this.setToken}/> : <div></div>
-                        }
-                    </Tab.Pane>
+							<Tabs id="projectList">
+								<Tab eventKey={1} title="Paratext">
+									<PanelGroup accordion id = "credential" style={{marginTop: '10px'}} >
+										<Panel eventKey={0}>
+											<Panel.Heading>
+												<Panel.Title toggle>Credential</Panel.Title>
+											</Panel.Heading>
+											<Panel.Body collapsible>
+												<div><div>
+													<label>Username</label>
+													<br />
+													<TextField
+														hintText="Username"
+														name="paraTextUserName"
+														className = "margin-top-24 textbox-width-70"
+														value = {AutographaStore.userName && !this.state.editCredential ? AutographaStore.userName : this.state.paraTextUserName}
+														ref = {input => this.paraTextUserName = input}
+														onChange = {this.handleCredential}
+													/>
+												</div>
+												<div>
+													<label>Password</label>
+													<br />
+													<TextField
+														hintText="Password"
+														name="paraTextPassword"
+														className = "margin-top-24 textbox-width-70"
+														value = {AutographaStore.password && !this.state.editCredential ? AutographaStore.password : this.state.paraTextPassword}
+														ref = {input => this.paraTextPassword = input}
+														onChange = {this.handleCredential}
+													/>
+													
+												</div>
+												<br/>
+												<FormattedMessage id="btn-import" >
+													{(message)=>
+													<RaisedButton
+														style={{marginTop: "27px", float: 'right', 'marginRight': '33px'}}
+														label={this.state.paraTextSignInTxt}
+														primary={true}
+														onClick={() => {this.importParaTextProject("btn")}}
+														disabled = {this.state.btnDisabled}
+													/>
+													}
+												</FormattedMessage> </div> 
+											</Panel.Body>
+										</Panel>
+									</PanelGroup> 
+									{
+										this.state.projectData.length > 0 && !this.state.editCredential ? <ProjectList projects={this.state.projectData} showLoader = {this.props.showLoader} loadingMsg = {this.state.loadingMsg} setToken = {this.setToken}/> : <div></div>
+									}
+								</Tab>
+								<Tab eventKey={2} title="Door43">
+								
+								</Tab>
+							</Tabs>
+                       
+                    	</Tab.Pane>
                   </Tab.Content>
                 </Col>
               </Row>
