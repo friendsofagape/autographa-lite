@@ -12,7 +12,7 @@ const ProjectList = ({ projects, showLoader, loadingMsg, setToken }) => {
                     return (<ProjectListRow key = { i } index = {i} project = { project } showLoader = { showLoader} setToken = {setToken}/>)
                 })
             }
-        </div>  : <div style={{color: '#0b82ff',fontWeight: 'bold', marginTop: '10px' }}>No projects to show.</div>
+        </div>  : <div style={{marginTop: '10px' }}>No projects to show.</div>
     );
 };
 

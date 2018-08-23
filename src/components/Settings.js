@@ -689,59 +689,7 @@ class SettingsModal extends React.Component {
 		this.hideCodeList();
 	}
 
-	importParaTextProject = () => {
-		this.setState({
-			paraTextSignInTxt: "Signing...",
-			btnDisabled: true
-		})
-		let userName = this.paraTextUserName.input.value;
-		let password = this.paraTextPassword.input.value;
-		let paraTextReqBody = {
-			username: userName,
-			password: password,
-			grant_type: "password",
-			scope: "projects:read projects.members:read  data_access"
-		}
-		let config = {
-			headers: {
-				'Authorization': "Bearer eyJhbGciOiJFUzI1NiJ9.eyJzY29wZXMiOlsib2F1dGg6cGFzc3dvcmQiXSwianRpIjoiWkFzcTd0NkRwZndmc0FIOEgiLCJhdWQiOlsiaHR0cHM6Ly9yZWdpc3RyeS5wYXJhdGV4dC5vcmciXSwicHJpbWFyeV9vcmdfaWQiOiJmNTQ3YTJmMzU2MWQ3ZGEyZGMyNzZmOWQiLCJzdWIiOiJhMnh2cGt2V3BCc2RRTkFkdCIsImF6cCI6ImEyeHZwa3ZXcEJzZFFOQWR0IiwiaWF0IjoxNTMwMTY0MDMyLCJpc3MiOiJwdHJlZyJ9.90Gor2h-JehL_BFP6Vt25AlSt-Gu5sR0QgINUJ17MttZSGagQu27PKI5LYbMlU2pkyOepB2X238OHY9ytW8Cpg",
-				'Content-Type': "application/json"
-			}
-		}
-		axios.post(`https://registry.paratext.org/api8/token`, paraTextReqBody, config)
-			.then(res => {
-				let config = {
-					headers: {
-						Authorization: `Bearer ${res.data.access_token}`
-					}
-				}
-				axios.get(`https://data-access.paratext.org/api8/projects`, config).then((res) => {
-					let parser = new xml2js.Parser();
-					parser.parseString(res.data, (err, result) => {
-						this.setState({
-							paraTextSignInTxt: "Signin",
-							btnDisabled: false,
-							projectData: result.repos.repo
-						});
-					}, (err) => {
-						this.setState({
-							paraTextSignInTxt: "Signin",
-							btnDisabled: false
-						});
-					});
-				}, (err) => {
-					this.setState({
-						paraTextSignInTxt: "Signin",
-						btnDisabled: false
-					});
-				})
-			}).catch((err) => {
-				this.setState({
-					paraTextSignInTxt: "Signin",
-					btnDisabled: false
-				});
-			})
-	}
+	
 
 	handleCredential = (event) => {
 		this.state[event.target.name] = event.target.value
@@ -749,11 +697,10 @@ class SettingsModal extends React.Component {
 	}
 	editCredential = () => {
 		this.setState({
-			editCredential: true,
 			paraTextUserName: AutographaStore.userName,
-			paraTextPassword: AutographaStore.password
+			paraTextPassword: AutographaStore.password,
+			editCredential: true
 		})
-		AutographaStore.tempAccessToken = null;
 	}
 
 	setToken = (userName, password) => {
@@ -870,9 +817,7 @@ class SettingsModal extends React.Component {
 	}
 
   	importParaTextProject = (clickSrc) => {
-  		if ((AutographaStore.userName == null && AutographaStore.password == null && clickSrc == "btn") || (clickSrc == "btn" && AutographaStore.tempAccessToken == null)) {
-
-
+  		if (clickSrc == "btn")  {
   			let userName = this.paraTextUserName.input.value;
   			let password = this.paraTextPassword.input.value;
   			let isValid = false
@@ -888,7 +833,7 @@ class SettingsModal extends React.Component {
   			}
   			this.signIn(userName, password);
   		} else {
-  			if (AutographaStore.userName && AutographaStore.password && !this.state.editCredential)
+  			if (AutographaStore.userName && AutographaStore.password)
   				this.signIn(AutographaStore.userName, AutographaStore.password);
   		}
   	}
@@ -899,7 +844,7 @@ class SettingsModal extends React.Component {
 
     let closeSetting = () => AutographaStore.showModalSettings = false
     const { show } = this.props;
-    const {showMsg, modalBody, title, projectData, showLoader} = this.state;
+    const {showMsg, modalBody, title, projectData} = this.state;
     const { langCodeValue, langCode, langVersion, folderPath } = this.state.settingData;
     const { bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath } = this.state.refSetting;
    
@@ -1311,7 +1256,7 @@ class SettingsModal extends React.Component {
 									<PanelGroup accordion id = "credential" style={{marginTop: '10px'}} onClick = {() => {this.editCredential()}} >
 										<Panel eventKey={0}>
 											<Panel.Heading>
-												<Panel.Title toggle>Credential</Panel.Title>
+												<Panel.Title toggle>Credentials</Panel.Title>
 											</Panel.Heading>
 											<Panel.Body collapsible>
 												<div>
@@ -1354,15 +1299,11 @@ class SettingsModal extends React.Component {
 											</Panel.Body>
 										</Panel>
 										{
-											<ProjectList projects={projectData} showLoader = {showLoader}  setToken = {this.setToken}/> 
+											<ProjectList projects={projectData} showLoader = {this.props.showLoader}  setToken = {this.setToken}/> 
 										}
 									</PanelGroup> 
 								</Tab>
-								<Tab eventKey={2} title="Door43">
-								
-								</Tab>
 							</Tabs>
-                       
                     	</Tab.Pane>
                   </Tab.Content>
                 </Col>

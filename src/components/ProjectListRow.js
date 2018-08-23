@@ -5,9 +5,8 @@ import BookList from './BookList';
 import { Panel,  FormGroup, Checkbox, Button } from 'react-bootstrap/lib';
 import axios from 'axios';
 import xml2js from 'xml2js';
-const electron = require('electron').remote;
-const currentWindow = electron.getCurrentWindow();
-const db = currentWindow.targetDb;
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
+
 const booksCodes = require(`${__dirname}/../util/constants.js`).bookCodeList;
 
 class ProjectListRow extends React.Component {
@@ -66,7 +65,7 @@ class ProjectListRow extends React.Component {
         	swal("Error", "Please make a selection to continue", "error");
   			return
   		}
-	    const currentTrans = AutographaStore.currentTrans;
+		const currentTrans = AutographaStore.currentTrans;
 	    let config = {headers: {
             Authorization: `Bearer ${AutographaStore.tempAccessToken}`
         }}
@@ -145,6 +144,7 @@ class ProjectListRow extends React.Component {
 					// console.log(book)
 		        	}).catch((err) => {
 						this.resetLoader();
+						console.log(err)
 						swal("Import", "Import error ", "error");
 					})
  	        	})
@@ -174,7 +174,7 @@ class ProjectListRow extends React.Component {
 	            	let revision = result.RevisionInfo.ChapterInfo[0].$.revision;
 	            	let usx = `<usx version="3.0">`
 	            	usx += `<book code="${bookId}" style="id"></book>`
-	            	db.get(AutographaStore.bookId).then((doc) => {
+	            	db.get(AutographaStore.bookId.toString()).then((doc) => {
 	            		
 	            		doc.chapters.map((chapter) => {
 	            			usx+= `<chapter number="${chapter.chapter}" style="c" />`
