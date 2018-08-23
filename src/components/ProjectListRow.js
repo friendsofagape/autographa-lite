@@ -10,8 +10,6 @@ const currentWindow = electron.getCurrentWindow();
 const db = currentWindow.targetDb;
 const booksCodes = require(`${__dirname}/../util/constants.js`).bookCodeList;
 
-var convert = require('xml-js');
-
 class ProjectListRow extends React.Component {
 
 	constructor(props){
