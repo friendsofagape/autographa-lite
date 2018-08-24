@@ -5,12 +5,12 @@ import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import { remote } from 'electron';
 import swal from 'sweetalert';
-import { Modal } from 'react-bootstrap/lib';
+import { Modal, NavDropdown, MenuItem } from 'react-bootstrap';
 import { FormattedMessage } from 'react-intl';
-
-const db = remote.getCurrentWindow().targetDb;
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const constants = require("../util/constants");
 let bibUtil = require("../util/json_to_usfm.js");
+
 
 @observer
 class DownloadModal extends React.Component {
@@ -79,7 +79,8 @@ class DownloadModal extends React.Component {
                             />}
                             </FormattedMessage>
                             <div className="input-group-btn">
-                                <button 
+                               
+                                <NavDropdown eventKey={1} title={ <button 
                                     id="dropdownBtn"
                                     type="button"
                                     className="btn btn-default dropdown-toggle"
@@ -87,35 +88,28 @@ class DownloadModal extends React.Component {
                                     aria-haspopup="true"
                                     aria-expanded="false"><FormattedMessage id={this.state.buttonStage} />&nbsp;{this.state.stageChange} 
                                     <span className="caret"></span>
-                                </button>
-                                <ul className="dropdown-menu dropdown-menu-right" id="trans-stage">
-                                    <li>
-
-                                        <a href="#"  onClick={() => this.clickStage("1")}>
+                                </button>} id="export-usfm" noCaret>
+                                <MenuItem eventKey="1" onClick={() => this.clickStage("1")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 1 
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#"  onClick={() => this.clickStage("2")}>
+                                        
+                                    </MenuItem>
+                                    <MenuItem eventKey="2"
+                                        onClick={() => this.clickStage("2")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 2 
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#"  onClick={() => this.clickStage("3")}>
+                                        </MenuItem>
+                                    <MenuItem eventKey="3"
+                                         onClick={() => this.clickStage("3")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 3
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#"  onClick={() => this.clickStage("4")}>
+                                    </MenuItem>
+                                    <MenuItem eventKey="4"
+                                        onClick={() => this.clickStage("4")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 4
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#"  onClick={() => this.clickStage("5")}>
+                                    </MenuItem>
+                                    <MenuItem 
+                                       onClick={() => this.clickStage("5")}>
                                             <span className="stage"><FormattedMessage id="label-stage" /> </span> 5
-                                        </a>
-                                    </li>
-                                </ul>
+                                    </MenuItem>
+                                </NavDropdown>
                             </div>
                         </div>
                     </div>
