@@ -10,13 +10,13 @@ const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const booksCodes = require(`${__dirname}/../util/constants.js`).bookCodeList;
 
 class ProjectListRow extends React.Component {
-
+	
 	constructor(props){
 		super(props);
 		this.state = {
 			bookList: [],
 			selectedBook: [],
-			importText: "Import",
+			importText: AutographaStore.currentTrans["btn-import"],
 			isImporting: false
 		}
 	}
@@ -49,20 +49,17 @@ class ProjectListRow extends React.Component {
 	}
 	resetLoader = () => {
 		this.props.showLoader(false);						
-	    this.setState({importText: "Import", isImporting: false})
+	    this.setState({importText: AutographaStore.currentTrans["btn-import"], isImporting: false})
 	}
-	
-	
-	
   	importBook = (projectId) => {
 		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
 			if (!res){
-				swal("Error", "Something went wrong. Please try again.", "error");
+				swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
 				return
 			}
 		});
   		if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
-        	swal("Error", "Please make a selection to continue", "error");
+        	swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["label-selection"], "error");
   			return
   		}
 		const currentTrans = AutographaStore.currentTrans;
@@ -70,8 +67,8 @@ class ProjectListRow extends React.Component {
             Authorization: `Bearer ${AutographaStore.tempAccessToken}`
         }}
 	    swal({
-	        title: "Warning",
-	        text: "This will overwrite any existing text in the selected books.",
+	        title: currentTrans["label-warning"],
+	        text: currentTrans["label-override-text"],
 	        icon: "warning",
 	        buttons: [currentTrans["btn-ok"], currentTrans["btn-cancel"]],
 	        dangerMode: false,
@@ -82,7 +79,7 @@ class ProjectListRow extends React.Component {
 	        if (action) {
 	        } else {
 				this.props.showLoader(true)
-	        	this.setState({importText: "Importing...", isImporting: true})
+	        	this.setState({importText: AutographaStore.currentTrans["label-importing"], isImporting: true})
 	        	AutographaStore.selectedParaTextBook[projectId].map((bookId) => {
  	        		axios.get(`https://data-access.paratext.org/api8/text/${projectId}/${bookId}`, config).then((res) => {
 		            
@@ -134,18 +131,18 @@ class ProjectListRow extends React.Component {
 	                    }
 	                    db.put(doc).then((response) => {
 							this.resetLoader();
-							swal("Import", "Import process success ", "success");
+							swal(AutographaStore.currentTrans["btn-import"], AutographaStore.currentTrans["label-imported-book"], "success");
 
 	                    }).catch((err) => {
 							this.resetLoader();
-							swal("Import", "Import error ", "error");
+							swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
 						});
                 	});
 					// console.log(book)
 		        	}).catch((err) => {
 						this.resetLoader();
-						console.log(err)
-						swal("Import", "Import error ", "error");
+						swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
+
 					})
  	        	})
 	        }
@@ -154,12 +151,12 @@ class ProjectListRow extends React.Component {
   	uploadBook = (projectId) => {
 		
         if(AutographaStore.selectedParaTextBook[projectId] == null || Object.keys(AutographaStore.selectedParaTextBook[projectId]).length == 0){
-        	swal("Error", "Please make a selection to continue", "error");
+        	swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["label-selection"], "error");
   			return
 		}
 		this.props.setToken(AutographaStore.userName, AutographaStore.password).then((res)=>{
 			if (!res){
-				swal("Error", "Something went wrong. Please try again.", "error");
+				swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
 				return
 			}
 		});
@@ -193,17 +190,16 @@ class ProjectListRow extends React.Component {
 							swal("Success", "Successfully uploaded data.", "success");
 	            		}).catch((err) => {
 							this.props.showLoader(false);
-							swal("Error", "Something went wrong. Please try again.", "error");
+							swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
 	            		});
-                    	// AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter.toString());
             		}).catch((err) => {
 						this.props.showLoader(false);
-						swal("Error", "Something went wrong. Please try again.", "error");
+						swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
             		});
 	            });
   			}).catch((err) => {
 				this.props.showLoader(false);
-				swal("Error", "Something went wrong to upload book. Please try later", "error");
+				swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
   			});
   		});
   	}

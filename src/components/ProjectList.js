@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 import ProjectListRow from './ProjectListRow';
+import { FormattedMessage } from 'react-intl';
+
 
 
 const ProjectList = ({ projects, showLoader, loadingMsg, setToken }) => {
@@ -12,7 +14,7 @@ const ProjectList = ({ projects, showLoader, loadingMsg, setToken }) => {
                     return (<ProjectListRow key = { i } index = {i} project = { project } showLoader = { showLoader} setToken = {setToken}/>)
                 })
             }
-        </div>  : <div style={{marginTop: '10px' }}>No projects to show.</div>
+        </div>  : <div style={{marginTop: '10px' }}><FormattedMessage id="label-no-project" /></div>
     );
 };
 

@@ -19,7 +19,6 @@ import {Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem, PanelGroup, Pane
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
-
 const Constant = require("../util/constants")
 const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
 const session = require('electron').remote.session;
@@ -67,7 +66,7 @@ class SettingsModal extends React.Component {
 			paraTextPassword: "",
 			activeTab: "first",
 			projectData: [],
-			paraTextSignInTxt: "Signin",
+			paraTextSignInTxt: AutographaStore.currentTrans["label-sign-in"],
 			btnDisabled: false
 	
 		};
@@ -731,7 +730,7 @@ class SettingsModal extends React.Component {
 		this.props.showLoader(true);
 		this.setState({
 			projectData: [],
-			paraTextSignInTxt: "Signing....",
+			paraTextSignInTxt: AutographaStore.currentTrans["label-sigining"],
 			btnDisabled: true
 		});
 		let paraTextReqBody = {
@@ -767,13 +766,13 @@ class SettingsModal extends React.Component {
 					refDb.put(doc).then((res) => {
 						this.props.showLoader(false);
 						this.setState({
-							paraTextSignInTxt: "Signing in...",
+							paraTextSignInTxt: AutographaStore.currentTrans["label-sigining"],
 							btnDisabled: true
 						})
 
 					}).catch((err) => {
 						this.props.showLoader(false);
-						swal("Error", "There was an issue while trying to sign in to Paratext. Please ensure username and password are correct and your device is connected to the internet before trying again.", "error");
+						swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["label-signin-issue"], "error");
 						return;
 					});
 				})
@@ -787,7 +786,7 @@ class SettingsModal extends React.Component {
 					parser.parseString(res.data, (err, result) => {
 						this.props.showLoader(false);
 						this.setState({
-							paraTextSignInTxt: "Sign in",
+							paraTextSignInTxt: AutographaStore.currentTrans["label-sign-in"],
 							btnDisabled: false,
 							projectData: result.repos.repo
 						});
@@ -795,22 +794,21 @@ class SettingsModal extends React.Component {
 				}).catch((err) => {
 					this.props.showLoader(false);
 					this.setState({
-						paraTextSignInTxt: "Sign in",
+						paraTextSignInTxt: AutographaStore.currentTrans["label-sign-in"],
 						btnDisabled: false
 					});
-					swal("Error", "Something went wrong. Please try again.", "error");
-
+					swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["dynamic-msg-went-wrong"], "error");
 				})
 			}).catch((err) => {
 				this.props.showLoader(false);
 				this.setState({
-					paraTextSignInTxt: "Sign in",
+					paraTextSignInTxt: AutographaStore.currentTrans["label-signin"],
 					btnDisabled: false
 				});
 				if (!err.response) {
-					swal("Error", "There was an issue while trying to sign in to Paratext. Please ensure username and password are correct and your device is connected to the internet before trying again.", "error");
+					swal(AutographaStore.currentTrans["dynamic-msg-error"], AutographaStore.currentTrans["label-signin-issue"], "error");
 				} else {
-					swal("Error", err.response.data.error_description , "error");
+					swal(AutographaStore.currentTrans["dynamic-msg-error"], err.response.data ? err.response.data.error_description : "Invalid username or password" , "error");
 				}
 
 			})
@@ -822,9 +820,9 @@ class SettingsModal extends React.Component {
   			let password = this.paraTextPassword.input.value;
   			let isValid = false
   			if (userName === null || userName == "") {
-  				isValid = this.setMessage('Username is required.', false);
+  				isValid = this.setMessage("username-req", false);
   			} else if (password === null || password == "") {
-  				isValid = this.setMessage('Password is required.', false);
+  				isValid = this.setMessage("password-req", false);
   			} else {
   				isValid = true
   			}
@@ -893,14 +891,14 @@ class SettingsModal extends React.Component {
                     </NavItem>
 
                     <NavItem eventKey="seventh" onClick={() => {this.importParaTextProject("tab")}}>
-                      Sync
+                    <FormattedMessage id="label-sync" />
                     </NavItem>
                   </Nav>
                 </Col>
                 <Col sm={8}>
                   <Tab.Content animation>
                       <Tab.Pane eventKey="first" >
-                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                        <div data-tip={`${AutographaStore.currentTrans['tooltip-language-validation']}`}>
                           <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField 
@@ -1038,7 +1036,7 @@ class SettingsModal extends React.Component {
                             />}
                           </FormattedMessage>
                         </div>
-                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                        <div data-tip={`${AutographaStore.currentTrans['tooltip-language-validation']}`}>
                           <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField
@@ -1252,50 +1250,54 @@ class SettingsModal extends React.Component {
                         </Tab.Pane>
                         <Tab.Pane eventKey="seventh">
 							<Tabs id="projectList">
-								<Tab eventKey={1} title="Paratext">
+								<Tab eventKey={1} title={`${AutographaStore.currentTrans["label-paratext"]}`}>
 									<PanelGroup accordion id = "credential" style={{marginTop: '10px'}} onClick = {() => {this.editCredential()}} >
 										<Panel eventKey={0}>
 											<Panel.Heading>
-												<Panel.Title toggle>Credentials</Panel.Title>
+												<Panel.Title toggle><FormattedMessage id="label-credentials"/></Panel.Title>
 											</Panel.Heading>
 											<Panel.Body collapsible>
 												<div>
-													<label>Username</label>
+													
+													<label><FormattedMessage id="label-username"/></label>
 													<br />
-													<TextField
-														hintText="Username"
-														name="paraTextUserName"
-														className = "margin-top-24 textbox-width-70"
-														value = {AutographaStore.userName && !this.state.editCredential ? AutographaStore.userName : this.state.paraTextUserName}
-														ref = {input => this.paraTextUserName = input}
-														onChange = {this.handleCredential}
-													/>
+													<FormattedMessage id="label-username">
+														{(message) => 
+															<TextField
+																hintText={message}
+																name="paraTextUserName"
+																className = "margin-top-24 textbox-width-70"
+																value = {AutographaStore.userName && !this.state.editCredential ? AutographaStore.userName : this.state.paraTextUserName}
+																ref = {input => this.paraTextUserName = input}
+																onChange = {this.handleCredential}
+															/>
+														}
+													</FormattedMessage>
 												</div>
 												<div>
-													<label>Password</label>
+													<label><FormattedMessage id="label-pwd"/></label>
 													<br />
-													<TextField
-														hintText="Password"
-														name="paraTextPassword"
-														className = "margin-top-24 textbox-width-70"
-														value = {AutographaStore.password && !this.state.editCredential ? AutographaStore.password : this.state.paraTextPassword}
-														ref = {input => this.paraTextPassword = input}
-														onChange = {this.handleCredential}
-													/>
-													
+													<FormattedMessage id="label-pwd">
+														{(message) => 
+															<TextField
+																hintText={message}
+																name="paraTextPassword"
+																className = "margin-top-24 textbox-width-70"
+																value = {AutographaStore.password && !this.state.editCredential ? AutographaStore.password : this.state.paraTextPassword}
+																ref = {input => this.paraTextPassword = input}
+																onChange = {this.handleCredential}
+															/>
+														}
+													</FormattedMessage>
 												</div>
 												<br/>
-												<FormattedMessage id="btn-import" >
-													{(message)=>
-													<RaisedButton
-														style={{marginTop: "27px", float: 'right', 'marginRight': '33px'}}
-														label={this.state.paraTextSignInTxt}
-														primary={true}
-														onClick={() => {this.importParaTextProject("btn")}}
-														disabled = {this.state.btnDisabled}
-													/>
-													}
-												</FormattedMessage> 
+												<RaisedButton
+													style={{marginTop: "27px", float: 'right', 'marginRight': '33px'}}
+													label={this.state.paraTextSignInTxt}
+													primary={true}
+													onClick={() => {this.importParaTextProject("btn")}}
+													disabled = {this.state.btnDisabled}
+												/>
 											</Panel.Body>
 										</Panel>
 										{
