@@ -1,12 +1,10 @@
-
-import { remote } from 'electron';
 module.exports = {
     /*
       All keys of options are required!
       e.g: options = {lang: 'en', version: 'udb', usfmFile: '/home/test-data/L66_1 Corinthians_I.SFM', 'target': 'refs|target'}
     */
 
-    toJson: function(options, callback) {
+    toJson: function (options, callback) {
         try {
             var lineReader = require('readline').createInterface({
                 input: require('fs').createReadStream(options.usfmFile)
@@ -14,8 +12,8 @@ module.exports = {
             patterns = require('fs').readFileSync(`${__dirname}/patterns.prop`, 'utf8');
             var book = {},
                 verse = [],
-                db = remote.getCurrentWindow().targetDb,
-                refDb = remote.getCurrentWindow().refDb,
+                db = require(`${__dirname}/../util/data-provider`).targetDb(),
+                refDb = require(`${__dirname}/../util/data-provider`).referenceDb(),
                 c = 0,
                 v = 0,
                 usfmBibleBook = false,
@@ -26,7 +24,7 @@ module.exports = {
         } catch (err) {
             return callback(new Error('usfm parser error'));
         }
-        lineReader.on('line', function(line) {
+        lineReader.on('line', function (line) {
             // Logic to tell if the input file is a USFM book of the Bible.
             if (!usfmBibleBook)
                 if (validLineCount > 3)
@@ -72,7 +70,7 @@ module.exports = {
             }
         });
 
-        lineReader.on('close', function(line) {
+        lineReader.on('close', function (line) {
 
             if (!usfmBibleBook)
                 // throw new Error('not usfm file');
@@ -96,10 +94,10 @@ module.exports = {
                     book.scriptDirection = options.scriptDirection;
                     refDb.put(book);
                     return callback(null, "Successfully loaded existing refs")
-                },(err) => {
+                }, (err) => {
                     refDb.put(book).then((doc) => {
                         return callback(null, "Successfully loaded new refs");
-                    },(err) => {
+                    }, (err) => {
                         // console.log("Error: While loading new refs. " + err);
                         return callback("Error: While loading new refs. " + err);
                     });
@@ -140,9 +138,9 @@ module.exports = {
             }
         });
 
-        lineReader.on('error', function(lineReaderErr) {
+        lineReader.on('error', function (lineReaderErr) {
             if (lineReaderErr.message === 'not usfm file')
-            	return callback(options.usfmFile + ' is not a valid USFM file.')
+                return callback(options.usfmFile + ' is not a valid USFM file.')
             else
                 return callback(new Error('usfm parser error'))
         });
