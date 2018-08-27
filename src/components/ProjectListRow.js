@@ -131,7 +131,20 @@ class ProjectListRow extends React.Component {
 	                    }
 	                    db.put(doc).then((response) => {
 							this.resetLoader();
-							swal(AutographaStore.currentTrans["btn-import"], AutographaStore.currentTrans["label-imported-book"], "success");
+							//swal({AutographaStore.currentTrans["btn-import"], AutographaStore.currentTrans["label-imported-book"], "success");
+							swal({
+								title: AutographaStore.currentTrans["btn-import"],
+								text:  AutographaStore.currentTrans["label-imported-book"],
+								icon: "success",
+								dangerMode: false,
+								closeOnClickOutside: false,
+								closeOnEsc: false
+							  })
+							  .then((action) => {
+								if(action){
+									window.location.reload();
+								}
+							  })
 
 	                    }).catch((err) => {
 							this.resetLoader();
