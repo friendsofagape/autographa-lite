@@ -13,7 +13,7 @@ Thumbs.db
 
 /src/app.js
 /src/app.js.map
-
+/src/.env
 
 # Logs
 logs

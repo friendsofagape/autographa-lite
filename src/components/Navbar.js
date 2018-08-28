@@ -491,7 +491,7 @@ class Navbar extends React.Component {
                 AutographaStore.setDiff = true
                 if(!isSameLanguage){
                     AutographaStore.toggle = false;
-                    swal(AutographaStore.currentTrans["compare-mode-heading"], AutographaStore.currentTrans["dynamic-compare-mode"], "error");
+                    swal(AutographaStore.currentTrans["compare-mode-heading"], AutographaStore.currentTrans["dynamic-compare-mode"], "warning");
                     return;
                 }
             }else{
