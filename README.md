@@ -8,7 +8,8 @@ It is relatively easy to setup the application locally for development.
 
 ### Prerequisites
 [Node JS 8.9.3](https://nodejs.org/download/release/v8.9.3/)    
-[Yarn 1.5.1](https://yarnpkg.com/en/docs/install)
+[Yarn 1.5.1](https://yarnpkg.com/en/docs/install)    
+[Python 2](https://www.python.org/downloads/release/python-2715/) (One of our build tools [breaks under Python 3](https://github.com/nodejs/node-gyp/issues/1337).)
 
 ### Mac (tested on MacOS Sierra 10.13.4) and *nix Setup (tested on Ububtu 17.10)
 Fork this repository.   
