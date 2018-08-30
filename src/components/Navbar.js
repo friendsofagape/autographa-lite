@@ -81,7 +81,7 @@ class Navbar extends React.Component {
                     break;
                 }
             }
-            let refString = doc.chapters[i].verses.map((verse, verseNum) => {
+            let refString = doc.chapters[i] && doc.chapters[i].verses.map((verse, verseNum) => {
                 return `<div type="ref" class="col-12 col-ref ref-contents ${doc.scriptDirection.toLowerCase()}" dir=${doc.scriptDirection}><div data-verse=r${(verseNum + 1)}><span class="verse-num"> ${doc.scriptDirection == "LTR" ? (verseNum + 1) : (verseNum + 1)} </span><span> ${verse.verse}</span></div></div`;
             }).join('');
             return refString;
