@@ -18,7 +18,7 @@ Fork this repository.
 
 ```% export ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true ```     
 ```% cd autographa-lite && yarn install ```     
-```% npm start```
+```% yarn start```
 
 This should start the application and open up the main screen.
 
