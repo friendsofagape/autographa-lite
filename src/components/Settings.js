@@ -226,9 +226,9 @@ class SettingsModal extends React.Component {
 
   openFileDialogSettingData = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+        title: "Export Location"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.state.settingData["folderPath"] = selectedDir;
@@ -239,9 +239,9 @@ class SettingsModal extends React.Component {
 
   openFileDialogImportTrans = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+      title: "Import Translation"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.setState({folderPathImport: selectedDir});
@@ -251,9 +251,9 @@ class SettingsModal extends React.Component {
 
   openFileDialogRefSetting = (event) => {
     dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+        title: "Import Reference"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.state.refSetting["refFolderPath"] = selectedDir;
