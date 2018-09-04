@@ -3,7 +3,7 @@ import swal from 'sweetalert';
 var fs = require("fs");
 import {css_1_col_ltr, css_2_col_ltr, css_1_col_rtl, css_2_col_rtl} from './export_css'
 module.exports = {
-	exportHtml: function(id, currentBook, db, direction, column){
+	exportHtml: function(id, currentBook, db, direction, column, currentTrans){
 	    	if(direction !== "RTL"){
 	        	let htmlContent = '';
 	        	let inlineData = `<!DOCTYPE html>
@@ -47,12 +47,10 @@ module.exports = {
 							let filepath = path.join(targetPath, `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 							fs.writeFile(filepath, inlineData , function (err) {
 								if (err) {
-									console.log(err)
-									swal("export", "Oops! error occured. Please try later", "error");
+									swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-went-wrong"], "error");
 									return
 								}else{
-									swal("Successfully exported as html", `File exported at location: ${filepath}`, "success");
-									
+									swal(currentTrans["btn-export"], `${currentTrans["label-exported-file"]}: ${filepath}`, "success");
 								}
 							});   
 						}); 
@@ -96,11 +94,11 @@ module.exports = {
 	                        let filepath = path.join(doc.targetPath[0], `${currentBook.book_name.toLowerCase()}_${column}col_${getTimeStamp(new Date())}.html`);
 	                        fs.writeFile(filepath, inlineData , function (err) {
 		                        if (err) {
-				                    swal("export", "Oops! error occured. Please try later", "error");
-		                            return;
-		                        }else{
-				                    swal("Successfully exported as html", `File exported at location: ${filepath}`, "success");
-		                        }
+									swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-went-wrong"], "error");
+									return
+								}else{
+									swal(currentTrans["btn-export"], `${currentTrans["label-exported-file"]}: ${filepath}`, "success");
+								}
 	                        });    
 	                    }); 
 	                }); 

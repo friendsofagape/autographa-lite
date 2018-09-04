@@ -278,9 +278,9 @@ describe('Autographa Test', () => {
       .click("#export-1-column")
       .waitForVisible(".swal-text", 2000)
       .getText(".swal-text").then((res) => {
-        if(fs.existsSync(res.replace("File exported at location: ", ""))) {
+        if(fs.existsSync(res.replace("Exported file at: ", ""))) {
            assert.strictEqual(true, true, "file exported at the saved location");
-           fs.unlinkSync(res.replace("File exported at location: ", ""))
+           fs.unlinkSync(res.replace("Exported file at: ", ""))
         }else {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
         }
@@ -296,9 +296,9 @@ describe('Autographa Test', () => {
       .click("#export-2-column")
       .waitForVisible(".swal-text", 2000)
       .getText(".swal-text").then((res) => {
-        if(fs.existsSync(res.replace("File exported at location: ", ""))) {
+        if(fs.existsSync(res.replace("Exported file at: ", ""))) {
            assert.strictEqual(true, true, "file exported at the saved location");
-           fs.unlinkSync(res.replace("File exported at location: ", ""))
+           fs.unlinkSync(res.replace("Exported file at: ", ""))
         }else {
           assert.strictEqual(true, false, "file doesn't exported at saved location");
         }

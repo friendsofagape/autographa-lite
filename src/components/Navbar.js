@@ -214,11 +214,11 @@ class Navbar extends React.Component {
         let id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1];
         db.get('targetBible').then((doc) => {
             db.get(AutographaStore.bookId.toString()).then((book) => {
-                exportHtml.exportHtml(id, book, db, doc.langScript, column);
+                exportHtml.exportHtml(id, book, db, doc.langScript, column, currentTrans);
             })
         }).catch(function(err) {
             // handle any errors
-            swal(currentTrans["dynamic-msg-error"], "Please enter Translation Details in the Settings to continue with Export.", "error");
+            swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-enter-translation"], "error");
         });  
     }
 
