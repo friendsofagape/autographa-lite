@@ -6,7 +6,7 @@ import swal from 'sweetalert';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import ReferencePanel from './ReferencePanel';
-const { dialog } = require('electron').remote;
+const { dialog, getCurrentWindow } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -93,8 +93,6 @@ class SettingsModal extends React.Component {
         }
       });
     })
-    console.log(AutographaStore.refListEdit)
-
   }
 
   onChange = (event) => {
@@ -225,7 +223,7 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogSettingData = (event) => {
-    dialog.showOpenDialog({
+    dialog.showOpenDialog(getCurrentWindow(), {
         properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Export Location"
@@ -238,7 +236,7 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogImportTrans = (event) => {
-    dialog.showOpenDialog({
+    dialog.showOpenDialog(getCurrentWindow(), {
         properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
       title: "Import Translation"
@@ -250,7 +248,7 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogRefSetting = (event) => {
-    dialog.showOpenDialog({
+    dialog.showOpenDialog(getCurrentWindow(), {
         properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
         title: "Import Reference"
