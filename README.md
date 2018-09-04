@@ -33,4 +33,4 @@ This project is licensed under the liberal MIT License. See [LICENSE](https://gi
 Let us know if face any bugs/problems by opening an issue in GitHub. We'll do our best to be prompt in our response.
 
 ## Acknowledgments
-* Friends of Agape, for their support and contributions.
+* [Friends of Agape](http://friendsofagape.org/), for their support and contributions.
