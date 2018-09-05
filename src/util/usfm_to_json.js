@@ -41,9 +41,9 @@ module.exports = {
                 validLineCount--;
                 //Do nothing for empty lines.
             } else if (splitLine[0] == '\\id') {
-                if (require(`${__dirname}/constants.js`).bookCodeList.includes(splitLine[1]))
+                if (booksCodes.includes(splitLine[1].toUpperCase()))
                     usfmBibleBook = true;
-                book._id = id_prefix + splitLine[1];
+                book._id = id_prefix + splitLine[1].toUpperCase();
             } else if (splitLine[0] == '\\c') {
                 book.chapters[parseInt(splitLine[1], 10) - 1] = {
                     "verses": verse,

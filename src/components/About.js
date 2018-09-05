@@ -35,7 +35,7 @@ var AboutUsModel = function(props) {
                         </div>
         <div className="col-xs-6" style={{padding:"5px"}}>
                             <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>
-                            <p><FormattedMessage id="label-version" /> <span>1.2.1</span></p>
+                            <p><FormattedMessage id="label-version" /> <span>1.2.2</span></p>
         <p><FormattedMessage id="label-hosted-url" /></p>
 	<p>https://github.com/friendsofagape/autographa-lite.git</p>
                         </div>

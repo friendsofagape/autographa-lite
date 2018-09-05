@@ -6,7 +6,7 @@ import swal from 'sweetalert';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import ReferencePanel from './ReferencePanel';
-const { dialog } = require('electron').remote;
+const { dialog, getCurrentWindow } = require('electron').remote;
 const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -93,8 +93,6 @@ class SettingsModal extends React.Component {
         }
       });
     })
-    console.log(AutographaStore.refListEdit)
-
   }
 
   onChange = (event) => {
@@ -225,10 +223,10 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogSettingData = (event) => {
-    dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+    dialog.showOpenDialog(getCurrentWindow(), {
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+        title: "Export Location"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.state.settingData["folderPath"] = selectedDir;
@@ -238,10 +236,10 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogImportTrans = (event) => {
-    dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+    dialog.showOpenDialog(getCurrentWindow(), {
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+      title: "Import Translation"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.setState({folderPathImport: selectedDir});
@@ -250,10 +248,10 @@ class SettingsModal extends React.Component {
   }
 
   openFileDialogRefSetting = (event) => {
-    dialog.showOpenDialog({
-        properties: ['openDirectory', 'openFile'],
+    dialog.showOpenDialog(getCurrentWindow(), {
+        properties: ['openDirectory'],
         filters: [{ name: 'All Files', extensions: ['*'] }],
-        title: "Select reference version folder"
+        title: "Import Reference"
     }, (selectedDir) => {
         if (selectedDir != null) {
           this.state.refSetting["refFolderPath"] = selectedDir;
