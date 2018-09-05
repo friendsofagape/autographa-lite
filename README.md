@@ -11,7 +11,7 @@ It is relatively easy to setup the application locally for development.
 [Yarn 1.9.4](https://yarnpkg.com/en/docs/install)    
 [Python 2](https://www.python.org/downloads/release/python-2715/) (One of our build tools [breaks under Python 3](https://github.com/nodejs/node-gyp/issues/1337).)
 
-### Mac (tested on MacOS Sierra 10.13.4) and *nix Setup (tested on Ububtu 17.10)
+### Mac (tested on MacOS Sierra 10.13.6) and *nix Setup (tested on Ububtu 18.04)
 Fork this repository.   
 \# Set enivronment variable ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true.   
 \# In bash like shell
