@@ -26,6 +26,12 @@ This should start the application and open up the main screen.
 If you'd like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
 Please read the [CONTRIBUTE](https://github.com/Bridgeconn/autographa-lite/blob/master/CONTRIBUTE.md) page for details on our code of conduct, and the process for submitting pull requests.
 
+We really value our contributors weather they helped fix a bug, build a feature, tested out the app or made some meaningful impact, here are our heros in alphabetical order of first name/username:
+- [aunger](https://github.com/aunger)
+- Donny Duvall
+- [joelthe1](https://github.com/joelthe1)
+- [sandeeponrails](https://github.com/sandeeponrails)
+
 ## License
 This project is licensed under the liberal MIT License. See [LICENSE](https://github.com/Bridgeconn/autographa-lite/blob/master/LICENSE) for more details.
 
