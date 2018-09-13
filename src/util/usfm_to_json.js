@@ -53,6 +53,8 @@ module.exports = {
                 c = parseInt(splitLine[1], 10)
                 v = 0;
             } else if (splitLine[0] == '\\v') {
+                if (c == 0)
+                    return callback(new Error("USFM files without chapters aren't supported."));
                 var verseStr = (splitLine.length <= 2) ? '' : splitLine.splice(2, splitLine.length - 1).join(' ');
                 verseStr = replaceMarkers(verseStr);
                 const bookIndex = booksCodes.findIndex((element) => {

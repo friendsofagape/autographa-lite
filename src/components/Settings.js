@@ -287,18 +287,14 @@ class SettingsModal extends React.Component {
           targetDb: 'target',
           scriptDirection: AutographaStore.refScriptDirection
         }
-        return that.getStuffAsync(options).then((res) => {
-            return res;
-        }, (err)=>{
-            return err;
-        })
+        return that.getStuffAsync(options);
       }
-    }).then(function(res){
-      window.location.reload();
-    }).catch(function(err){
-      window.location.reload();
+    }).catch((err) => {
+      const currentTrans = AutographaStore.currentTrans;
       console.log(err)
-    })
+      that.setState({showLoader: false});
+      return swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-imp-error"], "error");
+    }).finally(() => window.location.reload())
   }
 
   reference_setting() {
@@ -389,11 +385,11 @@ class SettingsModal extends React.Component {
 
   saveJsonToDB = (files) => {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
-    let that = this;
+    const that = this;
     Promise.map(files, (file) => {
-      var filePath = path.join(refFolderPath[0], file);
+      const filePath = path.join(refFolderPath[0], file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
-        var options = {
+        const options = {
           bibleName: bibleName,
           lang: refLangCodeValue.toLowerCase(),
           version: refVersion.toLowerCase(),
@@ -401,17 +397,14 @@ class SettingsModal extends React.Component {
           targetDb: 'refs',
           scriptDirection: AutographaStore.refScriptDirection
         }
-        return that.getStuffAsync(options).then((res) => {
-          return res;
-        }, (err)=>{
-          return err;
-        })
+        return that.getStuffAsync(options);
       }
-    }).then((res) => {
-      window.location.reload();
-    }, (err) => {
-      window.location.reload();
-    })
+    }).catch((err) => {
+      const currentTrans = AutographaStore.currentTrans;
+      console.log(err)
+      that.setState({showLoader: false});
+      return swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-imp-error"], "error");
+    }).finally(() => window.location.reload())
   }
 
   clickListSettingData = (evt, obj) => {
