@@ -295,7 +295,7 @@ class SettingsModal extends React.Component {
       const currentTrans = AutographaStore.currentTrans;
       console.log(err)
       that.setState({showLoader: false});
-      return swal(currentTrans["dynamic-msg-imp-error"], err.toString(), "error");
+      return swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-imp-error"], "error");
     }).finally(() => window.location.reload())
   }
 
