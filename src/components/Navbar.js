@@ -28,7 +28,6 @@ let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 
 injectTapEventPlugin();
-
 @observer
 class Navbar extends React.Component {
     constructor(props) {
