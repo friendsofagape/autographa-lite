@@ -20,10 +20,12 @@ import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
+const DEFAULTREF = "eng_ult";
 
 
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
+const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
 
 injectTapEventPlugin();
 
@@ -86,7 +88,7 @@ class Navbar extends React.Component {
             }).join('');
             return refString;
         }, (err) => {
-            console.log(err)
+            return "";
         });
     }
 
@@ -132,20 +134,19 @@ class Navbar extends React.Component {
         });
     }
     
-
     getRefContents = (id,chapter) => {
         refDb.get('targetReferenceLayout').then((doc) => {
             AutographaStore.layout = doc.layout;
             AutographaStore.layoutContent = doc.layout;
             let chapter = AutographaStore.chapterId.toString();
             this.getContent(AutographaStore.activeRefs[0]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                AutographaStore.content = content;
+                AutographaStore.content = content ? content : AutographaStore.currentTrans["label-data-not-found"];
             }) 
             this.getContent(AutographaStore.activeRefs[1]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                AutographaStore.contentOne = content;
+                AutographaStore.contentOne = content ? content : AutographaStore.currentTrans["label-data-not-found"];
             })
             this.getContent(AutographaStore.activeRefs[2]+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1],chapter).then((content)=>{
-                AutographaStore.contentTwo = content;
+                AutographaStore.contentTwo = content ? content : AutographaStore.currentTrans["label-data-not-found"];
             })
         })
        //  AutographaStore.aId  = "";
@@ -248,27 +249,16 @@ class Navbar extends React.Component {
     }
 
     onItemClick(bookName) {
-        var bookNo;
-        for (var i = 0; i < Constant.booksList.length; i++) {
-            bookName == Constant.booksList[i]
-            if (bookName == Constant.booksList[i]) {
-                var bookNo = i+1;
-                break;
-            };
-        };
-        AutographaStore.bookActive = bookNo;
+        
         AutographaStore.bookName = bookName;
         AutographaStore.chapterActive = 0;
-        var id = AutographaStore.currentRef + '_' + Constant.bookCodeList[parseInt(bookNo, 10) - 1]
-        var getData = refDb.get(id).then(function(doc) {
-            return doc.chapters.length;
-        }).catch(function(err){
-            console.log(err);
-        });
-        getData.then((length) => {
-            AutographaStore.bookChapter["chapterLength"] = length;
-            AutographaStore.bookChapter["bookId"] = bookNo;
-        });
+        
+        // getting chapter list
+        let bookIndex =  Constant.booksList.findIndex((book)=> book.toLowerCase() === bookName.toLowerCase());
+        const bookSkel = bibleJson[bookIndex+1];
+        AutographaStore.bookActive = bookIndex+1
+        AutographaStore.bookChapter["chapterLength"] = bookSkel.chapters.length;
+        AutographaStore.bookChapter["bookId"] = bookIndex+1;
     }
 
      

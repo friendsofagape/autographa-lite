@@ -32,7 +32,7 @@
 	"label-language" : "Idioma da Aplicação",
 	"label-select-language": "Selecionar o idioma para configurar a aplicação em=",
 	"label-heading-confirmation" : "Confirmação",
-	"label-not-found": "não encontrado",
+	"label-data-not-found": "Dados não encontrados",
 	"placeholder-search-text" : "Buscar Texto",
 	"placeholder-replace-text" : "Substituição",
 	"placeholder-path-to-destination" : "Localização da pasta de destino",

@@ -34,6 +34,7 @@
 	"label-select-language": "Select the language to setup the application in:",
 	"label-heading-confirmation" : "Confirmation",
 	"label-not-found": "Not found.",
+	"label-data-not-found": "Data not found.",
 	"placeholder-search-text" : "Search text",
 	"placeholder-replace-text" : "Replacement",
 	"placeholder-path-to-destination" : "Path to destination folder",
