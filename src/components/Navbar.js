@@ -20,9 +20,6 @@ import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
-const DEFAULTREF = "eng_ult";
-
-
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
