@@ -52,7 +52,7 @@ function createWindow() {
     //loading window gracefully
     win.once('ready-to-show', () => {
 	// Open the DevTools.
-	// win.webContents.openDevTools();	
+	//win.webContents.openDevTools();	
 	win.maximize();
         win.show();
     });
@@ -133,7 +133,9 @@ app.on('activate', () => {
     
 });
 
-const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+//code for sigle instance at a time according to electron 3.0.0
+app.requestSingleInstanceLock();
+app.on('second-instance', (commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (win) {
         if (win.isMinimized()) win.restore()
@@ -141,8 +143,6 @@ const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) 
     }
 })
 
-if (isSecondInstance) {
-    app.quit()
-}
+
 
 
