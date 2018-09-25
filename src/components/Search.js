@@ -197,8 +197,14 @@ class SearchModal extends React.Component {
 
 
   render (){
-    let closeSearch = () => AutographaStore.showModalSearch = false
-    let closeReplaceModal = () => this.setState({replaceInfo: false})
+    let closeSearch = () => {
+      AutographaStore.showModalSearch = false;
+      AutographaStore.replaceOption = "chapter";
+    }
+    let closeReplaceModal = () => {
+      this.setState({replaceInfo: false})
+      AutographaStore.replaceOption = "chapter";
+    }
     let wordBook = AutographaStore.currentTrans["dynamic-msg-book"];
     let wordReplace = AutographaStore.currentTrans["label-total-word-replaced"]
     return (  
