@@ -22,7 +22,7 @@
 	"label-folder-location" : "Folder Location",
 	"label-book-chapter" : "Book and Chapter",
 	"label-find-replace" : "Find and Replace",
-	"label-total-word-replaced" : "Total word replaced",
+	"label-total-word-replaced" : "Total words replaced",
 	"label-current-chapter" : "Current chapter",
 	"label-current-book" : "Current book",
 	"label-find" : "Find",
