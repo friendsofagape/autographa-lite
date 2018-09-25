@@ -199,6 +199,8 @@ class SearchModal extends React.Component {
   render (){
     let closeSearch = () => AutographaStore.showModalSearch = false
     let closeReplaceModal = () => this.setState({replaceInfo: false})
+    let wordBook = AutographaStore.currentTrans["dynamic-msg-book"];
+    let wordReplace = AutographaStore.currentTrans["label-total-word-replaced"]
     return (  
       <div>
       <Modal show={AutographaStore.showModalSearch} onHide={closeSearch} id="tab-search">
@@ -255,9 +257,9 @@ class SearchModal extends React.Component {
         <Modal.Body>
           <div className="row">
               <div className="col-lg-6" id="replace-message">
-                  <strong>Book: </strong> 
+                  <strong>{wordBook} </strong> 
                     {Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]} { AutographaStore.replaceOption == "chapter"  ? `: ${AutographaStore.chapterId}` : ""},
-                    Total word replaced: {this.state.replaceCount}
+                    {wordReplace}: {this.state.replaceCount}
                 
               </div>
               </div>
@@ -272,7 +274,7 @@ class SearchModal extends React.Component {
             onClick={this.saveReplacedText}
           />
           <RaisedButton
-            label={<FormattedMessage id="btn-replace-cancel" />}
+            label={<FormattedMessage id="btn-cancel" />}
             primary={true}
             onClick={closeReplaceModal}
           />
