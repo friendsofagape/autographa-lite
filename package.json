@@ -2,7 +2,7 @@
   "name": "Autographa",
   "productName": "Autographa Lite",
   "description": "A Bible translation editor for everyone.",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "src/app.js",
   "author": "Friends of Agape <mathew.joel@protonmail.com>",
   "license": "MIT",
