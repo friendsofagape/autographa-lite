@@ -263,10 +263,7 @@ class SearchModal extends React.Component {
         <Modal.Body>
           <div className="row">
               <div className="col-lg-6" id="replace-message">
-                  <strong>{wordBook} </strong> 
-                    {Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]} { AutographaStore.replaceOption == "chapter"  ? `: ${AutographaStore.chapterId}` : ""},
-                    {wordReplace}: {this.state.replaceCount}
-                
+                  {this.state.replaceCount} {AutographaStore.currentTrans["label-occurrences-replaced"]}
               </div>
               </div>
           <div>

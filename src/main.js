@@ -134,14 +134,27 @@ app.on('activate', () => {
 });
 
 //code for sigle instance at a time according to electron 3.0.0
-app.requestSingleInstanceLock();
-app.on('second-instance', (commandLine, workingDirectory) => {
+// app.requestSingleInstanceLock();
+// app.on('second-instance', (commandLine, workingDirectory) => {
+//     // Someone tried to run a second instance, we should focus our window.
+//     if (win) {
+//         if (win.isMinimized()) win.restore()
+//         win.focus()
+//     }
+// })
+
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (win) {
         if (win.isMinimized()) win.restore()
         win.focus()
     }
 })
+
+if (isSecondInstance) {
+    app.quit()
+}
+
 
 
 
