@@ -8415,7 +8415,7 @@ ul {
 .books-li {
   width: 100%;
   column-count: 4;
-  column-gap: 25%; }
+  }
 
 .books-li ul {
   padding-left: 50px; }
