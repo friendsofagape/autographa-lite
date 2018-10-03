@@ -28,7 +28,6 @@ Please read the [CONTRIBUTE](https://github.com/Bridgeconn/autographa-lite/blob/
 
 We really value our contributors weather they helped fix a bug, build a feature, tested out the app or made some meaningful impact, here are our heros in alphabetical order of first name/username:
 - [aunger](https://github.com/aunger)
-- Donny Duvall
 - [joelthe1](https://github.com/joelthe1)
 - [sandeeponrails](https://github.com/sandeeponrails)
 
