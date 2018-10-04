@@ -62,7 +62,6 @@
     "diff-match-patch": "^1.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "fs-jetpack": "^1.0.0",
-    "jquery": "2.2.4",
     "material-ui": "^0.17.4",
     "mobx": "^3.1.9",
     "mobx-react": "^4.1.8",
