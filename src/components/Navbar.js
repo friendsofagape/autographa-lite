@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-const { Nav, NavItem, Modal, Button, Col, Row, Grid, Tabs, Tab } = require('react-bootstrap/lib');
+const { Nav, NavItem, Modal, Button, Col, Row, Grid, Tabs, Tab, NavDropdown, MenuItem } = require('react-bootstrap/lib');
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 import { observer } from "mobx-react"
@@ -792,20 +792,14 @@ class Navbar extends React.Component {
                                 </a>}
                                 </FormattedMessage>
                             </li>
-                            <li>
-                                <a href="#" className="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}><i className="fa fa-cloud-download fa-2x"></i>
-                                </a>
-                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a onClick={() => this.openpopupDownload()} href="javascript:;" id="export-usfm-file"><FormattedMessage id="export-usfm"/></a>
-                                    </li>
-                                    <li>
-                                        <a onClick={(e) => this.exportPDF(e, 1)} href="javascript:;" id="export-1-column"><FormattedMessage id="export-html-1-column"/></a>
-                                        <a onClick={(e) => this.exportPDF(e, 2)} href="javascript:;" id="export-2-column"><FormattedMessage id="export-html-2-column"/></a>
-                                        
-                                    </li>
-                                </ul>
-                                </li>
+                            <NavDropdown eventKey={1} title={<i className="fa fa-cloud-download fa-2x"></i>} noCaret id="basic-nav-dropdown">
+                                <MenuItem eventKey="1" onClick={() => this.openpopupDownload()} id="export-usfm-file"><FormattedMessage id="export-usfm"/></MenuItem>
+                                <MenuItem eventKey="2" onClick={(e) => this.exportPDF(e, 1)} id="export-1-column"><FormattedMessage id="export-html-1-column"/>
+                                            </MenuItem>
+                                            <MenuItem eventKey="3" onClick={(e) => this.exportPDF(e, 2)}  id="export-2-column"><FormattedMessage id="export-html-2-column"/>
+
+                                            </MenuItem>
+                            </NavDropdown>
                             <li>
                                 <FormattedMessage id="tooltip-about" >
                                 {(message) =>
