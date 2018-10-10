@@ -100,6 +100,7 @@
     "css-loader": "^0.28.7",
     "electron": "2.0.10",
     "electron-builder": "^20.8.1",
+    "electron-debug": "2.0.0",
     "electron-mocha": "^5.0.0",
     "electron-react-devtools": "^0.5.3",
     "electron-rebuild": "^1.7.3",
