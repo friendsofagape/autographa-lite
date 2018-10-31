@@ -466,7 +466,7 @@ class SettingsModal extends React.Component {
     // this.setState({bibleReference: !this.state.bibleReference});
     const currentTrans = AutographaStore.currentTrans;
     let bibleNameLen = this.state.refName.length;
-    if( bibleNameLen >= 10 ){
+    if( bibleNameLen > 10 ){
       swal(currentTrans["label-bible-name"], currentTrans["ref_name_max_valid"], "error")
       return
     }
