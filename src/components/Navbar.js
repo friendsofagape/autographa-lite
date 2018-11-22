@@ -246,16 +246,16 @@ class Navbar extends React.Component {
     }
 
     onItemClick(bookName) {
-        
         AutographaStore.bookName = bookName;
         AutographaStore.chapterActive = 0;
-        
         // getting chapter list
         let bookIndex =  Constant.booksList.findIndex((book)=> book.toLowerCase() === bookName.toLowerCase());
         const bookSkel = bibleJson[bookIndex+1];
         AutographaStore.bookActive = bookIndex+1
         AutographaStore.bookChapter["chapterLength"] = bookSkel.chapters.length;
         AutographaStore.bookChapter["bookId"] = bookIndex+1;
+         // moving to next chapter Tab
+         this.goToTab(2);
     }
 
      
@@ -691,7 +691,7 @@ class Navbar extends React.Component {
                                 </div>
                                  ) : ''
                             }
-                            <Tab eventKey={1} title="Book" onClick={() => this.goToTab(2)}>
+                            <Tab eventKey={1} title="Book" >
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
