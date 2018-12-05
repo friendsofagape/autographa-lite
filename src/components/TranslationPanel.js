@@ -11,11 +11,17 @@ const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
+import { CommunicationSpeakerPhone } from 'material-ui/svg-icons';
 
+var el;
+var range;
+var sel;
+var pos;
+var textNode;
 @observer
 class TranslationPanel extends React.Component {
 	constructor(props){
-    	super(props);
+		super(props);
    		i18n.isRtl().then((res) => {
       		if(res) AutographaStore.scriptDirection = "rtl"
     	});
@@ -56,15 +62,15 @@ class TranslationPanel extends React.Component {
         	if( refContent[l])
           		refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
       	}
-  	}
+	  }
 
-	handleKeyUp =(e)=> {
+	  handleKeyUp = (e) => {
 		if(this.timeout) clearTimeout(this.timeout);
-			this.timeout = setTimeout(() => {
-				if(!AutographaStore.setDiff){
-					this.props.onSave();
-				}
-			}, 3000);
+		this.timeout = setTimeout(() => {
+			if(!AutographaStore.setDiff){
+				this.props.onSave();
+			}
+		}, 3000);
 	}
   	openStatPopup =() => {
         this.showReport();
@@ -107,19 +113,20 @@ class TranslationPanel extends React.Component {
             AutographaStore.incompleteVerse = incompleteVerseChapter;
             AutographaStore.multipleSpaces = multipleSpacesChapter;      
         })  
-    }
-  
+	}
+
   	render (){
     	let verseGroup = [];
     	const toggle = AutographaStore.toggle;
 
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
-		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)}>
+		verseGroup.push(<div key={i} id={`versediv${i+1}`}  onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text"}}>
 			<span className='verse-num' key={i}>{(i+1)}</span>
-			<span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
+			<div contentEditable={true} style={{display:"inline-block"}} suppressContentEditableWarning={true} id={vid}
+			onKeyUp= {this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
-			</span>
+			</div>
 			</div>
 		); 
 		}
