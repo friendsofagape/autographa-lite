@@ -11,13 +11,7 @@ const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
-import { CommunicationSpeakerPhone } from 'material-ui/svg-icons';
 
-var el;
-var range;
-var sel;
-var pos;
-var textNode;
 @observer
 class TranslationPanel extends React.Component {
 	constructor(props){
@@ -50,8 +44,8 @@ class TranslationPanel extends React.Component {
 			$('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
 			$('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
 		}
-		}*/}
-      	let refContent = document.getElementsByClassName('ref-contents');
+        }*/}
+        let refContent =  document.getElementsByClassName('ref-contents');
       	for(let l=0; l<AutographaStore.layout; l++){
         	let ref = refContent[l] ? refContent[l].querySelectorAll('div[data-verse^="r"]') : [];
         	for (let i=0; i < ref.length; i++) {
@@ -118,13 +112,11 @@ class TranslationPanel extends React.Component {
   	render (){
     	let verseGroup = [];
     	const toggle = AutographaStore.toggle;
-
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
-		verseGroup.push(<div key={i} id={`versediv${i+1}`}  onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text"}}>
+		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text", whiteSpace:"pre-wrap"}}>
 			<span className='verse-num' key={i}>{(i+1)}</span>
-			<div contentEditable={true} style={{display:"inline-block"}} suppressContentEditableWarning={true} id={vid}
-			onKeyUp= {this.handleKeyUp}>
+			<div contentEditable={true} style={{display:"inline"}} suppressContentEditableWarning={true} id={vid} onKeyUp= {this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
 			</div>
 			</div>

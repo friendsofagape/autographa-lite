@@ -354,6 +354,11 @@ class Navbar extends React.Component {
       return hours+ ':' + minutes  
     }
 
+    cleanVerse = (verse) => {
+        console.log(verse);
+        return verse.replace(/\n/g, ' ');
+    }
+
     saveTarget = () => {
         let bookNo = AutographaStore.bookId.toString();
         let that = this;
@@ -363,7 +368,7 @@ class Navbar extends React.Component {
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
                 //translationContent.push(document.getElementById(vId).textContent.toString());
-                verse.verse = document.getElementById(vId).textContent;
+                verse.verse = this.cleanVerse(document.getElementById(vId).innerHTML);
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
             // AutographaStore.translationContent = translationContent;
