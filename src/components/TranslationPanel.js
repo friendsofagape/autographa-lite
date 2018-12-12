@@ -55,8 +55,8 @@ class TranslationPanel extends React.Component {
         	};
         	if( refContent[l])
           		refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
-      	}
-	  }
+        }
+    }
 
 	  handleKeyUp = (e) => {
 		if(this.timeout) clearTimeout(this.timeout);
@@ -116,9 +116,9 @@ class TranslationPanel extends React.Component {
 		let vid="v"+(i+1);
 		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text", whiteSpace:"pre-wrap"}}>
 			<span className='verse-num' key={i}>{(i+1)}</span>
-			<div contentEditable={true} style={{display:"inline"}} suppressContentEditableWarning={true} id={vid} onKeyUp= {this.handleKeyUp}>
+			<span contentEditable={true} data-chunk-group={AutographaStore.chunkGroup[i]} suppressContentEditableWarning={true} id={vid} onKeyUp= {this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
-			</div>
+			</span>
 			</div>
 		); 
 		}
