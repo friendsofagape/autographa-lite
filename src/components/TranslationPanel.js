@@ -54,8 +54,10 @@ class TranslationPanel extends React.Component {
           		}
         	};
         	if( refContent[l])
-          		refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
-        }
+                  refContent[l].querySelectorAll('div[data-verse^='+'"'+"r"+(refId+1)+'"'+']')[0].style = "background-color: rgba(11, 130, 255, 0.1);padding-left:10px;padding-right:10px;border-radius: 10px";
+            }
+        let focusIn = document.getElementById(vId);
+        focusIn.focus();
     }
 
 	  handleKeyUp = (e) => {
