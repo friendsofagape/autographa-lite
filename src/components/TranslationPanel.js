@@ -65,8 +65,8 @@ class TranslationPanel extends React.Component {
 				this.props.onSave();
 			}
 		}, 3000);
-	}
-  	openStatPopup =() => {
+    }
+    openStatPopup = () => {
         this.showReport();
         AutographaStore.showModalStat = true
     }
@@ -114,9 +114,9 @@ class TranslationPanel extends React.Component {
     	const toggle = AutographaStore.toggle;
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
-		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text", whiteSpace:"pre-wrap"}}>
+		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style= {{cursor: "text", whiteSpace: "pre-wrap"}}>
 			<span className='verse-num' key={i}>{(i+1)}</span>
-			<span contentEditable={true} data-chunk-group={AutographaStore.chunkGroup[i]} suppressContentEditableWarning={true} id={vid} onKeyUp= {this.handleKeyUp}>
+			<span contentEditable={true} data-chunk-group={AutographaStore.chunkGroup[i]} suppressContentEditableWarning={true} id={vid} onKeyUp={this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
 			</span>
 			</div>

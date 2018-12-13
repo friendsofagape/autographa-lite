@@ -355,7 +355,6 @@ class Navbar extends React.Component {
     }
 
     cleanVerse = (verse) => {
-        console.log(verse);
         return verse.replace(/\n/g, ' ');
     }
 
