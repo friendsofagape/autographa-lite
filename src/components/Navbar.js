@@ -354,19 +354,23 @@ class Navbar extends React.Component {
       return hours+ ':' + minutes  
     }
 
+    cleanVerse = (verse) => {
+        return verse.replace(/\n/g, ' ');
+    }
+
     saveTarget = () => {
         let bookNo = AutographaStore.bookId.toString();
         let that = this;
-        let translationContent = [];
+        // let translationContent = [];
         db.get(bookNo).then((doc) => {
             let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
             verses.forEach( (verse, index) => {
                 let vId = 'v' + (index + 1);
-                translationContent.push(document.getElementById(vId).textContent.toString());
-                verse.verse = document.getElementById(vId).textContent;
+                // translationContent.push(document.getElementById(vId).textContent.toString());
+                verse.verse = this.cleanVerse(document.getElementById(vId).innerHTML);
                 doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses = verses;
             });
-            AutographaStore.translationContent = translationContent;
+            // AutographaStore.translationContent = translationContent;
             db.get(doc._id).then((book) => {
                 doc._rev = book._rev;
                 db.put(doc).then((response) => {
