@@ -44,6 +44,7 @@ We really value our contributors weather they helped fix a bug, build a feature,
 - [aunger](https://github.com/aunger)
 - [joelthe1](https://github.com/joelthe1)
 - [sandeeponrails](https://github.com/sandeeponrails)
+- [Ashersam](https://github.com/Ashersam)
 
 ## License
 This project is licensed under the liberal MIT License. See [LICENSE](https://github.com/Bridgeconn/autographa-lite/blob/master/LICENSE) for more details.
