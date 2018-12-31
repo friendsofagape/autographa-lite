@@ -97,6 +97,18 @@ describe('Autographa Test', () => {
       .getText("#v1").should.eventually.equal(input);
     });
 
+    it('should find the cursor jump', async () => {
+        const input = 'Check for cursor positionNewentry'
+        return app.client.waitUntilWindowLoaded()
+        .waitForVisible("#versediv4", 20000)
+        .click("#versediv4")
+        .keys('Check for cursor position')
+        .pause(3000)
+        .keys('Newentry')
+        .pause(3000)
+        .getText("#v4").should.eventually.equal(input);
+    });
+
     it('should click the ref drop down', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".ref-drop-down")
@@ -176,7 +188,7 @@ describe('Autographa Test', () => {
       .waitForEnabled('#diff', 20000)
       .click('#diff')
       .waitForExist("#tIns", 20000)
-      .getText("#tIns").should.eventually.equal('9');
+      .getText("#tIns").should.eventually.equal('13');
     });
 
     it('should click off the diff button', () => {
@@ -199,6 +211,18 @@ describe('Autographa Test', () => {
     it('should check chapter button', () => {
       return app.client.waitUntilWindowLoaded()
       .getText('#chapterBtn').should.eventually.equal('1');
+    });
+
+    it('should check verse existance after 3x, 4x click', () => {
+        const input = 'Check for verse5 visible after 3x 4x click';
+        return app.client.waitUntilWindowLoaded()
+        .waitForVisible("#versediv5", 20000)
+        .click("#versediv5")
+        .keys('Check for verse5 visible after 3x 4x click')
+        .pause(3000)
+        .waitForEnabled("#btn-3x", 20000)
+        .click("#btn-3x")
+        .getText("#v5").should.eventually.equal(input);
     });
 
   	it('should change layout to 3x', () => {
