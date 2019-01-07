@@ -97,7 +97,7 @@ describe('Autographa Test', () => {
       .getText("#v1").should.eventually.equal(input);
     });
 
-    it('should find the cursor jump', async () => {
+    it('should find the cursor jump', () => {
         const input = 'Check for cursor positionNewentry'
         return app.client.waitUntilWindowLoaded()
         .waitForVisible("#versediv4", 20000)
