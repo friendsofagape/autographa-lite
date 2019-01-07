@@ -53,6 +53,33 @@ class DownloadModal extends React.Component {
         });
     }
 
+    exportAllUsfm = (e,flag) => {
+        const {stageChange, stageName} = this.state;
+        let stageInput = stageName ? stageName : `Stage ${stageChange}`;
+        const currentTrans = AutographaStore.currentTrans;
+
+        for(let i =1; i<= Number(flag); i++){
+            let book = {};
+        db.get('targetBible').then(function(doc) {
+            book.bookNumber = i.toString();
+            if(flag===1)
+            book.bookNumber = AutographaStore.bookId.toString();
+            book.bookName = constants.booksList[parseInt(book.bookNumber, 10) -1];
+            book.bookCode = constants.bookCodeList[parseInt(book.bookNumber, 10) -1];
+            book.outputPath = doc.targetPath;
+            let filepath = bibUtil.toUsfm(book, stageInput, doc);
+            return filepath;
+        }).then((filepath) => {
+            AutographaStore.showModalDownload = false;
+            swal({title: currentTrans["tooltip-export-usfm"], text: `${currentTrans["label-exported-file"]}:${filepath}`})
+        }).catch((err) => {
+            console.log(err)
+            AutographaStore.showModalDownload = false;
+            swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-enter-translation"])
+        });
+    }
+    }
+
     render (){
         let closeSearchUSFM = () => AutographaStore.showModalDownload = false
         const {stageChange, stageName} = this.state;
@@ -118,7 +145,12 @@ class DownloadModal extends React.Component {
                 <Modal.Footer>
                 <FormattedMessage id="btn-export">
                 {(message) =>
-                  <RaisedButton style={{float: "right"}} disabled={stageName || stageChange ? false : true} id="btn-export-usfm" label={message} primary={true} onClick={(e) => this.exportUsfm(e)}/>
+                  <RaisedButton style={{float: "right", marginLeft:"5px"}} disabled={stageName || stageChange ? false : true} id="btn-export-usfm" label={message} primary={true} onClick={(e) => this.exportAllUsfm(e,1)}/>
+                }
+                </FormattedMessage>
+                <FormattedMessage id="btn-export-all">
+                {(message) =>
+                  <RaisedButton style={{float: "right"}} disabled={stageName || stageChange ? false : true} id="btn-export-usfm" label={message} primary={true} onClick={(e) => this.exportAllUsfm(e,66)}/>
                 }
                 </FormattedMessage>
                 </Modal.Footer>
