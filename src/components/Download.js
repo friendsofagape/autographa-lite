@@ -50,16 +50,16 @@ class DownloadModal extends React.Component {
                 swal({title: currentTrans["tooltip-export-usfm"], text: `${currentTrans["label-exported-file"]}:${filepath}`})
             }
             if(books === '*') {
-                constants.bookCodeList.forEach((value, index) => {
+                constants.bookCodeList.forEach(async(value, index) => {
                     book={};
                     book.bookNumber = (index+1).toString();
                     book.bookName = constants.booksList[index];
                     book.bookCode = value;
                     book.outputPath = doc.targetPath;
                     filepath = await bibUtil.toUsfm(book, stageInput, doc);
-                    AutographaStore.showModalDownload = false;
-                    swal({title: currentTrans["tooltip-backup-usfm"]})
                 })
+                AutographaStore.showModalDownload = false;
+                swal({title: currentTrans["tooltip-backup-usfm"]})
             }
         }
         catch(ex) {
