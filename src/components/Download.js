@@ -139,22 +139,22 @@ class DownloadModal extends React.Component {
                 </div>
                 </Modal.Body>
                 <RadioButtonGroup
-                            valueSelected={AutographaStore.BackupOption}
-                            name="BackUpOption"
-                            style={{display: "flex", marginBottom:"3%", marginLeft:"6%"}}
-                            onChange={(event, value) => this.onChangeBackupdir(value)}
-                          >
-                            <RadioButton
-                            value="current"
-                            label={<FormattedMessage id="label-current" />}
-                            style={{width: "40%"}}
-                            />
-                            <RadioButton
-                            value="*"
-                            label={<FormattedMessage id="label-all" />}
-                            style={{width: "40%"}}
-                            />
-                          </RadioButtonGroup>
+                valueSelected={AutographaStore.BackupOption}
+                name="BackUpOption"
+                style={{display: "flex", marginBottom:"3%", marginLeft:"6%"}}
+                onChange={(event, value) => this.onChangeBackupdir(value)}
+                >
+                <RadioButton
+                value="current"
+                label={<FormattedMessage id="label-current" />}
+                style={{width: "40%"}}
+                />
+                <RadioButton
+                value="*"
+                label={<FormattedMessage id="label-all" />}
+                style={{width: "40%"}}
+                />
+                </RadioButtonGroup>
                 <Modal.Footer>
                 <FormattedMessage id="btn-export">
                 {(message) =>
