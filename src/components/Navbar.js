@@ -802,8 +802,6 @@ class Navbar extends React.Component {
                                             </MenuItem>
                                             <MenuItem eventKey="3" onClick={(e) => this.exportPDF(e, 2)}  id="export-2-column"><FormattedMessage id="export-html-2-column"/>
                                             </MenuItem>
-                                            <MenuItem eventKey="4" onClick={(e) => this.openpopupDownload(e)} id="export_all"><FormattedMessage id="export-all-files" />
-                                            </MenuItem>
                             </NavDropdown>
                             <li>
                                 <FormattedMessage id="tooltip-about" >

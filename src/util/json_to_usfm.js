@@ -21,7 +21,7 @@ module.exports = {
 		    usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
 		});
 		if(index === chapterLimit-1) {
-		    var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookNumber+"_"+book.bookCode+"_"+stage+ "_" + getTimeStamp(new Date());
+		    var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookCode+"_"+stage+ "_" + getTimeStamp(new Date());
 		    filePath = path.join(Array.isArray(book.outputPath) ? book.outputPath[0] : book.outputPath, exportName);
 		    filePath += '.usfm';
 		    fs.writeFileSync(filePath, usfmContent.join('\n'), 'utf8');
