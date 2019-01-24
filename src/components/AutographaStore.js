@@ -62,7 +62,7 @@ export class AutographaStore {
   @observable incompleteVerse = {}
   @observable multipleSpaces = {}
   @observable setDiff = false
-  @observable BackupOption = "current"
+  @observable backupOption = "current"
 
 
 

@@ -33,7 +33,7 @@ class DownloadModal extends React.Component {
     }
 
     onChangeBackupdir = (value) => {
-        AutographaStore.BackupOption = value;
+        AutographaStore.backupOption = value;
     }
 
     exportUsfm = async(e) => {
@@ -43,7 +43,7 @@ class DownloadModal extends React.Component {
         const currentTrans = AutographaStore.currentTrans;
         let book = {};
         let filepath;
-        let books = AutographaStore.BackupOption;
+        let books = AutographaStore.backupOption;
         let doc = await db.get('targetBible');
         try {
             if(books === 'current') {
@@ -139,8 +139,8 @@ class DownloadModal extends React.Component {
                 </div>
                 </Modal.Body>
                 <RadioButtonGroup
-                valueSelected={AutographaStore.BackupOption}
-                name="BackUpOption"
+                valueSelected={AutographaStore.backupOption}
+                name="backUpOption"
                 style={{display: "flex", marginBottom:"3%", marginLeft:"6%"}}
                 onChange={(event, value) => this.onChangeBackupdir(value)}
                 >
