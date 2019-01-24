@@ -97,14 +97,14 @@ describe('Autographa Test', () => {
       .getText("#v1").should.eventually.equal(input);
     });
 
-    it('should find the cursor jump', () => {
-        const input = 'Check for cursor positionNewentry'
+    it('Check for cursor position edit', () => {
+        const input = 'Check for cursor position edit '
         return app.client.waitUntilWindowLoaded()
         .waitForVisible("#versediv4", 20000)
         .click("#versediv4")
         .keys('Check for cursor position')
         .pause(3000)
-        .keys('Newentry')
+        .keys(' edit ')
         .pause(3000)
         .getText("#v4").should.eventually.equal(input);
     });
@@ -188,7 +188,7 @@ describe('Autographa Test', () => {
       .waitForEnabled('#diff', 20000)
       .click('#diff')
       .waitForExist("#tIns", 20000)
-      .getText("#tIns").should.eventually.equal('13');
+      .getText("#tIns").should.eventually.equal('14');
     });
 
     it('should click off the diff button', () => {
@@ -214,24 +214,15 @@ describe('Autographa Test', () => {
     });
 
     it('should check verse existance after 3x, 4x click', () => {
-        const input = 'Check for verse5 visible after 3x 4x click';
+        const input = 'Check for verse5 after 3x 4x click';
         return app.client.waitUntilWindowLoaded()
         .waitForVisible("#versediv5", 20000)
         .click("#versediv5")
-        .keys('Check for verse5 visible after 3x 4x click')
-        .pause(3000)
-        .waitForEnabled("#btn-3x", 20000)
+        .keys('Check for verse5 after 3x 4x click')
         .click("#btn-3x")
+        .click("#btn-4x")
         .getText("#v5").should.eventually.equal(input);
     });
-
-  	it('should change layout to 3x', () => {
-  		return app.client.waitUntilWindowLoaded()
-  		.waitForEnabled("#btn-3x", 20000)
-  		.click("#btn-3x")
-  		.getText('.layout2x').should.eventually.exist;
-
-  	});
 
     it('Should keep newly saved text viewable when layout changes to 3x', ()=>{
      const input = 'this is a test';
@@ -256,13 +247,6 @@ describe('Autographa Test', () => {
         assert.strictEqual(true, matched, "style matched");
       })
     });
-
-    it('should change layout to 4x', () => {
-  		return app.client.waitUntilWindowLoaded()
-  		.waitForEnabled("#btn-4x", 20000)
-  		.click("#btn-4x")
-  		.getText('.layout3x').should.eventually.exist;
-  	});
 
     it('Should keep newly saved text viewable when layout changes to 4x', ()=>{
      const input = 'this is a test';
