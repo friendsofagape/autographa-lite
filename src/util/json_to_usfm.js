@@ -21,6 +21,9 @@ module.exports = {
 		    usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
 		});
 		if(index === chapterLimit-1) {
+			if(stage === "*")
+			var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookCode+"_" + getTimeStamp(new Date());
+			else
 		    var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookCode+"_"+stage+ "_" + getTimeStamp(new Date());
 		    filePath = path.join(Array.isArray(book.outputPath) ? book.outputPath[0] : book.outputPath, exportName);
 		    filePath += '.usfm';
