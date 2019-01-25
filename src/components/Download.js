@@ -114,7 +114,7 @@ class DownloadModal extends React.Component {
                                         className="btn btn-default dropdown-toggle"
                                         data-toggle="dropdown"
                                         aria-haspopup="true"
-                                        disabled = {(stageName==='*')? "disabled" : ""}
+                                        style={{pointerEvents: stageName === "*" ? 'none' : 'auto' }}
                                         aria-expanded="false"><FormattedMessage id={this.state.buttonStage} />&nbsp;{this.state.stageChange}
                                         <span className="caret"></span>
                                     </button>} id="export-usfm" noCaret>
