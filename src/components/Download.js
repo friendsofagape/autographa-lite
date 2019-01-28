@@ -34,12 +34,6 @@ class DownloadModal extends React.Component {
 
     onChangeBackupdir = (value) => {
         AutographaStore.backupOption = value;
-        if(value === 'current') {
-            this.setState({ stageName: "" });
-        }
-        else if(value === '*') {
-            this.setState({ stageName: "*" });
-        }
     }
 
     exportUsfm = async(e) => {
@@ -104,7 +98,6 @@ class DownloadModal extends React.Component {
                                     name="stageChange"
                                     value={ stageName ? stageName : (stageChange ? `Stage ${stageChange}` : "")}
                                     onChange={this.onChange}
-                                    disabled = {(stageName==='*')? "disabled" : ""}
                                 />}
                                 </FormattedMessage>
                                 <div className="input-group-btn">
@@ -114,7 +107,6 @@ class DownloadModal extends React.Component {
                                         className="btn btn-default dropdown-toggle"
                                         data-toggle="dropdown"
                                         aria-haspopup="true"
-                                        style={{pointerEvents: stageName === "*" ? 'none' : 'auto' }}
                                         aria-expanded="false"><FormattedMessage id={this.state.buttonStage} />&nbsp;{this.state.stageChange}
                                         <span className="caret"></span>
                                     </button>} id="export-usfm" noCaret>
