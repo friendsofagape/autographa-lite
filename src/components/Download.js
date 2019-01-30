@@ -44,8 +44,8 @@ class DownloadModal extends React.Component {
         let book = {};
         let filepath;
         let books = AutographaStore.backupOption;
-        let doc = await db.get('targetBible');
         try {
+            let doc = await db.get('targetBible');
             if(books === 'current') {
                 book.bookNumber = AutographaStore.bookId.toString();
                 book.bookName = constants.booksList[parseInt(book.bookNumber, 10) - 1];
@@ -65,7 +65,7 @@ class DownloadModal extends React.Component {
                     filepath = await bibUtil.toUsfm(book, stageInput, doc);
                 })
                 AutographaStore.showModalDownload = false;
-                swal({title: currentTrans["tooltip-backup-usfm"]})
+                swal({title: currentTrans["tooltip-export-usfm"], text: `${currentTrans["label-backup-usfm"]} : ${doc.targetPath}`})
             }
         }
         catch(ex) {
