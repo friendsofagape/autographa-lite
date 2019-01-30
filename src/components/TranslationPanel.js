@@ -127,7 +127,7 @@ class TranslationPanel extends React.Component {
 		}
 		const {tIns, tDel} = this.props;
 		return (
-			<div className="col-editor container-fluid">
+			<div className="col-editor container-fluid trans-margin">
 				<div className="row">
 				<div className="col-12 center-align">
 					<p className="translation"><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
