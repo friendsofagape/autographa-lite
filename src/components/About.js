@@ -18,7 +18,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import AutographaStore from "./AutographaStore" 
 import { FormattedMessage } from 'react-intl';
-
+import {version} from "../../package.json";
 var AboutUsModel = function(props) {
     let closeAboutUs = () => AutographaStore.showModalAboutUs = false
     return (  
@@ -35,7 +35,7 @@ var AboutUsModel = function(props) {
                         </div>
         <div className="col-xs-6" style={{padding:"5px"}}>
                             <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>
-                            <p><FormattedMessage id="label-version" /> <span>1.2.4</span></p>
+                            <p><FormattedMessage id="label-version" /> <span> { version } </span></p>
         <p><FormattedMessage id="label-hosted-url" /></p>
 	<p>https://github.com/friendsofagape/autographa-lite.git</p>
                         </div>
