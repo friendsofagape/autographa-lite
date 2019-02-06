@@ -237,8 +237,8 @@ class SettingsModal extends React.Component {
 
   openFileDialogImportTrans = (event) => {
     dialog.showOpenDialog(getCurrentWindow(), {
-        properties: ['openDirectory'],
-        filters: [{ name: 'All Files', extensions: ['*'] }],
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name: 'USFM Files', extensions: ['usfm'] }],
       title: "Import Translation"
     }, (selectedDir) => {
         if (selectedDir != null) {
@@ -250,7 +250,7 @@ class SettingsModal extends React.Component {
   openFileDialogRefSetting = (event) => {
     dialog.showOpenDialog(getCurrentWindow(), {
         properties: ['openDirectory'],
-        filters: [{ name: 'All Files', extensions: ['*'] }],
+        filters: [{ name: 'USFM Files', extensions: ['usfm'] }],
         title: "Import Reference"
     }, (selectedDir) => {
         if (selectedDir != null) {
@@ -270,29 +270,29 @@ class SettingsModal extends React.Component {
   }
 
   importTranslation = () => {
-    let that = this;
+    // let that = this;
     if (this.import_sync_setting() == false) return;
     this.setState({showLoader: true})
     
     const {langCode, langVersion} = this.state.settingData;
     let inputPath = this.state.folderPathImport;
-    var files = fs.readdirSync(inputPath[0]);
-    Promise.map(files, (file) => {
-      var filePath = path.join(inputPath[0], file);
-      if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
+    // var files = fs.readdirSync(inputPath[0]);
+    Promise.map(inputPath, (file) => {
+      // var filePath = path.join(inputPath[0], file);
+      if (fs.statSync(file).isFile() && !file.startsWith('.')) {
         var options = {
           lang: langCode.toLowerCase(),
           version: langVersion.toLowerCase(),
-          usfmFile: filePath,
+          usfmFile: file,
           targetDb: 'target',
           scriptDirection: AutographaStore.refScriptDirection
         }
-        return that.getStuffAsync(options);
+        return this.getStuffAsync(options);
       }
     }).catch((err) => {
       const currentTrans = AutographaStore.currentTrans;
       console.log(err)
-      that.setState({showLoader: false});
+      this.setState({showLoader: false});
       return swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-imp-error"], "error");
     }).finally(() => window.location.reload())
   }
