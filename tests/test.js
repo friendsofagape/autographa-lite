@@ -13,6 +13,8 @@ if (process.platform === 'win32') {
 }
 
 var appPath = path.join(__dirname, '..');
+var importfile = appPath + "/public/eng_NET-S3_GEN_#stageText_190212102540.usfm";
+var importdir = appPath + "/public";
 
 var app = new Application({
     path: electronPath,
@@ -122,14 +124,12 @@ describe('Autographa Test', () => {
       .getText("#v1").should.eventually.equal(input);
     });
 
-
     it('should change the ref drop down text', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".ref-drop-down")
       .selectByIndex(".ref-drop-down", 1)
       .getValue('.ref-drop-down').should.eventually.equal('eng_ust');
     });
-
 
     it('After ref change should check the verse again in translation panel', ()=>{
      const input = 'this is a test';
@@ -359,7 +359,6 @@ describe('Autographa Test', () => {
       .keys('Escape')
     });
 
-
     it('should check empty chapter report', () => {
       return app.client.waitUntilWindowLoaded()
       .click(".translation > a")
@@ -375,4 +374,60 @@ describe('Autographa Test', () => {
       return app.client.waitUntilWindowLoaded()
       .getText(".multiple-space-report").should.eventually.equal('1:2');
     });
+
+    it('close the app', () => {
+      return app.stop();
+    });
+
+    it('open the app', () => {
+      return app.start();
+    });
+
+    it("should import the translation file", () => {
+      const input = 'this is a test';
+      return app.client.waitUntilWindowLoaded()
+      .waitForEnabled("#btnSettings", 2000)
+      .click("#btnSettings")
+      .click("#left-tabs-example-tab-second")
+      .waitForVisible("#import-file-trans", 2000)
+      .keys("Tab")
+      .setValue("#import-file-trans", importfile)
+      .waitForExist("#btn-import-trans")
+      .click("#btn-import-trans")
+      .waitForVisible("#v1", 20000)
+      .getText("#v1").should.eventually.equal(input);
+    });
+
+    it("should import the reference version", () => {
+      return app.client.waitUntilWindowLoaded()
+      .waitForEnabled("#btnSettings", 2000)
+      .click("#btnSettings")
+      .click("#left-tabs-example-tab-third")
+      .waitForVisible("#import-ref-name")
+      .setValue("#import-ref-name", 'test')
+      .keys("Tab")
+      .setValue("#import-ref-lang", 'eng')
+      .keys("Tab")
+      .setValue("#import-ref-version", 'net')
+      .keys("Tab")
+      .keys("Tab")
+      .setValue("#import-ref-path", importdir)
+      .waitForExist("#btn-import-ref")
+      .click("#btn-import-ref")
+    });
+
+    it('should check for new reference version', () => {
+      return app.client.waitUntilWindowLoaded()
+      .waitForVisible(".ref-drop-down")
+      .click(".ref-drop-down")
+      .selectByIndex(".ref-drop-down", 0)
+      .getValue('.ref-drop-down').should.eventually.equal('test_eng_net')
+    });
+
+    it('should check for new imported refernce verse', () => {
+      return app.client.waitUntilWindowLoaded()
+      .waitForExist("#v1", 20000)
+      .getText("div[data-verse='r1']>.verse-num").should.eventually.equal('1')
+    });
+
 }); 

@@ -275,7 +275,7 @@ class SettingsModal extends React.Component {
     this.setState({showLoader: true})
     
     const {langCode, langVersion} = this.state.settingData;
-    let inputPath = this.state.folderPathImport;
+    let inputPath = Array.isArray(this.state.folderPathImport) ?  this.state.folderPathImport : [this.state.folderPathImport];
     // var files = fs.readdirSync(inputPath[0]);
     Promise.map(inputPath, (file) => {
       // var filePath = path.join(inputPath[0], file);
@@ -328,10 +328,12 @@ class SettingsModal extends React.Component {
     if(refLangCodeValue === null){
       refLangCodeValue = refLangCode
     }
+    // console.log(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath)
+    //return
     var ref_id_value = bibleName + '_' + refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
         ref_entry = {},
         ref_arr = [],
-        files = fs.readdirSync(refFolderPath[0]);
+        files = fs.readdirSync(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath);
         ref_entry.ref_id = ref_id_value;
         ref_entry.ref_name = bibleName;
         ref_entry.ref_lang_code = refLangCodeValue.toLowerCase();
@@ -387,7 +389,7 @@ class SettingsModal extends React.Component {
     const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
     const that = this;
     Promise.map(files, (file) => {
-      const filePath = path.join(refFolderPath[0], file);
+      const filePath = path.join((Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath), file);
       if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
         const options = {
           bibleName: bibleName,
@@ -569,7 +571,6 @@ class SettingsModal extends React.Component {
   clearList = () => {
     this.hideCodeList();
   }
-  
  
   render(){
     var errorStyle = {
@@ -733,12 +734,12 @@ class SettingsModal extends React.Component {
                           <FormattedMessage id="placeholder-path-of-usfm-files">
                             {(message) => <TextField
                             hintText={message}
-                            onChange={this.onChange.bind(this)}
-                            value={this.state.folderPathImport}
+                            onChange={(event)=> {this.setState({folderPathImport: event.target.value})}}
+                            value={this.state.folderPathImport || ""}
                             name="folderPathImport"
                             onClick={this.openFileDialogImportTrans}
                             className = "margin-top-24 textbox-width-70"
-
+                            id="import-file-trans"
                           />}
                           </FormattedMessage>
                           <FormattedMessage id="btn-import" >
@@ -748,6 +749,7 @@ class SettingsModal extends React.Component {
                                 label={message}
                                 primary={true}
                                 onClick={this.importTranslation}
+                                id="btn-import-trans"
                               />
                             }
                           </FormattedMessage>
@@ -765,6 +767,7 @@ class SettingsModal extends React.Component {
                                 value={bibleName || ""}
                                 name="bibleName"
                                 className = "margin-top-24 textbox-width-70"
+                                id="import-ref-name"
                             />}
                           </FormattedMessage>
                         </div>
@@ -777,7 +780,7 @@ class SettingsModal extends React.Component {
                             value={refLangCode || ""}
                             name="refLangCode"
                             className = "margin-top-24 textbox-width-70"
-                            
+                            id="import-ref-lang"
                           />
                         </div>
                         <div id="reference-lang-result" className="lang-code" style={{display: displayCSS}} ref={node => { this.node = node; }}>
@@ -802,6 +805,7 @@ class SettingsModal extends React.Component {
                             name="refVersion"
                             className = "margin-top-24 textbox-width-70"
                             onFocus = {this.clearList}
+                            id="import-ref-version"
                           />
                         </div>
                         <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -838,11 +842,13 @@ class SettingsModal extends React.Component {
                             >
                               {(message) => <TextField
                               hintText={message}
-                              onChange={this.onReferenceChange.bind(this)}
+                              onChange={this.onReferenceChange}
                               value={refFolderPath || ""}
                               ref="refFolderPath"
+                              name="refFolderPath"
                               onClick={this.openFileDialogRefSetting}
                               className = "margin-top-24 textbox-width-70"
+                              id="import-ref-path"
                             />}
                           </FormattedMessage>
                         </div>
@@ -853,6 +859,7 @@ class SettingsModal extends React.Component {
                               label={message}
                               primary={true}
                               onClick={this.importReference}
+                              id="btn-import-ref"
                             />
                           }
                         </FormattedMessage>
