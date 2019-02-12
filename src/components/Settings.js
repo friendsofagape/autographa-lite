@@ -687,7 +687,7 @@ class SettingsModal extends React.Component {
                             }
                           </FormattedMessage>
                         </div> 
-                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                           <label
                             style={{"marginTop": "-24px", "fontSize": "14px"}}
                             className="mdl-textfield__label"
@@ -716,7 +716,7 @@ class SettingsModal extends React.Component {
                         <FormattedMessage id="btn-save" >
                           { (message)=>
                             <RaisedButton
-                              style={{float: "right", marginRight: "33px"}}
+                              style={{float: "right", marginRight: "33px", marginTop: "100px"}}
                               label={message}
                               primary={true}
                               onClick={this.saveSetting}
