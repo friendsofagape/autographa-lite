@@ -687,7 +687,7 @@ class SettingsModal extends React.Component {
                             }
                           </FormattedMessage>
                         </div> 
-                        <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <div style={{"display": "flex"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                           <label
                             style={{"marginTop": "-24px", "fontSize": "14px"}}
                             className="mdl-textfield__label"
@@ -698,7 +698,7 @@ class SettingsModal extends React.Component {
                           <RadioButtonGroup
                             valueSelected={AutographaStore.scriptDirection.toUpperCase()}
                             name="scriptDir"
-                            style={{display: "flex", marginBottom:"6%"}}
+                            style={{display: "flex", marginBottom:"6%", width: "100%"}}
                             onChange={(event, value) => this.onChangeScriptDir(value)}
                           >
                             <RadioButton
@@ -716,7 +716,7 @@ class SettingsModal extends React.Component {
                         <FormattedMessage id="btn-save" >
                           { (message)=>
                             <RaisedButton
-                              style={{float: "right", marginRight: "33px", marginTop: "100px"}}
+                              style={{float: "right", marginRight: "33px"}}
                               label={message}
                               primary={true}
                               onClick={this.saveSetting}
