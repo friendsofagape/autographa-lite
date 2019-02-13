@@ -133,13 +133,13 @@ class DownloadModal extends React.Component {
                             <RadioButtonGroup
                                 valueSelected={AutographaStore.backupOption}
                                 name="backUpOption"
-                                style={{ display: "inline-flex", marginTop: "13px"}}
+                                style={{ display: "inline-flex", marginTop: "13px", width: "100%" }}
                                 onChange={(event, value) => this.onChangeBackupdir(value)}
                             >
                             <RadioButton
                                 value="current"
                                 label={<FormattedMessage id="label-current" />}
-                                style={{width: "65%"}}
+                                style={{width: "40%"}}
                             />
                             <RadioButton
                                 value="*"
