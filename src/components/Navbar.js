@@ -12,7 +12,7 @@ import DownloadModal from "./Download"
 import TranslationPanel  from '../components/TranslationPanel';
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
-const injectTapEventPlugin = require("react-tap-event-plugin");
+// const injectTapEventPlugin = require("react-tap-event-plugin");
 import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
 import Reference from "./Reference";
@@ -24,7 +24,7 @@ let exportHtml = require(`${__dirname}/../util/export_html.js`);
 let currentBook, book;
 const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
 
-injectTapEventPlugin();
+// injectTapEventPlugin();
 
 @observer
 class Navbar extends React.Component {

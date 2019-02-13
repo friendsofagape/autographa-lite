@@ -704,7 +704,7 @@ class SettingsModal extends React.Component {
                             <RadioButton
                             value="LTR"
                             label={<FormattedMessage id="label-ltr" />}
-                            style={{width: "30%"}}
+                            style={{width: "70%"}}
                             />
                             <RadioButton
                             value="RTL"
@@ -821,7 +821,7 @@ class SettingsModal extends React.Component {
                             <RadioButton
                               value="LTR"
                               label={<FormattedMessage id="label-ltr" />}
-                              style={{width: "30%"}}
+                              style={{width: "70%"}}
                             />
                             <RadioButton
                               value="RTL"
