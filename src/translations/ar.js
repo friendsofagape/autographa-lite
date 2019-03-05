@@ -88,7 +88,7 @@
 	"label-statistic-heading": "إحصائيات كتاب",
 	"export-html-1-column": "1-تخطيط العمود HTML",
 	"export-html-2-column": "2-تخطيط العمود HTML",
-	"tooltip-language-validation": "يجب أن يكون الطول بين 3 و 8 أحرف ولا يمكن البدء بالرقم.",
+	"tooltip-language-validation": "يجب أن يكون الطول بين 2 و 8 أحرف ولا يمكن البدء بالرقم.",
 	"dynamic-msg-bib-code-start-with-number": "يجب أن يكون طول رمز لغة الكتاب المقدس بين 3 و 8 أحرف ولا يمكن أن تبدأ بعدد.",
 	"error-msg-search-validation" : "الرجاء إدخال قيمة للبحث",
 	"error-msg-replace-validation" : "الرجاء إدخال قيمة لاستبدالها",

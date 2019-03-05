@@ -87,7 +87,7 @@
 	"export-usfm": "USFM",
 	"export-html-1-column": "1 colunas HTML",
 	"export-html-2-column": "2 colunas HTML",
-	"tooltip-language-validation": "O comprimento deve ser entre 3 e 8 caracteres e não pode começar com um número.",
+	"tooltip-language-validation": "O comprimento deve ser entre 2 e 8 caracteres e não pode começar com um número.",
 	"dynamic-msg-bib-code-start-with-number": "O comprimento do código da língua da Bíblia deve ter entre 3 e 8 caracteres e não pode começar com um número.",
 	"error-msg-search-validation" : "Indicar um valor para buscar",
 	"error-msg-replace-validation" : "Indicar um valor para substituir",
