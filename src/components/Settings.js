@@ -250,7 +250,7 @@ class SettingsModal extends React.Component {
   openFileDialogRefSetting = (event) => {
     dialog.showOpenDialog(getCurrentWindow(), {
         properties: ['openDirectory'],
-        filters: [{ name: 'USFM Files', extensions: ['usfm'] }],
+        filters: [{ name: 'USFM Files', extensions: ['*'] }],
         title: "Import Reference"
     }, (selectedDir) => {
         if (selectedDir != null) {

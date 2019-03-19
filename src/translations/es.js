@@ -88,7 +88,7 @@
 	"export-usfm": "USFM",
 	"export-html-1-column": "1 columnas HTML",
 	"export-html-2-column": "2 columnas HTML",
-	"tooltip-language-validation": "La longitud debe tener entre 3 y 8 caracteres y no puede comenzar con un número.",
+	"tooltip-language-validation": "La longitud debe tener entre 2 y 8 caracteres y no puede comenzar con un número.",
 	"dynamic-msg-bib-code-start-with-number": "La longitud del código de idioma de la Biblia debe tener entre 3 y 8 caracteres y no puede comenzar con un número.",
 	"error-msg-search-validation" : "Ingrese un valor para buscar",
 	"error-msg-replace-validation" : "Introduzca el valor para reemplazar",
