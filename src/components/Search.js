@@ -9,6 +9,7 @@ import AutographaStore from "./AutographaStore";
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
 var replacedChapter = {},
+    replacedVerse = {},
     allChapters = {},
     chapter_hash = {},
     verses_arr = [],
