@@ -1,15 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-const Constant = require("../util/constants");
 import { observer } from "mobx-react"
 import * as mobx from 'mobx'
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
-const Modal = require('react-bootstrap/lib/Modal');
 import AutographaStore from "./AutographaStore" 
 import { FormattedMessage } from 'react-intl';
 const numberFormat = require("../util/getNumberFormat")
-
+const Constant = require("../util/constants");
+const Modal = require('react-bootstrap/lib/Modal');
 
 @observer
 class Statistic extends React.Component {

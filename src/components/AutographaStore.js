@@ -1,5 +1,4 @@
-import { computed, observable } from "mobx"
-const session =  require('electron').remote.session
+import { observable } from "mobx"
 const Constant = require("../util/constants");
 
 export class AutographaStore {

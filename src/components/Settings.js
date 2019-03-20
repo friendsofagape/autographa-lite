@@ -1,25 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { remote } from 'electron';
 import { TextField, RaisedButton, SelectField, MenuItem } from 'material-ui';
 import swal from 'sweetalert';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
-import ReferencePanel from './ReferencePanel';
-const { dialog, getCurrentWindow } = require('electron').remote;
-const { Tabs, Tab, Modal, Button, Col, Row, Grid, Nav, NavItem } = require('react-bootstrap/lib');
+import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+const { dialog, getCurrentWindow } = require('electron').remote;
+const { Tab, Modal, Col, Row, Nav, NavItem } = require('react-bootstrap/lib');
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 const Constant = require("../util/constants")
 const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
-const session = require('electron').remote.session;
 const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require('fs'));
-import { FormattedMessage } from 'react-intl';
-import Loader from './Loader';
 
 @observer
 class SettingsModal extends React.Component {

@@ -1,13 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
+import ReactBootstrapSlider from'react-bootstrap-slider';
 import { observer } from "mobx-react";
 import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from 'react-intl';
-const Constant = require("../util/constants");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-
-
 
 @observer
 class Footer extends React.Component {

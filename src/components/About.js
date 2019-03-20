@@ -1,24 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
-const session =  require('electron').remote.session;
-const Constant = require("../util/constants")
-import { dialog } from 'electron';
-import { remote } from 'electron';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const Modal = require('react-bootstrap/lib/Modal');
-const Button = require('react-bootstrap/lib/Button');
-const Col = require('react-bootstrap/lib/Col');
-const Row = require('react-bootstrap/lib/Row')
-const Grid = require('react-bootstrap/lib/Grid')
-const Nav = require('react-bootstrap/lib/Nav');
-const NavItem = require('react-bootstrap/lib/NavItem');
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 import AutographaStore from "./AutographaStore" 
 import { FormattedMessage } from 'react-intl';
 import {version} from "../../package.json";
+import Modal from 'react-bootstrap/lib/Modal';
+
 var AboutUsModel = function(props) {
     let closeAboutUs = () => AutographaStore.showModalAboutUs = false
     return (  

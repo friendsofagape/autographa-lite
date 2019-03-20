@@ -1,39 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import Tabs from 'react-bootstrap/lib/Tabs';
-import Tab from 'react-bootstrap/lib/Tab';
-const session =  require('electron').remote.session;
-const Constant = require("../util/constants")
-import { dialog } from 'electron';
-import { remote } from 'electron';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const Modal = require('react-bootstrap/lib/Modal');
-const Button = require('react-bootstrap/lib/Button');
-const Col = require('react-bootstrap/lib/Col');
-const Row = require('react-bootstrap/lib/Row')
-const ControlLabel = require('react-bootstrap/lib/ControlLabel')
-const Grid = require('react-bootstrap/lib/Grid')
-const Radio = require('react-bootstrap/lib/Radio')
 import RaisedButton from 'material-ui/RaisedButton';
 const FormGroup = require('react-bootstrap/lib/FormGroup')
 import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import Checkbox from 'material-ui/Checkbox';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
-     var replacedChapter = {},
-    replacedVerse = {},
-     allChapters = {},
-     chapter_hash = {},
-     verses_arr = [],
-     chapter_arr = [];
+var replacedChapter = {},
+    allChapters = {},
+    chapter_hash = {},
+    verses_arr = [],
+    chapter_arr = [];
 @observer
 class SearchModal extends React.Component {
         
-    
   constructor(props) {
     super(props);
     this.handleFindChange = this.handleFindChange.bind(this);

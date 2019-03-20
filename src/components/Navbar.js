@@ -1,8 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-const { Nav, NavItem, Modal, Button, Col, Row, Grid, Tabs, Tab, NavDropdown, MenuItem } = require('react-bootstrap/lib');
-const Constant = require("../util/constants");
-const session = require('electron').remote.session;
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
 import SettingsModal from "./Settings"
@@ -10,21 +6,21 @@ import AboutUsModal from "./About"
 import SearchModal from "./Search"
 import DownloadModal from "./Download"
 import TranslationPanel  from '../components/TranslationPanel';
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
-const injectTapEventPlugin = require("react-tap-event-plugin");
 import  ReferencePanel  from '../components/ReferencePanel';
 import  Footer  from '../components/Footer';
 import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
+import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
+const Constant = require("../util/constants");
+const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
 const dmp_diff = new DiffMatchPatch();
+const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 let exportHtml = require(`${__dirname}/../util/export_html.js`);
-let currentBook, book;
 const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
 
-injectTapEventPlugin();
 
 @observer
 class Navbar extends React.Component {
@@ -632,7 +628,6 @@ class Navbar extends React.Component {
         const bookData = AutographaStore.bookData;
         const refContent = AutographaStore.content; 
         const refContentOne = AutographaStore.contentOne;
-        const refContentCommon = AutographaStore.contentCommon;
         const refContentTwo = AutographaStore.contentTwo;
         const bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
         let close = () => AutographaStore.showModalBooks = false;
