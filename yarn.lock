@@ -8790,7 +8790,7 @@ react-dev-utils@^0.4.2:
     sockjs-client "1.0.3"
     strip-ansi "3.0.1"
 
-react-dom@^16.8.1:
+react-dom@^16.8.4:
   version "16.8.4"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.4.tgz#1061a8e01a2b3b0c8160037441c3bf00a0e3bc48"
   dependencies:
@@ -8945,7 +8945,7 @@ react@^0.12.2:
   dependencies:
     envify "^3.0.0"
 
-react@^16.8.1:
+react@^16.8.4:
   version "16.8.4"
   resolved "https://registry.yarnpkg.com/react/-/react-16.8.4.tgz#fdf7bd9ae53f03a9c4cd1a371432c206be1c4768"
   dependencies:
