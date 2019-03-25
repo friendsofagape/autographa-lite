@@ -3,8 +3,6 @@ import { observer } from "mobx-react";
 import AutographaStore from "./AutographaStore";
 import Download from "./Download";
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const session = require('electron').remote.session;
-const Constant = require("../util/constants");
 
 @observer
 class Reference extends React.Component {

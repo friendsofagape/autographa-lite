@@ -1,16 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { dialog, remote } from 'electron';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
-const { Modal, Button, Col, Tabs, Tab } = require('react-bootstrap/lib');
-const Constant = require("../util/constants");
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const session = require('electron').remote.session;
-const i18n = new(require('../translations/i18n'));
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
+const i18n = new(require('../translations/i18n'));
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 
 @observer
 class TranslationPanel extends React.Component {

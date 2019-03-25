@@ -1,19 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-const bootstrap = require('react-bootstrap');
-const Modal = require('react-bootstrap/lib/Modal');
-const Button = require('react-bootstrap/lib/Button');
-const Col = require('react-bootstrap/lib/Col');
-const Tabs = require('react-bootstrap/lib/Tabs');
-const Tab = require('react-bootstrap/lib/Tab');
-const Constant = require("../util/constants");
-const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-const session =  require('electron').remote.session;
-import { dialog, remote } from 'electron';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
-import Reference from "./Reference"
+const session =  require('electron').remote.session;
 
 @observer
 class ReferencePanel extends React.Component {
