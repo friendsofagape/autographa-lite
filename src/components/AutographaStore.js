@@ -12,7 +12,9 @@ export class AutographaStore {
   @observable showModalAboutUs = false
   @observable showModalSearch = false
   @observable showModalDownload = false
-  @observable  showModalStat = false
+  @observable showModalStat = false
+  @observable showModalRecorder = false
+  @observable showModalPlayer = false
   @observable bookChapterContent = ''
   @observable chunkGroup = ''
   @observable content = ''
