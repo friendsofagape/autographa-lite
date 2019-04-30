@@ -74,10 +74,10 @@ class SearchModal extends React.Component {
 
     findReplaceSearchInputs = (verses, chapter, searchVal, replaceVal, option) => {
       let replacedVerse = {};
-      var i;
+      let i;
       let that = this;
       let replaceCount = 0;
-      for (i = 1; i <= verses.length; i++) {
+      for (i = 0; i < verses.length; i++) {
           if (option == "chapter") {
               let originalVerse = verses[i - 1].verse;
               replacedVerse[i] = i;
@@ -98,7 +98,7 @@ class SearchModal extends React.Component {
                   replaceCount += 0;
               }
           } else {
-              let originalVerse = verses[i - 1].verse
+              let originalVerse = verses[i].verse
               replacedVerse[i] = i;
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
