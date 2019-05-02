@@ -77,40 +77,40 @@ class SearchModal extends React.Component {
       let i;
       let that = this;
       let replaceCount = 0;
-      for (i = 0; i < verses.length; i++) {
+      for (i = 1; i <= verses.length; i++) {
           if (option == "chapter") {
-              let originalVerse = verses[i - 1].verse;
-              replacedVerse[i] = i;
+              let originalVerse = verses[i-1].verse;
+              replacedVerse[i] = i
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
                   replacedVerse[i] = modifiedVerse;
                   chapter_hash["verse"] = modifiedVerse;
-                  chapter_hash["verse_number"] = i + 1;
+                  chapter_hash["verse_number"] = i;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += originalVerse.match(new RegExp(that.searchRegExp(searchVal), 'g')).length;
               } else {
                   replacedVerse[i] = originalVerse;
                   chapter_hash["verse"] = originalVerse;
-                  chapter_hash["verse_number"] = i + 1;
+                  chapter_hash["verse_number"] = i;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += 0;
               }
           } else {
-              let originalVerse = verses[i].verse
+              let originalVerse = verses[i-1].verse
               replacedVerse[i] = i;
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
                   chapter_hash["verse"] = modifiedVerse;
-                  chapter_hash["verse_number"] = i + 1;
+                  chapter_hash["verse_number"] = i;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += originalVerse.match(new RegExp(searchVal, 'g')).length;
 
               } else {
                   chapter_hash["verse"] = originalVerse;
-                  chapter_hash["verse_number"] = i + 1;
+                  chapter_hash["verse_number"] = i;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += 0;
@@ -206,6 +206,7 @@ class SearchModal extends React.Component {
               />
               <RadioButton
                 value="book"
+                className="book"
                 label={<FormattedMessage id="label-current-book" />}
                 style={{width: "40%"}}
               />
@@ -214,6 +215,7 @@ class SearchModal extends React.Component {
           <div>
             <label><FormattedMessage id="label-find" /></label><br />
             <TextField
+              className="placeholder-search-text"
               style={{marginTop: "-12px"}}
               hintText={<FormattedMessage id="placeholder-search-text" />}
               onChange={this.handleFindChange.bind(this)}
@@ -231,6 +233,7 @@ class SearchModal extends React.Component {
         <Modal.Footer>
           <RaisedButton
             style={{float: "right"}}
+            className="btn-replace"
             label={<FormattedMessage id="btn-replace" />}
             primary={true}
             onClick={this.replaceContentAndSave.bind(this)}
@@ -255,6 +258,7 @@ class SearchModal extends React.Component {
         <Modal.Footer>
           <RaisedButton
             style={{marginRight: "10px"}}
+            className="btn-save-changes"
             label={<FormattedMessage id="btn-save-changes" />}
             primary={true}
             onClick={this.saveReplacedText}
