@@ -138,7 +138,7 @@ describe('Autographa Test', () => {
             .getValue('.ref-drop-down').should.eventually.equal('eng_ust');
         });
 
-        it('After ref change should check the verse again in translation panel', ()=>{
+        it('After ref change should check the verse again in translation panel', ()=> {
             const input = 'this is a test';
             return app.client.waitUntilWindowLoaded()
             .waitForVisible("#v1", 20000)
@@ -162,6 +162,7 @@ describe('Autographa Test', () => {
             .keys("Tab")
             .keys("Tab")
             .keys("Enter")
+            .pause(1000)
             .waitForVisible("#versediv1", 20000)
             .click("#versediv1")
             .keys("this is a test")
@@ -177,7 +178,7 @@ describe('Autographa Test', () => {
             .click(".btn-replace")
             .waitForVisible(".btn-save-changes",2000)
             .click(".btn-save-changes")
-            .waitForExist("#v1",30000)
+            .waitForExist("#v1",50000)
             .getText("#v1").should.eventually.equal(input);
         })
 
