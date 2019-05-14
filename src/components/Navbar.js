@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer } from "mobx-react"
+import swal from 'sweetalert';
 import AutographaStore from "./AutographaStore"
 import SettingsModal from "./Settings"
 import AboutUsModal from "./About"
@@ -12,6 +13,7 @@ import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
+import Loader from './Loader';
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -42,13 +44,13 @@ class Navbar extends React.Component {
             searchVal: "", 
             replaceVal:"",
             toggled: false,
-            setDiff: false
+            setDiff: false,
+            showLoader: false
         };
        
-        var verses, chunks, chapter;
+        var verses, chapter;
         var that = this;
         refDb.get("ref_history").then(function(doc) {
-            var bookName = doc.visit_history[0].book; 
             var book = doc.visit_history[0].bookId;
             chapter = doc.visit_history[0].chapter;
             AutographaStore.bookId = book.toString();
@@ -396,7 +398,7 @@ class Navbar extends React.Component {
             doc.activeRefs = Object.assign(doc.activeRefs, AutographaStore.activeRefs);
             refDb.put(doc);
         }, (err) => {
-            refDb.put({_id: "activeRefs" , activeRefs: activeRefs}).then((res) => {
+            refDb.put({_id: "activeRefs" , activeRefs: AutographaStore.activeRefs}).then((res) => {
             }, (err) => {
                 console.log(err);
             });
@@ -617,6 +619,9 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
+    setLoader = (value) => {
+        this.setState({showLoader: value})
+    }
     
     
     render() {
@@ -718,7 +723,7 @@ class Navbar extends React.Component {
                         </Tabs>
                     </Modal.Body>
                 </Modal>
-                <SettingsModal show={AutographaStore.showModalSettings} />
+                <SettingsModal show={AutographaStore.showModalSettings} showLoader = {this.setLoader} />
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
@@ -737,7 +742,7 @@ class Navbar extends React.Component {
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <a href="javascript:;" className="navbar-brand" style={{cursor: 'default'}}><img alt="Brand" src="../assets/images/logo.png"/></a>
+                        <a href="javascript:;" className="navbar-brand" style={{cursor: 'default'}}><img alt="Brand" src = {require("../assets/images/logo.png")}/></a>
                     </div>
                     <div className="navbar-collapse collapse" id="navbar">
                         <ul className="nav navbar-nav" style={{padding: "3px 0 0 0px"}}>
@@ -843,6 +848,7 @@ class Navbar extends React.Component {
                     </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
+                {this.state.showLoader ? <Loader /> : ""}
             </div>
         )
     }

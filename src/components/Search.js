@@ -1,13 +1,13 @@
 import React from 'react';
-const Modal = require('react-bootstrap/lib/Modal');
 import RaisedButton from 'material-ui/RaisedButton';
-const FormGroup = require('react-bootstrap/lib/FormGroup')
 import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
+const Modal = require('react-bootstrap/lib/Modal');
+const FormGroup = require('react-bootstrap/lib/FormGroup')
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 var replacedChapter = {},
     replacedVerse = {},
     allChapters = {},

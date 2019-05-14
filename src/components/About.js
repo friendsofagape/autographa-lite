@@ -18,7 +18,7 @@ var AboutUsModel = function(props) {
                 <Tab eventKey={1} title={<FormattedMessage id="label-overview-tab"/>}>
                     <div className="row">
                         <div className="col-xs-6">
-                            <img src="../assets/images/autographa_lite_large.png" className="img-circle" alt="Cinque Terre" width="215" height="200" />
+                            <img src={require("../assets/images/autographa_lite_large.png")} className="img-circle" alt="Cinque Terre" width="215" height="200" />
                         </div>
         <div className="col-xs-6" style={{padding:"5px"}}>
                             <h3><FormattedMessage id="app-name-Autographa-Lite" /></h3>

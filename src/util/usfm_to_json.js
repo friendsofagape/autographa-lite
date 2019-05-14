@@ -1,6 +1,9 @@
 const booksCodes = require(`${__dirname}/constants.js`).bookCodeList;
-const booksList = require(`${__dirname}/constants.js`).booksList;
 const bibleSkel = require(`${__dirname}/../lib/full_bible_skel.json`)
+const path = require('path');
+const remote = require('electron').remote;
+const appPath = remote.app.getAppPath();
+// const configFile = 
 
 module.exports = {
     /*
@@ -11,9 +14,9 @@ module.exports = {
     toJson: function (options, callback) {
         try {
             var lineReader = require('readline').createInterface({
-                input: require('fs').createReadStream(options.usfmFile)
+                input: require('fs-extra').createReadStream(options.usfmFile)
             });
-            patterns = require('fs').readFileSync(`${__dirname}/patterns.prop`, 'utf8');
+            patterns = require('fs-extra').readFileSync(path.join(appPath, `patterns.prop`), 'utf8');
             var book = {},
                 verse = [],
                 db = require(`${__dirname}/../util/data-provider`).targetDb(),
@@ -35,16 +38,16 @@ module.exports = {
                     return callback(new Error('not usfm file'))
 
             validLineCount++;
-            var line = line.trim();
+            line = line.trim();
             var splitLine = line.split(/ +/);
             if (!line) {
                 validLineCount--;
                 //Do nothing for empty lines.
-            } else if (splitLine[0] == '\\id') {
+            } else if (splitLine[0] === '\\id') {
                 if (booksCodes.includes(splitLine[1].toUpperCase()))
                     usfmBibleBook = true;
                 book._id = id_prefix + splitLine[1].toUpperCase();
-            } else if (splitLine[0] == '\\c') {
+            } else if (splitLine[0] === '\\c') {
                 book.chapters[parseInt(splitLine[1], 10) - 1] = {
                     "verses": verse,
                     "chapter": parseInt(splitLine[1], 10)
@@ -52,15 +55,14 @@ module.exports = {
                 verse = [];
                 c = parseInt(splitLine[1], 10)
                 v = 0;
-            } else if (splitLine[0] == '\\v') {
-                if (c == 0)
+            } else if (splitLine[0] === '\\v') {
+                if (c === 0)
                     return callback(new Error("USFM files without chapters aren't supported."));
                 var verseStr = (splitLine.length <= 2) ? '' : splitLine.splice(2, splitLine.length - 1).join(' ');
                 verseStr = replaceMarkers(verseStr);
                 const bookIndex = booksCodes.findIndex((element) => {
                     return (element === book._id.split("_").slice(-1)[0].toUpperCase())
                 })
-                let bookName = booksList[bookIndex];
                 if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
                     book.chapters[c - 1].verses.push({
                         "verse_number": parseInt(splitLine[1], 10),
@@ -70,7 +72,7 @@ module.exports = {
                 }
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
-            } else if (splitLine.length == 1) {
+            } else if (splitLine.length === 1) {
                 // Do nothing here for now.
             } else if (splitLine[0].startsWith('\\m')) {
                 // Do nothing here for now
