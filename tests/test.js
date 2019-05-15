@@ -138,7 +138,7 @@ describe('Autographa Test', () => {
             .getValue('.ref-drop-down').should.eventually.equal('eng_ust');
         });
 
-        it('After ref change should check the verse again in translation panel', ()=>{
+        it('After ref change should check the verse again in translation panel', ()=> {
             const input = 'this is a test';
             return app.client.waitUntilWindowLoaded()
             .waitForVisible("#v1", 20000)
@@ -151,8 +151,63 @@ describe('Autographa Test', () => {
             .selectByIndex(".ref-drop-down", 0)
             .getValue('.ref-drop-down').should.eventually.equal('eng_ult');
         });
-    });
+
+        it('should search and replace current chapter', () => {
+            const input = 'this is a testing';
+            return app.client.waitUntilWindowLoaded()
+            .waitForEnabled("#chapterBtn", 20000)
+            .click("#chapterBtn")
+            .keys("Tab")
+            .keys("Tab")
+            .keys("Tab")
+            .keys("Tab")
+            .keys("Enter")
+            .pause(1000)
+            .waitForVisible("#versediv1", 20000)
+            .click("#versediv1")
+            .keys("this is a test")
+            .waitForExist("#save-btn", 20000)
+            .click('#save-btn')
+            .waitForEnabled("#searchText", 2000)
+            .click("#searchText")
+            .waitForEnabled(".placeholder-search-text", 2000)
+            .click(".placeholder-search-text")
+            .keys("test")
+            .keys("Tab")
+            .keys("testing")
+            .click(".btn-replace")
+            .waitForVisible(".btn-save-changes",2000)
+            .click(".btn-save-changes")
+            .waitForExist("#v1",50000)
+            .getText("#v1").should.eventually.equal(input);
+        })
+
+        it('should search and replace current book', () => {
+            const input = 'this is a test';
+            return app.client.waitUntilWindowLoaded()
+            .waitForEnabled("#searchText", 2000)
+            .click("#searchText")
+            .click(".book")
+            .waitForEnabled(".placeholder-search-text", 2000)
+            .click(".placeholder-search-text")
+            .keys("testing")
+            .keys("Tab")
+            .keys("test")
+            .click(".btn-replace")
+            .waitForVisible(".btn-save-changes",2000)
+            .click(".btn-save-changes")
+            .waitForEnabled("#chapterBtn", 20000)
+            .click("#chapterBtn")
+            .keys("Tab")
+            .keys("Tab")
+            .keys("Tab")
+            .keys("Enter")
+            .waitForExist("#v1",30000)
+            .getText("#v1").should.eventually.equal(input);
+        })
  	
+    });
+
     describe("Setting popup", () => {
         
         it('should open the settings popup and save setting', () => {
@@ -387,7 +442,7 @@ describe('Autographa Test', () => {
         it('should check empty chapter report', () => {
             return app.client.waitUntilWindowLoaded()
             .click(".translation > a")
-            .getText(".empty-chapter-report").should.eventually.equal('2-50')
+            .getText(".empty-chapter-report").should.eventually.equal('3-50')
         });
 
         it('should check incomplete verse report', () => {
