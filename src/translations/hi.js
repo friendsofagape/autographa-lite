@@ -89,7 +89,7 @@ export default {
 	"export-html-1-column": "1 स्तम्भ अभिन्यास एचटीएमएल",
 	"export-html-2-column": "2 स्तम्भ अभिन्यास एचटीएमएल",
 	"tooltip-language-validation": "लंबाई 2 से 8 अक्षरों के बीच होनी चाहिए और किसी संख्या से शुरू नहीं हो सकती।",
-	"dynamic-msg-bib-code-start-with-number": "बाइबल भाषा कोड की लंबाई 3 से 8 वर्णों के बीच होनी चाहिए और किसी संख्या से शुरू नहीं हो सकती है",
+	"dynamic-msg-bib-code-start-with-number": "बाइबल भाषा कोड की लंबाई 2 से 8 वर्णों के बीच होनी चाहिए और किसी संख्या से शुरू नहीं हो सकती है",
 
 	"error-msg-search-validation" : "ढूँढने के लिए मूल्य डालें",
 	"error-msg-replace-validation" : "कप्रतिस्थापन के लिए मूल्य डालें",

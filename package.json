@@ -1,6 +1,6 @@
 {
   "name": "autographa-lite",
-  "version": "0.1.0-beta.5",
+  "version": "1.2.6-beta.1",
   "main": "public/electron.js",
   "author": "Friends of Agape <mathew.joel@protonmail.com>",
   "license": "GPL-3.0",

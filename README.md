@@ -1,68 +1,56 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Autographa Lite
+React re-write of an [earlier version](https://github.com/Bridgeconn/autographa-lite) of the app. All further development will be done here.
 
-## Available Scripts
+This is a standalone desktop application which hopes to aid and be a friendly companion of the Bible Translator. In essence it is a basic [USFM](http://paratext.org/about/usfm) editor which is capable of import and export of USFM files. It has handy features like color-coded diffs across imported texts for comparison between revisions, search and replace and export to formatted HTML.
 
-In the project directory, you can run:
+## Developer Setup
+It is relatively easy to setup the application locally for development.
 
-### `npm start`
+### Prerequisites
+[Node JS 10.11.0](https://nodejs.org/download/release/v10.11.0/)    
+[Yarn 1.15.2](https://yarnpkg.com/en/docs/install)    
+[Python 2](https://www.python.org/downloads/release/python-2715/) (One of our build tools [breaks under Python 3](https://github.com/nodejs/node-gyp/issues/1337).)
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Build and run
+1. Fork and clone this repository
+2. Set environment variable ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
+3. Install dependencies with ```yarn install```
+3. Start the application with ```yarn start```
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+#### Mac and *nix (tested on MacOS Sierra 10.14 and Ubuntu 19.04)  
+In Bash-like shell:
 
-### `npm test`
+```
+export ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true    
+cd autographa-live && yarn install    
+yarn start
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Windows (tested on Windows 10)  
+In Command Prompt:
 
-### `npm run build`
+```
+cd autographa-lite
+set ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
+yarn install
+yarn start
+```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Contributing
+If you'd like to contribute, please fork the repository and make changes as you'd like. Pull requests are warmly welcome.
+Please read the [CONTRIBUTE](https://github.com/Bridgeconn/autographa-lite/blob/master/CONTRIBUTE.md) page for details on our code of conduct, and the process for submitting pull requests.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+We really value our contributors weather they helped fix a bug, build a feature, tested out the app or made some meaningful impact, here are our heros in alphabetical order of first name/username:
+- [aunger](https://github.com/aunger)
+- [joelthe1](https://github.com/joelthe1)
+- [sandeeponrails](https://github.com/sandeeponrails)
+- [Ashersam](https://github.com/Ashersam)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## License
+This project is licensed under the liberal MIT License. See [LICENSE](https://github.com/Bridgeconn/autographa-lite/blob/master/LICENSE) for more details.
 
-### `npm run eject`
+## Contact
+Let us know if face any bugs/problems by opening an issue in GitHub. We'll do our best to be prompt in our response.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## Acknowledgments
+* [Friends of Agape](http://friendsofagape.org/), for their support and contributions.
