@@ -181,7 +181,7 @@ class SettingsModal extends React.Component {
       isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
     } else if(langCode.match(/^\d/)) {      
       isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
-    } else if((/^([a-zA-Z0-9_-]){3,8}$/).test(langCode) === false){
+    } else if((/^([a-zA-Z0-9_-]){2,8}$/).test(langCode) === false){
       isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
     } else if (version === null || version === "") {
       isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
@@ -626,7 +626,7 @@ class SettingsModal extends React.Component {
                 <Col sm={8}>
                   <Tab.Content animation>
                       <Tab.Pane eventKey="first" >
-                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                        <div data-tip="Length should be between 2 and 8 characters and can’t start with a number.">
                           <label><FormattedMessage id="label-language-code" /></label>
                           <br />
                           <TextField 
