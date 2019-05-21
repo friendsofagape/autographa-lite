@@ -8,22 +8,22 @@ It is relatively easy to setup the application locally for development.
 
 ### Prerequisites
 [Node JS 10.11.0](https://nodejs.org/download/release/v10.11.0/)    
-[Yarn 1.15.2](https://yarnpkg.com/en/docs/install)    
+[npm 6.4.1](https://www.npmjs.com/get-npm)    
 [Python 2](https://www.python.org/downloads/release/python-2715/) (One of our build tools [breaks under Python 3](https://github.com/nodejs/node-gyp/issues/1337).)
 
 ### Build and run
 1. Fork and clone this repository
 2. Set environment variable ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
-3. Install dependencies with ```yarn install```
-3. Start the application with ```yarn start```
+3. Install dependencies with ```npm install```
+3. Start the application with ```npm start```
 
 #### Mac and *nix (tested on MacOS Sierra 10.14 and Ubuntu 19.04)  
 In Bash-like shell:
 
 ```
 export ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true    
-cd autographa-live && yarn install    
-yarn start
+cd autographa-live && npm install    
+npm start
 ```
 
 #### Windows (tested on Windows 10)  
@@ -32,8 +32,8 @@ In Command Prompt:
 ```
 cd autographa-lite
 set ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
-yarn install
-yarn start
+npm install
+npm start
 ```
 
 ## Contributing

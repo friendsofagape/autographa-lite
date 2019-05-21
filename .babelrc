@@ -1,9 +1,0 @@
-{
- "presets": ["es2015", "react"],
-  "plugins": [  "transform-class-properties", "transform-runtime", [
-      "react-intl", {
-        "messagesDir": "./build/messages",
-        "enforceDescriptions": false
-      }
-    ], ["transform-object-rest-spread", { "useBuiltIns": true }], "transform-decorators-legacy"]
-}
