@@ -78,7 +78,7 @@ class SearchModal extends React.Component {
       let that = this;
       let replaceCount = 0;
       for (i = 1; i <= verses.length; i++) {
-          if (option == "chapter") {
+          if (option === "chapter") {
               let originalVerse = verses[i - 1].verse;
               replacedVerse[i] = i;
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
@@ -129,7 +129,7 @@ class SearchModal extends React.Component {
 
     saveReplacedText = () => {
     db.get(AutographaStore.bookId.toString()).then((doc) => {
-        if (AutographaStore.replaceOption == "chapter") {
+        if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
                 var verses = doc.chapters[AutographaStore.chapterId-1].verses
                 verses.forEach((verse, index)=> {
