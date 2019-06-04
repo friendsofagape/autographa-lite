@@ -54,7 +54,6 @@ i18n.prototype.isRtl = function(){
 
 i18n.prototype.currentLocale = function() {
 	return loadedLanguage.then(function(res){
-		console.log(res);
 		return res;
 	})
 }

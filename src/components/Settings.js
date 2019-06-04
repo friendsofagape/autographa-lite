@@ -398,7 +398,7 @@ class SettingsModal extends React.Component {
     }
 
     importReference = () => {
-        if (this.reference_setting() == false)
+        if (this.reference_setting() === false)
         return;
         this.setState({showLoader: true})
         let {bibleName, refVersion, refLangCodeValue, refLangCode, refFolderPath} = this.state.refSetting;

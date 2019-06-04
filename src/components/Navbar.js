@@ -13,7 +13,6 @@ import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
-import Loader from './Loader';
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -45,7 +44,6 @@ class Navbar extends React.Component {
             replaceVal:"",
             toggled: false,
             setDiff: false,
-            showLoader: false
         };
        
         var verses, chapter;
@@ -619,11 +617,7 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
-    setLoader = (value) => {
-        this.setState({showLoader: value})
-    }
-    
-    
+
     render() {
         // const layout = AutographaStore.layout;
         var OTbooksstart = 0;
@@ -723,7 +717,7 @@ class Navbar extends React.Component {
                         </Tabs>
                     </Modal.Body>
                 </Modal>
-                <SettingsModal show={AutographaStore.showModalSettings} showLoader = {this.setLoader} />
+                <SettingsModal show={AutographaStore.showModalSettings} />
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
@@ -821,14 +815,14 @@ class Navbar extends React.Component {
                     </div>
                 </nav>
                 {
-                    AutographaStore.layout == 1   &&
+                    AutographaStore.layout === 1   &&
                         <div className="parentdiv">
                             <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
                             <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                         </div>
                 } 
                 {
-                    AutographaStore.layout == 2 &&
+                    AutographaStore.layout === 2 &&
                     <div className="parentdiv">
                         <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
 
@@ -837,7 +831,7 @@ class Navbar extends React.Component {
                     </div>
                 }
                 {
-                    AutographaStore.layout == 3 &&
+                    AutographaStore.layout === 3 &&
                     <div className="parentdiv">
                         <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]}/></div>
 
@@ -848,7 +842,6 @@ class Navbar extends React.Component {
                     </div>
                 }  
                 <Footer onSave={this.saveTarget} getRef = {this.getRefContents}/>
-                {this.state.showLoader ? <Loader /> : ""}
             </div>
         )
     }
