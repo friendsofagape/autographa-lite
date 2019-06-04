@@ -995,7 +995,7 @@ class SettingsModal extends React.Component {
                                                 )}
                                             </FormattedMessage>
                                         </div>
-                                        <div data-tip="Length should be between 3 and 8 characters and can’t start with a number.">
+                                        <div data-tip="Length should be between 2 and 8 characters and can’t start with a number.">
                                             <label>
                                                 <FormattedMessage id="label-language-code" />
                                             </label>
