@@ -1,27 +1,42 @@
-const path = require("path")
-const electron = require('electron');
-const electronRemote = require('electron').remote;
-const fs = require('fs');
+import en from './en';
+import hi from './hi';
+import es from './es';
+import ar from './ar';
+import pt from './pt';
+
 let loadedLanguage;
-let app = electron.app ? electron.app : electron.remote.app;
 const rtlDetect = require('rtl-detect');
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
-// const refDb = electronRemote.getCurrentWindow().refDb
-
-module.exports = i18n;
-
+const fs = require('fs');
+const path = require('path');
 
 
 function i18n() {
 	loadedLanguage = refDb.get('app_locale').then(function(doc) {
-		if(fs.existsSync(path.join(__dirname, doc.appLang + '.js'))) {
-			return JSON.parse(fs.readFileSync(path.join(__dirname, doc.appLang + '.js'), 'utf8'))
+		switch(doc.appLang){
+			case 'en':
+				return en;
+			case 'hi':
+				return hi;
+			case 'pt':
+				return pt;
+			case 'es':
+				return es;
+			case 'ar':
+				return ar;
+			default:
+				return en;
 		}
-		else {
-			return JSON.parse(fs.readFileSync(path.join(__dirname, 'en.js'), 'utf8'))
-		}
+
+		// if(fs.existsSync(path.join(__dirname, doc.appLang + '.js'))) {
+		// 	return JSON.parse(fs.readFileSync(path.join(__dirname, doc.appLang + '.js'), 'utf8'))
+		// }
+		// else {
+		// 	return JSON.parse(fs.readFileSync(path.join(__dirname, "en.js"), 'utf8'))
+		// }
 	}).catch(function(error){
-		return JSON.parse(fs.readFileSync(path.join(__dirname, 'en.js'), 'utf8'))
+		//return JSON.parse(fs.readFileSync(path.join(__dirname, "en.js"), 'utf8'))
+		return en;
 	})
 }
 
@@ -39,7 +54,7 @@ i18n.prototype.isRtl = function(){
 
 i18n.prototype.currentLocale = function() {
 	return loadedLanguage.then(function(res){
-		return res['0']
+		return res;
 	})
 }
 
@@ -52,3 +67,4 @@ i18n.prototype.__ = function(phrase) {
 	  	return translation;
 	})
 }
+module.exports = i18n;

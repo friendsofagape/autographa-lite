@@ -1,4 +1,4 @@
-[{
+export default {
 	
 	"label-translation": "Traducción",	
 	"app-name-Autographa-Lite" : "Autographa Lite",
@@ -193,4 +193,4 @@
 	"book-3-john" : "3 Juan",
 	"book-jude" : "Judas",
 	"book-revelation" : "Apocalipsis"
-}]
+}

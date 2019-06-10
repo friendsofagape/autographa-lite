@@ -1,13 +1,13 @@
 import React from 'react';
-const Modal = require('react-bootstrap/lib/Modal');
 import RaisedButton from 'material-ui/RaisedButton';
-const FormGroup = require('react-bootstrap/lib/FormGroup')
 import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
+const Modal = require('react-bootstrap/lib/Modal');
+const FormGroup = require('react-bootstrap/lib/FormGroup')
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 var replacedChapter = {},
     replacedVerse = {},
     allChapters = {},
@@ -74,25 +74,25 @@ class SearchModal extends React.Component {
 
     findReplaceSearchInputs = (verses, chapter, searchVal, replaceVal, option) => {
       let replacedVerse = {};
-      let i;
+      var i;
       let that = this;
       let replaceCount = 0;
       for (i = 1; i <= verses.length; i++) {
-          if (option == "chapter") {
+          if (option === "chapter") {
               let originalVerse = verses[i - 1].verse;
-              replacedVerse[i] = i
+              replacedVerse[i] = i;
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
                   replacedVerse[i] = modifiedVerse;
                   chapter_hash["verse"] = modifiedVerse;
-                  chapter_hash["verse_number"] = i;
+                  chapter_hash["verse_number"] = i + 1;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += originalVerse.match(new RegExp(that.searchRegExp(searchVal), 'g')).length;
               } else {
                   replacedVerse[i] = originalVerse;
                   chapter_hash["verse"] = originalVerse;
-                  chapter_hash["verse_number"] = i;
+                  chapter_hash["verse_number"] = i + 1;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += 0;
@@ -103,14 +103,14 @@ class SearchModal extends React.Component {
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
                   let modifiedVerse = originalVerse.replace(new RegExp(that.searchRegExp(searchVal), 'g'), replaceVal);
                   chapter_hash["verse"] = modifiedVerse;
-                  chapter_hash["verse_number"] = i;
+                  chapter_hash["verse_number"] = i + 1;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += originalVerse.match(new RegExp(searchVal, 'g')).length;
 
               } else {
                   chapter_hash["verse"] = originalVerse;
-                  chapter_hash["verse_number"] = i;
+                  chapter_hash["verse_number"] = i + 1;
                   verses_arr.push(chapter_hash);
                   chapter_hash = {};
                   replaceCount += 0;
@@ -129,7 +129,7 @@ class SearchModal extends React.Component {
 
     saveReplacedText = () => {
     db.get(AutographaStore.bookId.toString()).then((doc) => {
-        if (AutographaStore.replaceOption == "chapter") {
+        if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
                 var verses = doc.chapters[AutographaStore.chapterId-1].verses
                 verses.forEach((verse, index)=> {
@@ -206,7 +206,6 @@ class SearchModal extends React.Component {
               />
               <RadioButton
                 value="book"
-                className="book"
                 label={<FormattedMessage id="label-current-book" />}
                 style={{width: "40%"}}
               />
@@ -215,7 +214,6 @@ class SearchModal extends React.Component {
           <div>
             <label><FormattedMessage id="label-find" /></label><br />
             <TextField
-              className="placeholder-search-text"
               style={{marginTop: "-12px"}}
               hintText={<FormattedMessage id="placeholder-search-text" />}
               onChange={this.handleFindChange.bind(this)}
@@ -233,7 +231,6 @@ class SearchModal extends React.Component {
         <Modal.Footer>
           <RaisedButton
             style={{float: "right"}}
-            className="btn-replace"
             label={<FormattedMessage id="btn-replace" />}
             primary={true}
             onClick={this.replaceContentAndSave.bind(this)}
@@ -258,7 +255,6 @@ class SearchModal extends React.Component {
         <Modal.Footer>
           <RaisedButton
             style={{marginRight: "10px"}}
-            className="btn-save-changes"
             label={<FormattedMessage id="btn-save-changes" />}
             primary={true}
             onClick={this.saveReplacedText}

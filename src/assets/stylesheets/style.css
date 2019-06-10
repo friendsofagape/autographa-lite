@@ -8806,7 +8806,7 @@ body {
 }
 
 #loading-img {
-  background: url(../assets/images/loader.gif) center center no-repeat;
+  background: url(../images/loader.gif) center center no-repeat;
   text-align: center;
   background: #fff;
   opacity: 0.85;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer } from "mobx-react"
+import swal from 'sweetalert';
 import AutographaStore from "./AutographaStore"
 import SettingsModal from "./Settings"
 import AboutUsModal from "./About"
@@ -42,13 +43,12 @@ class Navbar extends React.Component {
             searchVal: "", 
             replaceVal:"",
             toggled: false,
-            setDiff: false
+            setDiff: false,
         };
        
-        var verses, chunks, chapter;
+        var verses, chapter;
         var that = this;
         refDb.get("ref_history").then(function(doc) {
-            var bookName = doc.visit_history[0].book; 
             var book = doc.visit_history[0].bookId;
             chapter = doc.visit_history[0].chapter;
             AutographaStore.bookId = book.toString();
@@ -396,7 +396,7 @@ class Navbar extends React.Component {
             doc.activeRefs = Object.assign(doc.activeRefs, AutographaStore.activeRefs);
             refDb.put(doc);
         }, (err) => {
-            refDb.put({_id: "activeRefs" , activeRefs: activeRefs}).then((res) => {
+            refDb.put({_id: "activeRefs" , activeRefs: AutographaStore.activeRefs}).then((res) => {
             }, (err) => {
                 console.log(err);
             });
@@ -617,8 +617,7 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
-    
-    
+
     render() {
         // const layout = AutographaStore.layout;
         var OTbooksstart = 0;
@@ -737,7 +736,7 @@ class Navbar extends React.Component {
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <a href="javascript:;" className="navbar-brand" style={{cursor: 'default'}}><img alt="Brand" src="../assets/images/logo.png"/></a>
+                        <a href="javascript:;" className="navbar-brand" style={{cursor: 'default'}}><img alt="Brand" src = {require("../assets/images/logo.png")}/></a>
                     </div>
                     <div className="navbar-collapse collapse" id="navbar">
                         <ul className="nav navbar-nav" style={{padding: "3px 0 0 0px"}}>
@@ -816,14 +815,14 @@ class Navbar extends React.Component {
                     </div>
                 </nav>
                 {
-                    AutographaStore.layout == 1   &&
+                    AutographaStore.layout === 1   &&
                         <div className="parentdiv">
                             <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
                             <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                         </div>
                 } 
                 {
-                    AutographaStore.layout == 2 &&
+                    AutographaStore.layout === 2 &&
                     <div className="parentdiv">
                         <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
 
@@ -832,7 +831,7 @@ class Navbar extends React.Component {
                     </div>
                 }
                 {
-                    AutographaStore.layout == 3 &&
+                    AutographaStore.layout === 3 &&
                     <div className="parentdiv">
                         <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]}/></div>
 
