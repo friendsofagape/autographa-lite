@@ -24,7 +24,6 @@ const MAIN_WINDOW_ID = 'main';
  */
 function createMainWindow() {
   const windowOptions = {
-    icon: '/assets/images/logo.png',
     width: 980,
     minWidth: 980,
     height: 580,
