@@ -91,7 +91,6 @@ export default {
 	"export-html-2-column": "2-Column HTML",
 	"tooltip-language-validation": "Length should be between 2 and 8 characters and can’t start with a number.",
 	"dynamic-msg-bib-code-start-with-number": "The Bible language code length should be between 2 and 8 characters and can’t start with a number.",
-	
 	"error-msg-search-validation" : "Please enter value to search",
 	"error-msg-replace-validation" : "Please enter value to replace",
 	"dynamic-msg-error" : "Error",
