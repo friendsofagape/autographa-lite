@@ -1,7 +1,7 @@
-const path = require('path');
 import swal from 'sweetalert';
-var fs = require("fs");
 import {css_1_col_ltr, css_2_col_ltr, css_1_col_rtl, css_2_col_rtl} from './export_css'
+const path = require('path');
+var fs = require("fs");
 module.exports = {
 	exportHtml: function(id, currentBook, db, direction, column, currentTrans){
 	    	if(direction !== "RTL"){

@@ -1,13 +1,13 @@
 import React from 'react';
-const Modal = require('react-bootstrap/lib/Modal');
 import RaisedButton from 'material-ui/RaisedButton';
-const FormGroup = require('react-bootstrap/lib/FormGroup')
 import TextField from 'material-ui/TextField';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
-const db = require(`${__dirname}/../util/data-provider`).targetDb();
 import { FormattedMessage } from 'react-intl';
+const Modal = require('react-bootstrap/lib/Modal');
+const FormGroup = require('react-bootstrap/lib/FormGroup')
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
 var replacedChapter = {},
     replacedVerse = {},
     allChapters = {},
@@ -78,7 +78,7 @@ class SearchModal extends React.Component {
       let that = this;
       let replaceCount = 0;
       for (i = 1; i <= verses.length; i++) {
-          if (option == "chapter") {
+          if (option === "chapter") {
               let originalVerse = verses[i - 1].verse;
               replacedVerse[i] = i
               if (originalVerse.search(new RegExp(that.searchRegExp(searchVal), 'g')) >= 0) {
@@ -129,7 +129,7 @@ class SearchModal extends React.Component {
 
     saveReplacedText = () => {
     db.get(AutographaStore.bookId.toString()).then((doc) => {
-        if (AutographaStore.replaceOption == "chapter") {
+        if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
                 var verses = doc.chapters[AutographaStore.chapterId-1].verses
                 verses.forEach((verse, index)=> {

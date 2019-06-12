@@ -25,7 +25,6 @@ class ReferencePanel extends React.Component {
         });
     }
     render (){
-        const layout = AutographaStore.layout;
         const {tIns, tDel} = this.props;
         return (        
             <div className="container-fluid">

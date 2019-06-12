@@ -1,107 +1,118 @@
-module.exports = {
-    destroyDbs: function() {
-	const targetDb = require(`${__dirname}/data-provider`).targetDb();
-	targetDb.destroy().then(function (response) {
-	    console.log('targetDB destroyed!.');
-	    targetDb.close();
-	}).catch(function (err) {
-	    console.log(err);
-	    targetDb.close();
-	});
+const dataProvider = require(`${__dirname}/data-provider`);
+const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
+const refEnUlbJson = require(`${__dirname}/../lib/eng_ult.json`);
+const refEnUdbJson = require(`${__dirname}/../lib/eng_ust.json`);
+const refHiUlbJson = require(`${__dirname}/../lib/hin_irv.json`);
+const refArbVdtJson = require(`${__dirname}/../lib/arb_vdt.json`);
+const chunksJson = require(`${__dirname}/../lib/chunks.json`);
+const refsConfigJson = require(`${__dirname}/../lib/refs_config.json`);
+const langCodeJson = require(`${__dirname}/../lib/language_code.json`);
 
-	const refDb = new PouchDB(`${__dirname}/db/referenceDB`);
-	refDb.destroy().then(function (response) {
-	    console.log('referenceDB destroyed!');
-	    refDb.close();
-	}).catch(function (err) {
-	    console.log(err);
-	    refDb.close();
-	});
-    },
-
-    setupTargetDb: new Promise(
-	function(resolve, reject) {
-	    const targetDb = require(`${__dirname}/data-provider`).targetDb();
-	    targetDb.get('isDBSetup')
-		.then(function (doc) {
-		    targetDb.close();
-		    resolve('TargetDB exists.');
-		})
-		.catch(function (err) {
-		    const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
-		    targetDb.bulkDocs(bibleJson)
-			.then(function (response) {
-			    targetDb.close();
-			    resolve('Successfully setup Target DB.');
-			})
-			.catch(function (err) {
-			    targetDb.close();
-			    reject(err);
-			});
-		});
-	}),
-    
-    setupRefDb: new Promise (
-	function(resolve, reject) {
-	    const refDb = require(`${__dirname}/data-provider`).referenceDb();
-	    refDb.get('refs')
-		.then(function (doc) {
-		    refDb.close();
-		    resolve('ReferenceDB exists.');
-		})
-		.catch(function (err) {
-		    const refEnUlbJson = require(`${__dirname}/../lib/eng_ult.json`),
-			  refEnUdbJson = require(`${__dirname}/../lib/eng_ust.json`),
-			  refHiUlbJson = require(`${__dirname}/../lib/hin_irv.json`),
-			  refArbVdtJson = require(`${__dirname}/../lib/arb_vdt.json`),
-			  chunksJson = require(`${__dirname}/../lib/chunks.json`),
-			  refsConfigJson = require(`${__dirname}/../lib/refs_config.json`);
-
-		    refDb.put(chunksJson)	
-			.then(function (response) {
-			    return refDb.bulkDocs(refsConfigJson);
-			})
-			.then(function (response) {
-			    return refDb.bulkDocs(refEnUlbJson);
-			})
-			.then(function (response) {
-			    return refDb.bulkDocs(refEnUdbJson);
-			})
-			.then(function (response) {
-			    return refDb.bulkDocs(refHiUlbJson);
-			})
-			.then(function (response) {
-			    return refDb.bulkDocs(refArbVdtJson);
-			})
-			.then(function (response) {
-			    refDb.close();
-			    resolve('Successfully loaded reference texts.');
-			})
-			.catch(function (err) {
-			    refDb.close();
-			    reject('Error loading reference data.' + err);
-			});
-		});
-	}),
-	setupLookupsDb: new Promise(
-	function(resolve, reject) {
-	    const lookupsDB = require(`${__dirname}/data-provider`).lookupsDb();
-	    lookupsDB.get('english_eng')
-		.then(function (doc) {
-		    lookupsDB.close();
-		    resolve('LookupsDB exists.');
-		})
-		.catch(function (err) {
-		    const langCodeJson = require(`${__dirname}/../lib/language_code.json`);
-		    lookupsDB.bulkDocs(langCodeJson)
-			.then(function (response) {
-			    lookupsDB.close();
-			    resolve('Successfully setup Looks up DB.');
-			})
-			.catch(function (err) {
-			    lookupsDB.close();
-			    reject(err);
-			});
-		});
-	})
+const populateDb = async ({db, bulkDocsArray}) => {
+  try {
+    bulkDocsArray.forEach(async (data) => {
+      await db.bulkDocs(data);
+    });
+      //db.close();
+    return true;
+  } catch(err) {
+    db.close();
+    return false;
+  };
 };
+
+const setupDb = async ({db, bulkDocsArray}) => {
+  try {
+    const info = await db.info();
+    if (info.doc_count > 0) {
+      //db.close();
+      return false;
+    } else {
+      const populated = await populateDb({db, bulkDocsArray});
+      return populated;
+    }
+  } catch(err) {
+    return false;
+  }
+}
+
+const setupTargetDb = async () => {
+  try {
+    const db = dataProvider.targetDb();
+    const setup = await setupDb({db, bulkDocsArray: [bibleJson]});
+    return setup;
+  } catch(err) {
+    return false;
+  }
+};
+
+const setupRefDb = async () => {
+  try {
+    const db = dataProvider.referenceDb();
+    const bulkDocsArray = [
+      refsConfigJson,
+      refEnUlbJson,
+      refEnUdbJson,
+      refHiUlbJson,
+      refArbVdtJson
+    ];
+    const setup = await setupDb({db, bulkDocsArray});
+    await db.put(chunksJson);
+    return setup;
+  } catch(err) {
+    return false;
+  };
+};
+
+const setupLookupsDb = async () => {
+  try {
+    const db = dataProvider.lookupsDb();
+    const setup = await setupDb({db, bulkDocsArray: [langCodeJson]});
+    return setup;
+  } catch(err) {
+    return false;
+  };
+};
+
+async function dbSetupAll() {
+  try {
+    await setupTargetDb();
+    await setupRefDb();
+    await setupLookupsDb();
+    return true;
+  } catch(err) {
+    return false;
+  };
+};
+
+
+const destroyDbs = async () => {
+  const targetDb = dataProvider.targetDb();
+  let response;
+  try {
+    response = await targetDb.destroy();
+    response = await targetDb.close();
+	} catch(err) {
+    await targetDb.close();
+	};
+
+  const refDb = dataProvider.referenceDb();
+  try {
+    response = await refDb.destroy();
+    response = await refDb.close();
+  } catch(err) {
+    await refDb.close();
+	};
+
+  return true;
+};
+
+const exportsAll = {
+  dbSetupAll,
+  destroyDbs,
+  setupTargetDb,
+  setupRefDb,
+	setupLookupsDb,
+};
+
+module.exports = exportsAll;
