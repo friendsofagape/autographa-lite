@@ -189,39 +189,71 @@ class SettingsModal extends React.Component {
         this.setState({ refSetting, visibleList: true });
         this.listLanguage(event.target.value);
         this.setState({});
-    };
+  }
 
-    setMessage = (msgid, isValid) => {
-        this.setState({ message: msgid, hideAlert: "failure" });
-        setTimeout(() => {
-            this.setState({ hideAlert: "hidemessage" });
-        }, 2000);
-        return isValid;
-    };
+  setMessage = (msgid, isValid) => {
+    this.setState({ message: msgid, hideAlert: 'failure' });
+    setTimeout(() => {
+      this.setState({hideAlert: 'hidemessage'})
+    }, 2000);
+    return isValid;
+  }
 
-    target_setting = () => {
-        const { langCode, langVersion, folderPath } = this.state.settingData;
-        let version = langVersion;
-        let path = folderPath;
-        let isValid = true;
-        if (langCode === null || langCode === "") {
-            isValid = this.setMessage("dynamic-msg-bib-code-validation", false);
-        } else if (langCode.match(/^\d/)) {
-            isValid = this.setMessage(
-                "dynamic-msg-bib-code-start-with-number",
-                false
-            );
-        } else if (/^([a-zA-Z0-9_-]){2,8}$/.test(langCode) === false) {
-            isValid = this.setMessage(
-                "dynamic-msg-bib-code-start-with-number",
-                false
-            );
-        } else if (version === null || version === "") {
-            isValid = this.setMessage("dynamic-msg-bib-version-validation", false);
-        } else if (path === null || path === "") {
-            isValid = this.setMessage("dynamic-msg-bib-path-validation", false);
-        } else {
-            isValid = true;
+  target_setting = () => {
+    const {langCode, langVersion, folderPath} = this.state.settingData;
+    let version = langVersion;
+    let path = folderPath;
+    let isValid = true;
+    if (langCode === null || langCode == "") {
+      isValid = this.setMessage('dynamic-msg-bib-code-validation', false);
+    } else if(langCode.match(/^\d/)) {      
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if((/^([a-zA-Z0-9_-]){2,8}$/).test(langCode) === false){
+      isValid = this.setMessage('dynamic-msg-bib-code-start-with-number', false);
+    } else if (version === null || version === "") {
+      isValid = this.setMessage('dynamic-msg-bib-version-validation', false);
+    } else if (path === null || path === "") {
+      isValid = this.setMessage('dynamic-msg-bib-path-validation', false);
+    } else {
+      isValid = true;
+    }
+    return isValid;
+  }
+
+  saveSetting = () => {
+    if (this.target_setting() == false) return;
+    const currentTrans = AutographaStore.currentTrans;
+    const {langCodeValue, langCode, langVersion, folderPath} = this.state.settingData;
+    const settingData = { 
+      _id: 'targetBible',
+      targetLang: langCode,
+      targetVersion: langVersion,
+      targetPath: folderPath,
+      langScript: AutographaStore.scriptDirection.toUpperCase()
+    }
+    db.get('targetBible').then((doc) => {
+      settingData._rev = doc._rev;
+      db.put(settingData).then((res) => {
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-saved-change"], "success");
+      }); 
+    }, (err) => {
+      db.put(settingData).then((res) => {
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-saved-change"], "success");
+      }, (err) => {
+        swal(currentTrans["dynamic-msg-trans-data"], currentTrans["dynamic-msg-went-wrong"], "success");
+      });
+    });
+  }
+
+  openFileDialogSettingData = (event) => {
+    dialog.showOpenDialog(getCurrentWindow(), {
+        properties: ['openDirectory'],
+        filters: [{ name: 'All Files', extensions: ['*'] }],
+        title: "Export Location"
+    }, (selectedDir) => {
+        if (selectedDir != null) {
+          this.state.settingData["folderPath"] = selectedDir;
+          this.setState({});
         }
         return isValid;
     };
