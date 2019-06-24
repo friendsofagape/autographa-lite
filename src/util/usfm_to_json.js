@@ -1,3 +1,4 @@
+import AutographaStore from "../components/AutographaStore";
 const booksCodes = require(`${__dirname}/constants.js`).bookCodeList;
 const bibleSkel = require(`${__dirname}/../lib/full_bible_skel.json`)
 const path = require('path');
@@ -29,13 +30,13 @@ module.exports = {
             book["scriptDirection"] = options.scriptDirection;
             book.chapters = [];
         } catch (err) {
-            return callback(new Error('usfm parser error'));
+            return callback(new Error(`${fileName(options.usfmFile)}: ${AutographaStore.currentTrans["usfm-parser-error"]}`));
         }
         lineReader.on('line', function (line) {
             // Logic to tell if the input file is a USFM book of the Bible.
             if (!usfmBibleBook)
                 if (validLineCount > 3)
-                    return callback(new Error('not usfm file'))
+                return callback(new Error(`${fileName(options.usfmFile)} ${AutographaStore.currentTrans["usfm-bookid-missing"]}`));
 
             validLineCount++;
             line = line.trim();
@@ -57,7 +58,7 @@ module.exports = {
                 v = 0;
             } else if (splitLine[0] === '\\v') {
                 if (c === 0)
-                    return callback(new Error("USFM files without chapters aren't supported."));
+                return callback(new Error(`${fileName(options.usfmFile)} LineNo ${validLineCount}: ${AutographaStore.currentTrans["usfm-chaper-missing"]}`));
                 var verseStr = (splitLine.length <= 2) ? '' : splitLine.splice(2, splitLine.length - 1).join(' ');
                 verseStr = replaceMarkers(verseStr);
                 const bookIndex = booksCodes.findIndex((element) => {
@@ -89,7 +90,7 @@ module.exports = {
 
             if (!usfmBibleBook)
                 // throw new Error('not usfm file');
-                return callback(new Error('not usfm file'))
+                return callback(new Error(`${fileName(options.usfmFile)}: ${AutographaStore.currentTrans["usfm-not-valid"]}`))
             /*console.log(book);
               require('fs').writeFileSync('/Users/fox/output.json', JSON.stringify(book), {
               encoding: 'utf8',
@@ -115,13 +116,13 @@ module.exports = {
                     book._rev = doc._rev;
                     book.scriptDirection = options.scriptDirection;
                     refDb.put(book);
-                    return callback(null, "Successfully loaded existing refs")
+                    return callback(null, `${fileName(options.usfmFile)}`)
                 }, (err) => {
                     refDb.put(book).then((doc) => {
-                        return callback(null, "Successfully loaded new refs");
+                        return callback(null, `${fileName(options.usfmFile)}`);
                     }, (err) => {
                         // console.log("Error: While loading new refs. " + err);
-                        return callback("Error: While loading new refs. " + err);
+                        return callback(`${fileName(options.usfmFile)}`+ err);
                     });
                 });
             } else if (options.targetDb === 'target') {
@@ -137,8 +138,9 @@ module.exports = {
                 db.get(i.toString()).then((doc) => {
                     for (i = 0; i < doc.chapters.length; i++) {
                         for (j = 0; j < book.chapters.length; j++) {
+                            if(book.chapters[j] === undefined)
+                            break;
                             if (book.chapters[j].chapter === doc.chapters[i].chapter) {
-
                                 var versesLen = Math.min(book.chapters[j].verses.length, doc.chapters[i].verses.length);
                                 for (k = 0; k < versesLen; k++) {
                                     var verseNum = book.chapters[j].verses[k].verse_number;
@@ -151,9 +153,9 @@ module.exports = {
                         }
                     }
                     db.put(doc).then((response) => {
-                        return callback(null, response);
+                        return callback(null, fileName(options.usfmFile)+", ");
                     }, (err) => {
-                        return callback('Error: While trying to save to DB. ' + err);
+                        return callback(`${AutographaStore.currentTrans["Error-whilesaving-db"]}` + err);
                     });
                 });
             }
@@ -161,12 +163,16 @@ module.exports = {
 
         lineReader.on('error', function (lineReaderErr) {
             if (lineReaderErr.message === 'not usfm file')
-                return callback(options.usfmFile + ' is not a valid USFM file.')
+                return callback(new Error(`${fileName(options.usfmFile)}: ${AutographaStore.currentTrans["usfm-not-valid"]}`))
             else
-                return callback(new Error('usfm parser error'))
+                return callback(new Error(`${fileName(options.usfmFile)}: ${AutographaStore.currentTrans["usfm-parser-error"]}`))
         });
     }
 };
+
+function fileName(file) {
+    return file.substr(file.lastIndexOf("/") + 1);
+}
 
 var patterns = "";
 

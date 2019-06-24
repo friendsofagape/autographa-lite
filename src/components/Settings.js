@@ -16,6 +16,7 @@ const bibUtil_to_json = require(`${__dirname}/../util/usfm_to_json`);
 const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
+var appPath = path.join(__dirname,'..','..');
 
 @observer
 class SettingsModal extends React.Component {
@@ -52,7 +53,12 @@ class SettingsModal extends React.Component {
             msgId: "",
             filepath: "",
             modalBody: "",
-            title: ""
+            title: "",
+            successFile: [],
+            errorFile: [],
+            successTitle:"",
+            errorTitle:"",
+            show: false
         };
         db.get("targetBible").then(
             doc => {
@@ -336,10 +342,14 @@ class SettingsModal extends React.Component {
         // let that = this;
         if (this.import_sync_setting() === false) return;
         this.setState({ showLoader: true });
-
+        let date = new Date();
         const { langCode, langVersion } = this.state.settingData;
         let inputPath = Array.isArray(this.state.folderPathImport) ? this.state.folderPathImport : [this.state.folderPathImport];
         // var files = fs.readdirSync(inputPath[0]);
+        fs.exists(`${appPath}/report/error${date.getDate()}${date.getMonth()}${date.getFullYear()}.log`, function(exists) {
+            if (exists) console.log("Directory Exists")
+            else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
+        });
         Promise.map(inputPath, file => {
             // var filePath = path.join(inputPath[0], file);
             if (fs.statSync(file).isFile() && !file.startsWith(".")) {
@@ -350,20 +360,36 @@ class SettingsModal extends React.Component {
                     targetDb: "target",
                     scriptDirection: AutographaStore.refScriptDirection
                 };
-                return this.getStuffAsync(options);
+                return this.getStuffAsync(options).then((res)=> {
+                    this.setState(prevState => ({
+                        successFile: [...prevState.successFile, (res)],
+                        successTitle: AutographaStore.currentTrans["tooltip-import-title"]
+                    }))
+                    return res;
+
+                }).catch((err) => {
+                    console.log(err)
+                    var errorpath = `${appPath}/report/error${date.getDate()}${date.getMonth()+1}${date.getFullYear()}.log`;
+                    fs.appendFile(errorpath, err+"\n" , (err) => {
+                        if (err) {
+                            console.log(err);
+                        }else{
+                            console.log("succesfully created error.log file")
+                        }
+                    });
+                    let newErr = err.toString().replace("Error:","");
+                    this.setState(prevState => ({
+                        errorFile: [...prevState.errorFile, (newErr)],
+                        errorTitle: AutographaStore.currentTrans["tooltip-error-title"]
+                    }))
+                    return err
+                })
             }
-        })
-            .catch(err => {
-                const currentTrans = AutographaStore.currentTrans;
-                console.log(err);
-                this.setState({ showLoader: false });
-                return swal(
-                    currentTrans["dynamic-msg-error"],
-                    currentTrans["dynamic-msg-imp-error"],
-                    "error"
-                );
-            })
-            .finally(() => window.location.reload());
+        }).then(() => {
+            this.setState({showLoader:false});
+            this.setState({show:true});
+            AutographaStore.showModalSettings = false;
+        }) //.finally(() => window.location.reload());
     };
 
     reference_setting() {
@@ -461,9 +487,13 @@ class SettingsModal extends React.Component {
             });
       }
     
-      saveJsonToDB = (files) => {
+    saveJsonToDB = (files) => {
         const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
         const that = this;
+        fs.exists(appPath+"/report", function(exists) {
+            if (exists) console.log("Directory Exists")
+            else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
+        });
         Promise.map(files, (file) => {
           console.log("files ",files);
           console.log("file ",file);
@@ -478,15 +508,33 @@ class SettingsModal extends React.Component {
               targetDb: 'refs',
               scriptDirection: AutographaStore.refScriptDirection
             }
-            return that.getStuffAsync(options);
-          }
-        }).catch((err) => {
-          const currentTrans = AutographaStore.currentTrans;
-          console.log(err)
-          that.setState({showLoader: false});
-          return swal(currentTrans["dynamic-msg-error"], currentTrans["dynamic-msg-imp-error"], "error");
-        }).finally(() => window.location.reload())
-      }
+            return that.getStuffAsync(options).then((res)=> {
+                this.setState(prevState => ({
+                    successFile: [...prevState.successFile, (res)],
+                    successTitle: AutographaStore.currentTrans["tooltip-import-title"]
+                }))
+                return res;
+            }).catch((err) => {
+                console.log(err)
+                let errorpath = `${appPath}/report/referror.log`;
+                fs.appendFile(errorpath, err+"\n" , (err) => {
+                    if (err) { console.log(err) }
+                    else{ console.log("succesfully created referror.log file") }
+                });
+                let newErr = err.toString().replace("Error:","");
+                this.setState(prevState => ({
+                    errorFile: [...prevState.errorFile, (newErr)],
+                    errorTitle: AutographaStore.currentTrans["tooltip-error-title"]
+                }))
+                return err
+            })
+        }
+        }).then(() => {
+            this.setState({showLoader:false});
+            this.setState({show:true});
+            AutographaStore.showModalSettings = false
+        })//.finally(() => window.location.reload())
+    }
 
     clickListSettingData = (evt, obj) => {
         let settingData = Object.assign({}, this.state.settingData);
@@ -721,6 +769,11 @@ class SettingsModal extends React.Component {
         this.hideCodeList();
     };
 
+    handleClose = () => {
+        this.setState({ show: false });
+        window.location.reload();
+    }
+
     render() {
         var errorStyle = {
             margin: "auto",
@@ -759,6 +812,7 @@ class SettingsModal extends React.Component {
             return <Loader />;
         }
         return (
+        <div>
             <Modal show={show} onHide={closeSetting} id="tab-settings">
                 <Modal.Header closeButton>
                     <Modal.Title>
@@ -1306,6 +1360,22 @@ class SettingsModal extends React.Component {
                     </Tab.Container>
                 </Modal.Body>
             </Modal>
+            <Modal className="importReport" show={this.state.show} onHide={this.handleClose}>
+            <Modal.Header className="head" closeButton>
+            <Modal.Title><FormattedMessage id="modal-import-report" /></Modal.Title>
+            </Modal.Header>
+                <div className="successTitle">{this.state.successTitle}</div>
+                <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""}>
+                    {this.state.successFile.map((success,key) =>
+                    <span id={key} key={key} style={{width:"250px", textAlign:"center", display: "inline-block"}}>{success}</span>)}
+                </Modal.Body>
+                <div className="errorTitle">{this.state.errorTitle}</div>
+                <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
+                    {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)}
+                </Modal.Body>
+            <Modal.Footer />
+            </Modal>
+        </div>
         );
     }
 }
