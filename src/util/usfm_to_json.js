@@ -62,15 +62,22 @@ module.exports = {
                 var verseStr = (splitLine.length <= 2) ? '' : splitLine.splice(2, splitLine.length - 1).join(' ');
                 verseStr = replaceMarkers(verseStr);
                 const bookIndex = booksCodes.findIndex((element) => {
-                    return (element === book._id.split("_").slice(-1)[0].toUpperCase())
+                    if (book._id !== undefined){
+                        return (element === book._id.split("_").slice(-1)[0].toUpperCase())
+                    }
                 })
-                if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
-                    book.chapters[c - 1].verses.push({
-                        "verse_number": parseInt(splitLine[1], 10),
-                        "verse": verseStr
-                    });
-                    v++;
+
+                // To avoid panic error if book-id is null
+                if (bookIndex !== -1){
+                    if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
+                        book.chapters[c - 1].verses.push({
+                            "verse_number": parseInt(splitLine[1], 10),
+                            "verse": verseStr
+                        });
+                        v++;
+                    }
                 }
+                
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
             } else if (splitLine.length === 1) {
@@ -139,7 +146,7 @@ module.exports = {
                     for (i = 0; i < doc.chapters.length; i++) {
                         for (j = 0; j < book.chapters.length; j++) {
                             if(book.chapters[j] === undefined)
-                            break;
+                            continue;
                             if (book.chapters[j].chapter === doc.chapters[i].chapter) {
                                 var versesLen = Math.min(book.chapters[j].verses.length, doc.chapters[i].verses.length);
                                 for (k = 0; k < versesLen; k++) {
