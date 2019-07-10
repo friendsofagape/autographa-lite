@@ -382,6 +382,7 @@ class SettingsModal extends React.Component {
                         errorFile: [...prevState.errorFile, (newErr)],
                         errorTitle: AutographaStore.currentTrans["tooltip-error-title"]
                     }))
+                    console.log(AutographaStore.warningMsg)
                     return err
                 })
             }

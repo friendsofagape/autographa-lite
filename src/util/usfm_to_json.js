@@ -69,6 +69,7 @@ module.exports = {
 
                 // To avoid panic error if book-id is null
                 if (bookIndex !== -1){
+                    if(bibleSkel[bookIndex + 1].chapters[c - 1] !== undefined){
                     if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
                         book.chapters[c - 1].verses.push({
                             "verse_number": parseInt(splitLine[1], 10),
@@ -77,6 +78,7 @@ module.exports = {
                         v++;
                     }
                 }
+            }
                 
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
@@ -145,8 +147,9 @@ module.exports = {
                 db.get(i.toString()).then((doc) => {
                     for (i = 0; i < doc.chapters.length; i++) {
                         for (j = 0; j < book.chapters.length; j++) {
-                            if(book.chapters[j] === undefined)
-                            continue;
+                            if(book.chapters[j] === undefined){
+                                continue;
+                            }
                             if (book.chapters[j].chapter === doc.chapters[i].chapter) {
                                 var versesLen = Math.min(book.chapters[j].verses.length, doc.chapters[i].verses.length);
                                 for (k = 0; k < versesLen; k++) {
@@ -165,6 +168,11 @@ module.exports = {
                         return callback(`${AutographaStore.currentTrans["Error-whilesaving-db"]}` + err);
                     });
                 });
+                (book.chapters).find((_value, index) => {
+                    if (_value === undefined){
+                        AutographaStore.warningMsg.push(bookId + (index+1))
+                    }
+                })
             }
         });
 
