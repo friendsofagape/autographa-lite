@@ -6,6 +6,26 @@ import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from "react-intl";
 import Loader from "./Loader";
 import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
+
+// Added for list
+import { makeStyles } from "@material-ui/core/styles";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+// const useStyles = makeStyles(theme => ({
+//   root: {
+//     width: "50%"
+//   },
+//   heading: {
+//     fontSize: theme.typography.pxToRem(15),
+//     fontWeight: theme.typography.fontWeightRegular
+//   }
+// }));
+// end of List
+
 const { dialog, getCurrentWindow } = require("electron").remote;
 const { Tab, Modal, Col, Row, Nav, NavItem } = require("react-bootstrap/lib");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -811,6 +831,11 @@ class SettingsModal extends React.Component {
         if (this.state.showLoader) {
             return <Loader />;
         }
+
+        // For the List
+        // const classes = useStyles();
+        // End of List
+
         return (
         <div>
             <Modal show={show} onHide={closeSetting} id="tab-settings">
@@ -1367,11 +1392,48 @@ class SettingsModal extends React.Component {
                 <div className="successTitle">{this.state.successTitle}</div>
                 <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""}>
                     {this.state.successFile.map((success,key) =>
-                    <span id={key} key={key} style={{width:"250px", textAlign:"center", display: "inline-block"}}>{success}</span>)}
+                    // <span id={key} key={key} style={{width:"250px", textAlign:"center", display: "inline-block"}}>{success}</span>)}
+                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block"}}>
+                        <ExpansionPanel>
+                        <ExpansionPanelSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                            style={{backgroundColor: "lightgreen"}}
+                        >
+                            <Typography>{success}</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails>
+                            <Typography>
+                                All the chapters are Available!
+                            </Typography>
+                        </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                    </div>
+                    )}
                 </Modal.Body>
                 <div className="errorTitle">{this.state.errorTitle}</div>
                 <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
-                    {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)}
+                    {/* {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)} */}
+                    {this.state.errorFile.map((err,key) =>
+                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block"}}>
+                            <ExpansionPanel>
+                            <ExpansionPanelSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                                style={{backgroundColor: "red"}}
+                            >
+                                <Typography>{err}</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <Typography>
+                                    ID is missing!
+                                </Typography>
+                            </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </div>
+                    )}
                 </Modal.Body>
             <Modal.Footer />
             </Modal>
