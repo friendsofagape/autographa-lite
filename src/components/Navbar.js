@@ -13,6 +13,7 @@ import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
 import { Toggle } from 'material-ui';
 import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
+import RecorderModal from "./Recorder"
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -34,6 +35,7 @@ class Navbar extends React.Component {
             showModalSettings: false,
             showModalSearch: false,
             showModalDownload: false,
+            showModalRecorder: false,
             data: Constant,
             chapData: [],
             bookNo:1,
@@ -201,6 +203,10 @@ class Navbar extends React.Component {
 
     openpopupDownload() {
         AutographaStore.showModalDownload = true
+    }
+
+    openpopupRecorder = () => {
+        AutographaStore.showModalRecorder = true;
     }
 
     exportPDF = (e, column) => {
@@ -724,6 +730,7 @@ class Navbar extends React.Component {
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
                 <SearchModal show={AutographaStore.showModalSearch}/>
                 <DownloadModal show={AutographaStore.showModalDownload} />
+                <RecorderModal show={AutographaStore.showModalRecorder} />
                 <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div className="container-fluid">
                     <div className="navbar-header">
@@ -769,6 +776,12 @@ class Navbar extends React.Component {
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right nav-pills verse-diff-on">
+                        <li className="rec-btn">
+                                <FormattedMessage id="tooltip-recorder" >
+                                {(message) =>
+                                <a onClick={() => this.openpopupRecorder()} href="#" data-target="#recordmodal" data-toggle="tooltip" data-placement="bottom" title={message} id="btnRec" disabled={`${toggle ? "disabled" : "" }`} style={{pointerEvents: `${toggle ? "none" : "" }`}}><i className="fa fa-microphone fa-2x"></i></a>}
+                                </FormattedMessage>
+                            </li>
                             <li style={{padding: "17px 5px 0 0", color: "#fff", fontWeight: "bold"}}><span><FormattedMessage id="btn-switch-off" /></span></li>
                             <li>
 

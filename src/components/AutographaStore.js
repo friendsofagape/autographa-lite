@@ -62,6 +62,9 @@ export class AutographaStore {
   @observable multipleSpaces = {}
   @observable setDiff = false
   @observable backupOption = "current"
+  @observable showModalStat = false
+  @observable showModalRecorder = false
+  @observable showModalPlayer = false
 
 
 
@@ -69,4 +72,4 @@ export class AutographaStore {
 
   }  
 }
-export default new AutographaStore
+export default new AutographaStore()
