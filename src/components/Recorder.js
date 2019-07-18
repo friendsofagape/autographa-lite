@@ -3,6 +3,7 @@ import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from "react-intl";
 import { ReactMicPlus } from "react-mic-plus";
 import { observer } from "mobx-react";
+import swal from 'sweetalert';
 import RaisedButton from "material-ui/RaisedButton";
 import AudioPlayer from "react-h5-audio-player";
 const Modal = require("react-bootstrap/lib/Modal");
@@ -33,8 +34,8 @@ class RecorderModal extends React.Component {
   onStop = async recordedBlob => {
     console.log("recordedBlob is: ", recordedBlob);
     file = recordedBlob;
-    let book = {};
-    let doc = await db.get("targetBible");
+    var book = {};
+    var doc = await db.get("targetBible");
     doc = doc.targetPath;
     book.bookNumber = AutographaStore.bookId.toString();
     book.bookName = constants.booksList[parseInt(book.bookNumber, 10) - 1];
