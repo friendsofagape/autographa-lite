@@ -58,7 +58,8 @@ module.exports = {
                 v = 0;
             } else if (splitLine[0] === '\\v') {
                 if (c === 0)
-                return callback(new Error(`${fileName(options.usfmFile)} LineNo ${validLineCount}: ${AutographaStore.currentTrans["usfm-chaper-missing"]}`));
+                return
+                // callback(new Error(`${fileName(options.usfmFile)} LineNo ${validLineCount}: ${AutographaStore.currentTrans["usfm-chaper-missing"]}`));
                 var verseStr = (splitLine.length <= 2) ? '' : splitLine.splice(2, splitLine.length - 1).join(' ');
                 verseStr = replaceMarkers(verseStr);
                 const bookIndex = booksCodes.findIndex((element) => {
@@ -69,6 +70,7 @@ module.exports = {
 
                 // To avoid panic error if book-id is null
                 if (bookIndex !== -1){
+                    if(bibleSkel[bookIndex + 1].chapters[c - 1] !== undefined){
                     if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
                         book.chapters[c - 1].verses.push({
                             "verse_number": parseInt(splitLine[1], 10),
@@ -77,6 +79,7 @@ module.exports = {
                         v++;
                     }
                 }
+            }
                 
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
@@ -142,11 +145,13 @@ module.exports = {
                         break;
                     }
                 }
+                
                 db.get(i.toString()).then((doc) => {
                     for (i = 0; i < doc.chapters.length; i++) {
                         for (j = 0; j < book.chapters.length; j++) {
-                            if(book.chapters[j] === undefined)
-                            continue;
+                            if(book.chapters[j] === undefined){
+                                continue;
+                            }
                             if (book.chapters[j].chapter === doc.chapters[i].chapter) {
                                 var versesLen = Math.min(book.chapters[j].verses.length, doc.chapters[i].verses.length);
                                 for (k = 0; k < versesLen; k++) {
@@ -159,8 +164,20 @@ module.exports = {
                             }
                         }
                     }
+                    var missingChapterbook = [];
+                    (book.chapters).find((_value, index) => {
+                        if (_value === undefined){
+                            missingChapterbook = fileName(options.usfmFile)
+                            AutographaStore.warningMsg.push([fileName(options.usfmFile) , (index+1)])
+                        }
+                    })
                     db.put(doc).then((response) => {
-                        return callback(null, fileName(options.usfmFile)+", ");
+                        if(missingChapterbook !== fileName(options.usfmFile)){
+                            return callback(null, fileName(options.usfmFile));
+                        }
+                        else { 
+                            return callback(null) 
+                        }
                     }, (err) => {
                         return callback(`${AutographaStore.currentTrans["Error-whilesaving-db"]}` + err);
                     });

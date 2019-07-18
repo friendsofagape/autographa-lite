@@ -64,6 +64,7 @@ export class AutographaStore {
   @observable backupOption = "current"
   @observable successFile = []
   @observable errorFile = []
+  @observable warningMsg = []
 
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 

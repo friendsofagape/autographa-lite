@@ -17,6 +17,23 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -5101,7 +5118,8 @@ button.close {
 
 .modal-open .modal {
   overflow-x: hidden;
-  overflow-y: auto; }
+  /* overflow-y: auto;  */
+}
 
 .modal-dialog {
   position: relative;
@@ -5117,7 +5135,10 @@ button.close {
   -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
-  outline: 0; }
+  outline: 0; 
+  /* height: 500px; */
+  overflow-y: scroll;
+}
 
 .modal-backdrop {
   position: fixed;
@@ -8853,10 +8874,17 @@ body {
 .trans-margin {
   margin-bottom: 61px;
 }
-.importReport {
-  margin-top: 100px;
+.importReport > div {
+  margin-top: 20px;
+  width: 665px;
 }
 .successTitle {
+  font-weight: bold;
+  margin-left: 25px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+.warningTitle {
   font-weight: bold;
   margin-left: 25px;
   margin-top: 15px;
@@ -8869,16 +8897,24 @@ body {
   margin-bottom: 5px;
 }
 .ImportedFiles {
-  max-width: 574px;
+  max-width: 642px;
   margin-left: 12px;
-  max-height: 220px;
+  max-height: 165px;
+  overflow: auto;
+  background: #F8F8F8;
+}
+.WarningFiles {
+  max-width: 642px;
+  margin-left: 12px;
+  margin-top: 5px;
+  max-height: 165px;
   overflow: auto;
   background: #F8F8F8;
 }
 .ErrorFiles {
-  max-width: 574px;
+  max-width: 642px;
   margin-left: 12px;
-  max-height: 220px;
+  max-height: 165px;
   overflow: auto;
   background: #F8F8F8;
 }

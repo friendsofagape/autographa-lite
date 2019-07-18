@@ -6,26 +6,14 @@ import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from "react-intl";
 import Loader from "./Loader";
 import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
-
-// Added for list
+import * as mobx from "mobx";
 import { makeStyles } from "@material-ui/core/styles";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     width: "50%"
-//   },
-//   heading: {
-//     fontSize: theme.typography.pxToRem(15),
-//     fontWeight: theme.typography.fontWeightRegular
-//   }
-// }));
-// end of List
-
+const numberFormat = require("../util/getNumberFormat")
 const { dialog, getCurrentWindow } = require("electron").remote;
 const { Tab, Modal, Col, Row, Nav, NavItem } = require("react-bootstrap/lib");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
@@ -37,6 +25,7 @@ const path = require("path");
 const Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
 var appPath = path.join(__dirname,'..','..');
+let flag = false;
 
 @observer
 class SettingsModal extends React.Component {
@@ -76,9 +65,11 @@ class SettingsModal extends React.Component {
             title: "",
             successFile: [],
             errorFile: [],
+            warningTitle: "",
             successTitle:"",
             errorTitle:"",
-            show: false
+            show: false,
+            expanded: '',
         };
         db.get("targetBible").then(
             doc => {
@@ -317,7 +308,7 @@ class SettingsModal extends React.Component {
             getCurrentWindow(),
             {
                 properties: ["openFile", "multiSelections"],
-                filters: [{ name: "USFM Files", extensions: ["usfm"] }],
+                filters: [{ name: "USFM Files", extensions: ["usfm","sfm"] }],
                 title: "Import Translation"
             },
             selectedDir => {
@@ -370,6 +361,7 @@ class SettingsModal extends React.Component {
             if (exists) console.log("Directory Exists")
             else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
         });
+       
         Promise.map(inputPath, file => {
             // var filePath = path.join(inputPath[0], file);
             if (fs.statSync(file).isFile() && !file.startsWith(".")) {
@@ -515,10 +507,7 @@ class SettingsModal extends React.Component {
             else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
         });
         Promise.map(files, (file) => {
-          console.log("files ",files);
-          console.log("file ",file);
           const filePath = path.join((Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath), file);
-          console.log("filePath " + filePath)
           if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
             const options = {
               bibleName: bibleName,
@@ -535,7 +524,6 @@ class SettingsModal extends React.Component {
                 }))
                 return res;
             }).catch((err) => {
-                console.log(err)
                 let errorpath = `${appPath}/report/referror.log`;
                 fs.appendFile(errorpath, err+"\n" , (err) => {
                     if (err) { console.log(err) }
@@ -793,6 +781,30 @@ class SettingsModal extends React.Component {
         this.setState({ show: false });
         window.location.reload();
     }
+    
+    handleChange = panel => (event, isExpanded) => {
+        if (isExpanded === undefined && flag === false){
+            isExpanded = true;
+            flag = true;
+        }
+        else if(isExpanded === undefined && flag === true){
+            isExpanded = false;
+            flag = false;
+        }
+        this.setState({expanded: (isExpanded ? panel : false) });
+    }
+
+    handleErrChange = panel => (event, isExpanded) => {
+        if (isExpanded === undefined && flag === false){
+            isExpanded = true;
+            flag = true;
+        }
+        else if(isExpanded === undefined && flag === true){
+            isExpanded = false;
+            flag = false;
+        }
+        this.setState({expanded: (isExpanded ? panel : false) });
+    }
 
     render() {
         var errorStyle = {
@@ -832,9 +844,44 @@ class SettingsModal extends React.Component {
             return <Loader />;
         }
 
-        // For the List
-        // const classes = useStyles();
-        // End of List
+        
+        const chapterMissing = mobx.toJS(AutographaStore.warningMsg);
+        let objWarnArray = [];
+        let preValue = undefined;
+        let book = "";
+        let chapters = [];
+
+        chapterMissing.map((value) => { 
+            if (value[0] !== preValue){
+                if (value[0] !== preValue && preValue !== undefined ){
+                    const obj = {'filename':book, 'chapter':chapters};
+                    objWarnArray.push(obj);
+                    book = "";
+                    chapters = [];
+                }
+                book = value[0];
+                chapters.push(value[1])
+                preValue = value[0];
+            }
+            else{
+                chapters.push(value[1])
+            }          
+        });
+
+        if (book !== "" && chapters.length !== 0){
+            const obj = {'filename':book, 'chapter':chapters};
+            objWarnArray.push(obj);
+            if (this.state.warningTitle === ""){
+                this.setState({warningTitle:"WarningFiles"});
+            }
+        }
+        let finalWarnArray = Array.from(new Set(objWarnArray));
+
+        // To remove 'undefined' values from success files state array.
+        (this.state.successFile) = (this.state.successFile).filter(function( element ) {
+            return element !== undefined;
+         });
+
 
         return (
         <div>
@@ -1389,52 +1436,74 @@ class SettingsModal extends React.Component {
             <Modal.Header className="head" closeButton>
             <Modal.Title><FormattedMessage id="modal-import-report" /></Modal.Title>
             </Modal.Header>
-                <div className="successTitle">{this.state.successTitle}</div>
-                <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""}>
-                    {this.state.successFile.map((success,key) =>
-                    // <span id={key} key={key} style={{width:"250px", textAlign:"center", display: "inline-block"}}>{success}</span>)}
-                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block"}}>
-                        <ExpansionPanel>
-                        <ExpansionPanelSummary
-                            expandIcon={<ExpandMoreIcon />}
+                <div className="successTitle">Successfully Imported Files {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.folderPathImport.length}</div>
+                <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""} onDoubleClick={this.handleChange('panel')}>
+                {this.state.successFile.map((success,key) =>
+                    <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
+                        <ExpansionPanelSummary 
                             aria-controls="panel1a-content"
                             id="panel1a-header"
-                            style={{backgroundColor: "lightgreen"}}
-                        >
+                            style={{backgroundColor: "lightgreen"}}>
                             <Typography>{success}</Typography>
                         </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Typography>
-                                All the chapters are Available!
-                            </Typography>
-                        </ExpansionPanelDetails>
-                        </ExpansionPanel>
                     </div>
-                    )}
+                )}
+                    
                 </Modal.Body>
-                <div className="errorTitle">{this.state.errorTitle}</div>
-                <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
-                    {/* {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)} */}
-                    {this.state.errorFile.map((err,key) =>
-                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block"}}>
-                            <ExpansionPanel>
+                {/* <div className="warningTitle">{this.state.warningTitle ? "Warning Files" : ""}</div> */}
+                
+                <Modal.Body className={this.state.warningTitle ? "WarningFiles" : ""} onDoubleClick={this.handleChange('panel')}>
+                    <div style={{position:"absolute",top: "-4px", right: "39px"}}>
+                    {this.state.warningTitle ?<ExpandMoreIcon onClick={this.handleChange('panel')} style={{borderRadius:"35%", backgroundColor:"#a59f9f"}}/>:""}
+                    </div>
+                    {finalWarnArray.map((_warning,key) =>
+                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
+                            <ExpansionPanel expanded={this.state.expanded === ('panel'+key) || this.state.expanded === 'panel' } onChange={this.handleChange('panel'+key)}>
                             <ExpansionPanelSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
-                                style={{backgroundColor: "red"}}
+                                style={{backgroundColor: "yellow"}}
                             >
-                                <Typography>{err}</Typography>
+                                <Typography>{_warning.filename}</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <Typography>
-                                    ID is missing!
+                                    Chapter {numberFormat.getNumberFormat(_warning.chapter)} is missing!
                                 </Typography>
                             </ExpansionPanelDetails>
                             </ExpansionPanel>
                         </div>
                     )}
                 </Modal.Body>
+                
+                <div className="errorTitle">{this.state.errorTitle ? "Import Failures" : ""} {this.state.errorTitle ? (this.state.errorFile.length)+"/"+(this.state.folderPathImport.length):""}</div>
+                <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
+                    {/* {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)} */}
+                    <div style={{position:"absolute",top: "-4px", right: "39px"}}>
+                    {this.state.errorTitle ?<ExpandMoreIcon onClick={this.handleErrChange('Errpanel')} style={{borderRadius:"35%", backgroundColor:"#a59f9f"}}/>:""}
+                    </div>
+                    {this.state.errorFile.map((err,key) =>
+                        <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
+                            <ExpansionPanel expanded={this.state.expanded === ('Errpanel'+key) || this.state.expanded === 'Errpanel' } onChange={this.handleErrChange('Errpanel'+key)}>
+                            <ExpansionPanelSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                                style={{backgroundColor: "red"}}
+                            >
+                                <Typography>{err.split('USFM file without')[0]}</Typography>
+                            </ExpansionPanelSummary>
+                            <ExpansionPanelDetails>
+                                <Typography>
+                                    {'USFM file without'+ err.split('USFM file without')[1]}
+                                </Typography>
+                            </ExpansionPanelDetails>
+                            </ExpansionPanel>
+                        </div>
+                    )}
+                </Modal.Body>
+                
             <Modal.Footer />
             </Modal>
         </div>
