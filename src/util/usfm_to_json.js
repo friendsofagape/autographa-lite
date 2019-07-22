@@ -129,7 +129,19 @@ module.exports = {
                     return callback(null, `${fileName(options.usfmFile)}`)
                 }, (err) => {
                     refDb.put(book).then((doc) => {
-                        return callback(null, `${fileName(options.usfmFile)}`);
+                    var missingChapterbook = [];
+                    (book.chapters).forEach((_value,index)=> {
+                        if(_value.verses.length===0){
+                        missingChapterbook = fileName(options.usfmFile)
+                        AutographaStore.warningMsg.push([fileName(options.usfmFile) , (index+1)])
+                        }
+                    })
+                    if(missingChapterbook !== fileName(options.usfmFile)){
+                        return callback(null, fileName(options.usfmFile));
+                    }
+                    else { 
+                        return callback(null) 
+                    }
                     }, (err) => {
                         // console.log("Error: While loading new refs. " + err);
                         return callback(`${fileName(options.usfmFile)}`+ err);
