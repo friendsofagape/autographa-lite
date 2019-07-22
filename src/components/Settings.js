@@ -70,6 +70,7 @@ class SettingsModal extends React.Component {
             errorTitle:"",
             show: false,
             expanded: '',
+            totalFile: []
         };
         db.get("targetBible").then(
             doc => {
@@ -314,6 +315,7 @@ class SettingsModal extends React.Component {
             selectedDir => {
                 if (selectedDir != null) {
                     this.setState({ folderPathImport: selectedDir });
+                    this.setState({ totalFile: selectedDir });
                 }
             }
         );
@@ -448,6 +450,7 @@ class SettingsModal extends React.Component {
             ref_entry = {},
             ref_arr = [],
             files = fs.readdirSync(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath);
+            this.setState({totalFile:files});
             ref_entry.ref_id = ref_id_value;
             ref_entry.ref_name = bibleName;
             ref_entry.ref_lang_code = refLangCodeValue.toLowerCase();
@@ -1436,7 +1439,7 @@ class SettingsModal extends React.Component {
             <Modal.Header className="head" closeButton>
             <Modal.Title><FormattedMessage id="modal-import-report" /></Modal.Title>
             </Modal.Header>
-                <div className="successTitle">Successfully Imported Files {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.folderPathImport.length}</div>
+                <div className="successTitle">Successfully Imported Files {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.totalFile.length}</div>
                 <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""} onDoubleClick={this.handleChange('panel')}>
                 {this.state.successFile.map((success,key) =>
                     <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
@@ -1477,7 +1480,7 @@ class SettingsModal extends React.Component {
                     )}
                 </Modal.Body>
                 
-                <div className="errorTitle">{this.state.errorTitle ? "Import Failures" : ""} {this.state.errorTitle ? (this.state.errorFile.length)+"/"+(this.state.folderPathImport.length):""}</div>
+                <div className="errorTitle">{this.state.errorTitle ? "Import Failures" : ""} {this.state.errorTitle ? (this.state.errorFile.length)+"/"+(this.state.totalFile.length):""}</div>
                 <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
                     {/* {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)} */}
                     <div style={{position:"absolute",top: "-4px", right: "39px"}}>
