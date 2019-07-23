@@ -885,7 +885,6 @@ class SettingsModal extends React.Component {
             return element !== undefined;
          });
 
-
         return (
         <div>
             <Modal show={show} onHide={closeSetting} id="tab-settings">
@@ -1439,7 +1438,7 @@ class SettingsModal extends React.Component {
             <Modal.Header className="head" closeButton>
             <Modal.Title><FormattedMessage id="modal-import-report" /></Modal.Title>
             </Modal.Header>
-                <div className="successTitle">Successfully Imported Files {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.totalFile.length}</div>
+                <div className="successTitle"><FormattedMessage id="tooltip-import-title" /> {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.totalFile.length}</div>
                 <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""} onDoubleClick={this.handleChange('panel')}>
                 {this.state.successFile.map((success,key) =>
                     <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
@@ -1472,7 +1471,7 @@ class SettingsModal extends React.Component {
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <Typography>
-                                    Chapter {numberFormat.getNumberFormat(_warning.chapter)} is missing!
+                                <FormattedMessage id="usfm-warning1-chapter" /> {numberFormat.getNumberFormat(_warning.chapter)} <FormattedMessage id="usfm-warning2-chapter" />
                                 </Typography>
                             </ExpansionPanelDetails>
                             </ExpansionPanel>
@@ -1480,7 +1479,7 @@ class SettingsModal extends React.Component {
                     )}
                 </Modal.Body>
                 
-                <div className="errorTitle">{this.state.errorTitle ? "Import Failures" : ""} {this.state.errorTitle ? (this.state.errorFile.length)+"/"+(this.state.totalFile.length):""}</div>
+                <div className="errorTitle">{this.state.errorTitle ? <FormattedMessage id="tooltip-error-title" /> : ""} {this.state.errorTitle ? (this.state.errorFile.length)+"/"+(this.state.totalFile.length):""}</div>
                 <Modal.Body className={this.state.errorTitle ? "ErrorFiles" : ""}>
                     {/* {this.state.errorFile.map((err,key) => <ul key={key}>{err}</ul>)} */}
                     <div style={{position:"absolute",top: "-4px", right: "39px"}}>
@@ -1495,11 +1494,11 @@ class SettingsModal extends React.Component {
                                 id="panel1a-header"
                                 style={{backgroundColor: "red"}}
                             >
-                                <Typography>{err.split('USFM file without')[0]}</Typography>
+                                <Typography>{err.match(/(.*)(\.usfm|\.sfm)(.*)/i)[1]+err.match(/(.*)(\.usfm|\.sfm)(.*)/i)[2]}</Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
                                 <Typography>
-                                    {'USFM file without'+ err.split('USFM file without')[1]}
+                                    {err.match(/(.*)(\.usfm|\.sfm)(.*)/i)[3]}
                                 </Typography>
                             </ExpansionPanelDetails>
                             </ExpansionPanel>
