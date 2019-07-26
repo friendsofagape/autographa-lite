@@ -65,6 +65,7 @@ class SettingsModal extends React.Component {
             title: "",
             successFile: [],
             errorFile: [],
+            warningFile: [],
             warningTitle: "",
             successTitle:"",
             errorTitle:"",
@@ -379,6 +380,44 @@ class SettingsModal extends React.Component {
                         successFile: [...prevState.successFile, (res)],
                         successTitle: AutographaStore.currentTrans["tooltip-import-title"]
                     }))
+
+                    const chapterMissing = mobx.toJS(AutographaStore.warningMsg);
+                    let objWarnArray = [];
+                    let preValue = undefined;
+                    let book = "";
+                    let chapters = [];
+            
+                    chapterMissing.map((value) => { 
+                        if (value[0] !== preValue){
+                            if (value[0] !== preValue && preValue !== undefined ){
+                                const obj = {'filename':book, 'chapter':chapters};
+                                objWarnArray.push(obj);
+                                book = "";
+                                chapters = [];
+                            }
+                            book = value[0];
+                            chapters.push(value[1])
+                            preValue = value[0];
+                        }
+                        else{
+                            chapters.push(value[1])
+                        }          
+                    });
+            
+                    if (book !== "" && chapters.length !== 0){
+                        const obj = {'filename':book, 'chapter':chapters};
+                        objWarnArray.push(obj);
+                        if (this.state.warningTitle === ""){
+                            this.setState({warningTitle:"WarningFiles"});
+                        }
+                    }
+                    let finalWarnArray = Array.from(new Set(objWarnArray));
+                    this.setState({ warningFile: finalWarnArray });
+                    // To remove 'undefined' values from success files state array.
+                    (this.state.successFile) = (this.state.successFile).filter(function( element ) {
+                        return element !== undefined;
+                     });
+
                     return res;
 
                 }).catch((err) => {
@@ -525,6 +564,44 @@ class SettingsModal extends React.Component {
                     successFile: [...prevState.successFile, (res)],
                     successTitle: AutographaStore.currentTrans["tooltip-import-title"]
                 }))
+
+                const chapterMissing = mobx.toJS(AutographaStore.warningMsg);
+                let objWarnArray = [];
+                let preValue = undefined;
+                let book = "";
+                let chapters = [];
+        
+                chapterMissing.map((value) => { 
+                    if (value[0] !== preValue){
+                        if (value[0] !== preValue && preValue !== undefined ){
+                            const obj = {'filename':book, 'chapter':chapters};
+                            objWarnArray.push(obj);
+                            book = "";
+                            chapters = [];
+                        }
+                        book = value[0];
+                        chapters.push(value[1])
+                        preValue = value[0];
+                    }
+                    else{
+                        chapters.push(value[1])
+                    }          
+                });
+        
+                if (book !== "" && chapters.length !== 0){
+                    const obj = {'filename':book, 'chapter':chapters};
+                    objWarnArray.push(obj);
+                    if (this.state.warningTitle === ""){
+                        this.setState({warningTitle:"WarningFiles"});
+                    }
+                }
+                let finalWarnArray = Array.from(new Set(objWarnArray));
+                this.setState({ warningFile: finalWarnArray });
+                // To remove 'undefined' values from success files state array.
+                (this.state.successFile) = (this.state.successFile).filter(function( element ) {
+                    return element !== undefined;
+                 });
+                 
                 return res;
             }).catch((err) => {
                 let errorpath = `${appPath}/report/referror.log`;
@@ -846,44 +923,6 @@ class SettingsModal extends React.Component {
         if (this.state.showLoader) {
             return <Loader />;
         }
-
-        
-        const chapterMissing = mobx.toJS(AutographaStore.warningMsg);
-        let objWarnArray = [];
-        let preValue = undefined;
-        let book = "";
-        let chapters = [];
-
-        chapterMissing.map((value) => { 
-            if (value[0] !== preValue){
-                if (value[0] !== preValue && preValue !== undefined ){
-                    const obj = {'filename':book, 'chapter':chapters};
-                    objWarnArray.push(obj);
-                    book = "";
-                    chapters = [];
-                }
-                book = value[0];
-                chapters.push(value[1])
-                preValue = value[0];
-            }
-            else{
-                chapters.push(value[1])
-            }          
-        });
-
-        if (book !== "" && chapters.length !== 0){
-            const obj = {'filename':book, 'chapter':chapters};
-            objWarnArray.push(obj);
-            if (this.state.warningTitle === ""){
-                this.setState({warningTitle:"WarningFiles"});
-            }
-        }
-        let finalWarnArray = Array.from(new Set(objWarnArray));
-
-        // To remove 'undefined' values from success files state array.
-        (this.state.successFile) = (this.state.successFile).filter(function( element ) {
-            return element !== undefined;
-         });
 
         return (
         <div>
@@ -1438,7 +1477,7 @@ class SettingsModal extends React.Component {
             <Modal.Header className="head" closeButton>
             <Modal.Title><FormattedMessage id="modal-import-report" /></Modal.Title>
             </Modal.Header>
-                <div className="successTitle"><FormattedMessage id="tooltip-import-title" /> {(this.state.successFile.length)+(finalWarnArray.length)}/{this.state.totalFile.length}</div>
+                <div className="successTitle"><FormattedMessage id="tooltip-import-title" /> {(this.state.successFile.length)+(this.state.warningFile.length)}/{this.state.totalFile.length}</div>
                 <Modal.Body className={this.state.successTitle ? "ImportedFiles" : ""} onDoubleClick={this.handleChange('panel')}>
                 {this.state.successFile.map((success,key) =>
                     <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
@@ -1458,7 +1497,7 @@ class SettingsModal extends React.Component {
                     <div style={{position:"absolute",top: "-4px", right: "39px"}}>
                     {this.state.warningTitle ?<ExpandMoreIcon onClick={this.handleChange('panel')} style={{borderRadius:"35%", backgroundColor:"#a59f9f"}}/>:""}
                     </div>
-                    {finalWarnArray.map((_warning,key) =>
+                    {this.state.warningFile.map((_warning,key) =>
                         <div id={key} key={key} style={{width:"200px", textAlign:"center", display: "inline-block", margin:"1px"}}>
                             <ExpansionPanel expanded={this.state.expanded === ('panel'+key) || this.state.expanded === 'panel' } onChange={this.handleChange('panel'+key)}>
                             <ExpansionPanelSummary
