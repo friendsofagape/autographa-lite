@@ -8697,7 +8697,7 @@ body {
 .nav-tabs > li {
   float: none;
   margin-bottom: -1px;
-  width: 100px;
+  width: auto;
   margin: 0 auto;
   display: inline-block; }
 
@@ -8877,6 +8877,7 @@ body {
 .importReport > div {
   margin-top: 20px;
   width: 665px;
+  height: 600px;
 }
 .successTitle {
   font-weight: bold;
@@ -8899,22 +8900,14 @@ body {
 .ImportedFiles {
   max-width: 642px;
   margin-left: 12px;
-  max-height: 165px;
-  overflow: auto;
-  background: #F8F8F8;
-}
-.WarningFiles {
-  max-width: 642px;
-  margin-left: 12px;
-  margin-top: 5px;
-  max-height: 165px;
+  max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
 }
 .ErrorFiles {
   max-width: 642px;
   margin-left: 12px;
-  max-height: 165px;
+  max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
 }
