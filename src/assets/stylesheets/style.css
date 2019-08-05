@@ -8874,37 +8874,37 @@ body {
 .trans-margin {
   margin-bottom: 61px;
 }
-.importReport > div {
+.import-report > div {
   margin-top: 20px;
   width: 665px;
   height: 600px;
 }
-.successTitle {
+.success-title {
   font-weight: bold;
   margin-left: 25px;
   margin-top: 15px;
   margin-bottom: 5px;
 }
-.warningTitle {
+.warning-title {
   font-weight: bold;
   margin-left: 25px;
   margin-top: 15px;
   margin-bottom: 5px;
 }
-.errorTitle {
+.error-title {
   font-weight: bold;
   margin-left: 25px;
   margin-top: 15px;
   margin-bottom: 5px;
 }
-.ImportedFiles {
+.imported-files {
   max-width: 642px;
   margin-left: 12px;
   max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
 }
-.ErrorFiles {
+.error-files {
   max-width: 642px;
   margin-left: 12px;
   max-height: 452px;
