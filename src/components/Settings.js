@@ -489,7 +489,14 @@ class SettingsModal extends React.Component {
         var ref_id_value = bibleName + '_' + refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase(),
             ref_entry = {},
             ref_arr = [],
-            files = fs.readdirSync(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath);
+            files = [],
+            ref_files = fs.readdirSync(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath);
+           
+            ref_files.map((file)=>{
+                if (file.match(/(.*)(\.usfm|\.sfm)/i)){
+                    files.push(file);
+                }
+            });
             this.setState({totalFile:files});
             ref_entry.ref_id = ref_id_value;
             ref_entry.ref_name = bibleName;
