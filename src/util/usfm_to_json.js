@@ -207,7 +207,8 @@ module.exports = {
 };
 
 function fileName(file) {
-    return file.substr(file.lastIndexOf("/") + 1);
+    // return file.substr(file.lastIndexOf("/") + 1);
+    return (file.match("/") ? file.substr(file.lastIndexOf("/") + 1) : file.substr(file.lastIndexOf("\\") + 1));
 }
 
 var patterns = "";
