@@ -18,7 +18,7 @@ export default {
 	"label-language-code": "رمز اللغة",
 	"label-version" : "الإصدار",
 	"label-export-folder-location" : "تصدير موقع المجلد",
-	"label-folder-location" : "موقع المجلد",
+	"label-folder-location" : "مكان الملف",
 	"label-book-chapter" : "كتاب والفصل",
 	"label-find-replace" : "البحث والاستبدال",
 	"label-total-word-replaced" : "تم استبدال الكلمة الإجمالية",

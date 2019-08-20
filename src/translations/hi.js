@@ -18,7 +18,7 @@ export default {
 	"label-language-code": "भाषा संकेत-लिपि",
 	"label-version" : "संस्करण",
 	"label-export-folder-location" : "फोल्डर स्थान एक्सपोर्ट करना",
-	"label-folder-location" : "फोल्डर स्थान",
+	"label-folder-location" : "फाइल का पता",
 	"label-book-chapter" : "पुस्तक और पाठ",
 	"label-find-replace" : "ढूंढें और प्रतिस्थापित करें",
 	"label-total-word-replaced" : "सम्पूर्ण प्रतिस्थापित शब्द",

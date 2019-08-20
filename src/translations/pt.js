@@ -18,7 +18,7 @@ export default {
 	"label-language-code": "Código de Língua",
 	"label-version" : "Versão",
 	"label-export-folder-location" : "Local da Pasta de Exportação",
-	"label-folder-location" : "Local da Pasta",
+	"label-folder-location" : "Localização de arquivo",
 	"label-book-chapter" : "Livro e Capítulo",
 	"label-find-replace" : "Buscar e substituir",
 	"label-total-word-replaced" : "Palavra total substituida",

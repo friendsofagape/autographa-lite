@@ -13,6 +13,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Icon from '@material-ui/core/Icon';
 const numberFormat = require("../util/getNumberFormat")
 const { dialog, getCurrentWindow } = require("electron").remote;
 const { Tab, Tabs, Modal, Col, Row, Nav, NavItem } = require("react-bootstrap/lib");
@@ -1117,19 +1118,23 @@ class SettingsModal extends React.Component {
                                             <br />
                                             <FormattedMessage id="placeholder-path-of-usfm-files">
                                                 {message => (
-                                                    <TextField
-                                                        hintText={message}
-                                                        onChange={event => {
-                                                            this.setState({
-                                                                folderPathImport: event.target.value
-                                                            });
-                                                        }}
-                                                        value={this.state.folderPathImport || ""}
-                                                        name="folderPathImport"
-                                                        onClick={this.openFileDialogImportTrans}
-                                                        className="margin-top-24 textbox-width-70"
-                                                        id="import-file-trans"
-                                                    />
+                                                    <div>
+                                                        <TextField
+                                                            hintText={message}
+                                                            onChange={event => {
+                                                                this.setState({
+                                                                    folderPathImport: event.target.value
+                                                                });
+                                                            }}
+                                                            value={this.state.folderPathImport || ""}
+                                                            name="folderPathImport"
+                                                            className="margin-top-24 textbox-width-70"
+                                                            id="import-file-trans"
+                                                        />
+                                                        <div className="folder-selection">
+                                                                <Icon style={{margin: "2"}} onClick={this.openFileDialogImportTrans}>folder</Icon>
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </FormattedMessage>
                                             <FormattedMessage id="btn-import">
@@ -1271,16 +1276,20 @@ class SettingsModal extends React.Component {
                                             <br />
                                             <FormattedMessage id="placeholder-path-of-usfm-files">
                                                 {message => (
-                                                    <TextField
-                                                        hintText={message}
-                                                        onChange={this.onReferenceChange}
-                                                        value={refFolderPath || ""}
-                                                        ref="refFolderPath"
-                                                        name="refFolderPath"
-                                                        onClick={this.openFileDialogRefSetting}
-                                                        className="margin-top-24 textbox-width-70"
-                                                        id="import-ref-path"
-                                                    />
+                                                    <div>
+                                                        <TextField
+                                                            hintText={message}
+                                                            onChange={this.onReferenceChange}
+                                                            value={refFolderPath || ""}
+                                                            ref="refFolderPath"
+                                                            name="refFolderPath"
+                                                            className="margin-top-24 textbox-width-70"
+                                                            id="import-ref-path"
+                                                        />
+                                                        <div className="folder-selection">
+                                                            <Icon style={{margin: "2"}} onClick={this.openFileDialogRefSetting}>folder</Icon>
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </FormattedMessage>
                                         </div>
