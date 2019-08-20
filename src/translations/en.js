@@ -19,7 +19,7 @@ export default {
 	"label-language-code": "Language Code",
 	"label-version" : "Version",
 	"label-export-folder-location" : "Export Folder Location",
-	"label-folder-location" : "Folder Location",
+	"label-folder-location" : "File Location",
 	"label-book-chapter" : "Book and Chapter",
 	"label-find-replace" : "Find and Replace",
 	"label-total-word-replaced" : "Total words replaced",
