@@ -91,6 +91,7 @@ export default {
 	"label-incomplete-verses" : "ممكن الآيات غير كاملة",
 	"label-multiple-spaces" : "آيات مع مساحات متعددة",
 	"label-statistic-heading": "إحصائيات كتاب",
+	"export-usfm": "USFM",
 	"export-html-1-column": "1-تخطيط العمود HTML",
 	"export-html-2-column": "2-تخطيط العمود HTML",
 	"tooltip-language-validation": "يجب أن يكون الطول بين 2 و 8 أحرف ولا يمكن البدء بالرقم.",
