@@ -8879,14 +8879,14 @@ body {
   margin-bottom: 5px;
 }
 .imported-files {
-  max-width: 642px;
+  max-width: 652px;
   margin-left: 12px;
   max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
 }
 .error-files {
-  max-width: 642px;
+  max-width: 652px;
   margin-left: 12px;
   max-height: 452px;
   overflow: auto;
