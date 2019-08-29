@@ -8879,15 +8879,15 @@ body {
   margin-bottom: 5px;
 }
 .imported-files {
-  max-width: 652px;
-  margin-left: 12px;
+  max-width: 653px;
+  margin-left: 10px;
   max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
 }
 .error-files {
-  max-width: 652px;
-  margin-left: 12px;
+  max-width: 653px;
+  margin-left: 10px;
   max-height: 452px;
   overflow: auto;
   background: #F8F8F8;
@@ -8901,4 +8901,20 @@ body {
 .folder-selection:hover {
   display: inline-block;
   transform: scale(1.5);
+}
+
+div::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0.8em;
+}
+
+div::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+div::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+background-color: darkgrey;
+outline: 1px solid slategrey;
 }
