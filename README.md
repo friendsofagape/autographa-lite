@@ -54,4 +54,4 @@ Let us know if face any bugs/problems by opening an issue in GitHub. We'll do ou
 
 ## Acknowledgments
 * [Friends of Agape](http://friendsofagape.org/), for their support and contributions.
-* [Bridge Connectivity Solutions] (http://bridgeconn.com), for technical resources
+* [Bridge Connectivity Solutions](http://bridgeconn.com), for technical resources
