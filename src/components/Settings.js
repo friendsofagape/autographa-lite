@@ -1048,7 +1048,7 @@ class SettingsModal extends React.Component {
                                                 <FormattedMessage id="label-export-folder-location" />
                                             </label>
                                             <br />
-                                            <FormattedMessage id="placeholder-path-of-usfm-files">
+                                            <FormattedMessage id="placeholder-saving-usfm-files">
                                                 {message => (
                                                     <TextField
                                                         hintText={message}
@@ -1113,10 +1113,10 @@ class SettingsModal extends React.Component {
                                     <Tab.Pane eventKey="second">
                                         <div className="form-group">
                                             <label>
-                                                <FormattedMessage id="label-folder-location" />
+                                                <FormattedMessage id="label-file-location" />
                                             </label>
                                             <br />
-                                            <FormattedMessage id="placeholder-path-of-usfm-files">
+                                            <FormattedMessage id="placeholder-select-usfm-files">
                                                 {message => (
                                                     <div>
                                                         <TextField
