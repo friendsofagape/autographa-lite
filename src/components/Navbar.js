@@ -29,6 +29,7 @@ class Navbar extends React.Component {
       super(props);
         this.handleRefChange = this.handleRefChange.bind(this);
         this.getData = this.getData.bind(this);
+        this.fontChange = this.fontChange.bind(this)
         this.state = {
             showModal: false,
             showModalSettings: false,
@@ -44,6 +45,9 @@ class Navbar extends React.Component {
             replaceVal:"",
             toggled: false,
             setDiff: false,
+            setFont1: "",
+            setFont2: "",
+            setFont3: ""
         };
        
         var verses, chapter;
@@ -391,6 +395,23 @@ class Navbar extends React.Component {
         });
     }
 
+    componentDidMount(){
+        this.fontChange()
+    }
+
+    fontChange() {
+        let options = ['eng_ult', 'eng_ust', 'hin_irv']
+        if((options.indexOf(AutographaStore.activeRefs[0]) === -1))
+            this.setState({setFont1:  "Awami Nastaliq"})
+        else this.setState({ setFont1:  "" })
+        if((options.indexOf(AutographaStore.activeRefs[1]) === -1))
+            this.setState({ setFont2:  "Awami Nastaliq" })
+        else this.setState({ setFont2:  "" })
+        if((options.indexOf(AutographaStore.activeRefs[2]) === -1))
+            this.setState({ setFont3:  "Awami Nastaliq" })
+        else this.setState({ setFont3:  "" })
+    }
+
     handleRefChange(refDropDownPos, event) {
         // event.persist();
         AutographaStore.activeRefs[refDropDownPos] = event.target.value;
@@ -420,6 +441,7 @@ class Navbar extends React.Component {
             if (error)
             console.log(error);
         });
+        this.fontChange(event.target.value);
     }
     isSameLanguage = async() => {
         const verseLangCode = "",
@@ -820,27 +842,27 @@ class Navbar extends React.Component {
                 {
                     AutographaStore.layout === 1   &&
                         <div className="parentdiv">
-                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent}  /></div>
+                            <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id = {1} layout={1}/><ReferencePanel refContent ={refContent} font={this.state.setFont1}/></div>
                             <div style={{padding: "10px"}} className="layoutx"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                         </div>
                 } 
                 {
                     AutographaStore.layout === 2 &&
                     <div className="parentdiv">
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} font={this.state.setFont1}/></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]}/></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]} font={this.state.setFont2}/></div>
                         <div style={{padding: "10px"}} className="layout2x"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                     </div>
                 }
                 {
                     AutographaStore.layout === 3 &&
                     <div className="parentdiv">
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout = {1} /><ReferencePanel refContent ={refContent} refIds={AutographaStore.activeRefs[0]} font={this.state.setFont1}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout = {2} /><ReferencePanel refContent ={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns = {AutographaStore.tIns[1]} tDel = {AutographaStore.tDel[1]} font={this.state.setFont2}/></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={AutographaStore.activeRefs[2]} tIns = {AutographaStore.tIns[2]} tDel = {AutographaStore.tDel[2]}/></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout = {3} /><ReferencePanel refContent ={refContentTwo} refIds={AutographaStore.activeRefs[2]} tIns = {AutographaStore.tIns[2]} tDel = {AutographaStore.tDel[2]} font={this.state.setFont3}/></div>
                         <div style={{ padding: "10px"}} className="layout3x"><TranslationPanel onSave={this.saveTarget} tIns = {AutographaStore.tIns[0]} tDel = {AutographaStore.tDel[0]}/></div>
                     </div>
                 }  

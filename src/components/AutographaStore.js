@@ -65,6 +65,7 @@ export class AutographaStore {
   @observable successFile = []
   @observable errorFile = []
   @observable warningMsg = []
+  @observable setTransfont = ''
 
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
 

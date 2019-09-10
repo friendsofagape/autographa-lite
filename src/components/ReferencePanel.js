@@ -32,7 +32,7 @@ class ReferencePanel extends React.Component {
                     <div className="col-sm-12 col-fixed" id="section-0">
                         {tIns || tDel ? <div style={{textAlign: 'center'}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) {tIns}</span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) {tDel}</span></div> : ""}
                         <div className="row">
-                            <div dangerouslySetInnerHTML={{__html: this.props.refContent}} className="col-12 col-ref"></div>
+                            <div dangerouslySetInnerHTML={{__html: this.props.refContent}} style={{fontFamily: this.props.font}} className="col-12 col-ref"></div>
                         </div>
                     </div>
                 </div>

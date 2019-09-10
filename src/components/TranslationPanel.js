@@ -5,6 +5,7 @@ import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
 const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
+var langdir;
 
 @observer
 class TranslationPanel extends React.Component {
@@ -15,6 +16,14 @@ class TranslationPanel extends React.Component {
     	});
    		this.timeout =  0;
   	}
+	
+	componentDidMount(){
+		db.get("targetBible").then(
+            doc => {
+                langdir = doc.langScript.toUpperCase();
+                (langdir === 'RTL') ? AutographaStore.setTransfont = 'Awami Nastaliq' : AutographaStore.setTransfont = '' ;
+            });
+	}
 
   	highlightRef(vId, refId, obj) {
 		{/*var content = ReactDOM.findDOMNode(this);
@@ -111,7 +120,7 @@ class TranslationPanel extends React.Component {
 
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
-		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
+		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap", fontFamily: AutographaStore.setTransfont}}>
 			<span className='verse-num' key={i}>{(i+1)}</span>
 			<span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
