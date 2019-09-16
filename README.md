@@ -7,8 +7,8 @@ This is a standalone desktop application which hopes to aid and be a friendly co
 It is relatively easy to setup the application locally for development.
 
 ### Prerequisites
-[Node JS 10.16.0](https://nodejs.org/download/release/v10.16.0/)
-[npm 6.4.1](https://www.npmjs.com/get-npm)    
+[Node JS 12.6.0](https://nodejs.org/download/release/v10.16.0/)
+[npm 6.9.0](https://www.npmjs.com/get-npm)    
 [Python 2](https://www.python.org/downloads/release/python-2715/) (One of our build tools [breaks under Python 3](https://github.com/nodejs/node-gyp/issues/1337).)
 
 ### Build and run
