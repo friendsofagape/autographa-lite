@@ -26,7 +26,7 @@ module.exports = {
                 v = 0,
                 usfmBibleBook = false,
                 validLineCount = 0,
-                id_prefix = options.bibleName + '_' + options.lang + '_' + options.version + '_';
+                id_prefix = options.lang + '_' + options.version + '_' + options.bibleName + '_';
             book["scriptDirection"] = options.scriptDirection;
             book.chapters = [];
         } catch (err) {
