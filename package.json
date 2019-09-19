@@ -32,6 +32,7 @@
     "react-intl": "^2.4.0",
     "react-scripts": "3.0.1",
     "rtl-detect": "^1.0.0",
+    "string-punctuation-tokenizer": "^2.0.0-beta.2",
     "sweetalert": "^2.1.0",
     "sweetalert-react": "^0.4.11",
     "transform-runtime": "0.0.0"
