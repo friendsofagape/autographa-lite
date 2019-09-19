@@ -328,13 +328,14 @@ class SettingsModal extends React.Component {
         dialog.showOpenDialog(
             getCurrentWindow(),
             {
-                properties: ["openDirectory"],
-                filters: [{ name: "All Files", extensions: ["*"] }],
+                properties: ["openFile", "multiSelections"],
+                filters: [{ name: "All Files", extensions: ["usfm","sfm"] }],
                 title: "Import Reference"
             },
             selectedDir => {
                 if (selectedDir != null) {
                     this.state.refSetting["refFolderPath"] = selectedDir;
+                    this.setState({ totalFile: selectedDir });
                     this.setState({});
                 }
             }
@@ -490,9 +491,7 @@ class SettingsModal extends React.Component {
         var ref_id_value = refLangCodeValue.toLowerCase() + '_' + refVersion.toLowerCase() + '_' + bibleName,
             ref_entry = {},
             ref_arr = [],
-            files = fs.readdirSync(Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath);
-            files = files.filter(file => file.match(/(.*)(\.usfm|\.sfm)/i));
-            this.setState({totalFile:files});
+            files = (Array.isArray(refFolderPath)? refFolderPath : [refFolderPath]);
             ref_entry.ref_id = ref_id_value;
             ref_entry.ref_name = bibleName;
             ref_entry.ref_lang_code = refLangCodeValue.toLowerCase();
@@ -545,20 +544,19 @@ class SettingsModal extends React.Component {
       }
     
     saveJsonToDB = (files) => {
-        const {bibleName, refVersion, refLangCodeValue, refFolderPath} = this.state.refSetting;
+        const { bibleName, refVersion, refLangCodeValue } = this.state.refSetting;
         const that = this;
         fs.exists(appPath+"/report", function(exists) {
             if (exists) console.log("Directory Exists")
             else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
         });
         Promise.map(files, (file) => {
-          const filePath = path.join((Array.isArray(refFolderPath) ? refFolderPath[0] : refFolderPath), file);
-          if (fs.statSync(filePath).isFile() && !file.startsWith('.')) {
+          if (fs.statSync(file).isFile() && !file.startsWith('.')) {
             const options = {
               bibleName: bibleName,
               lang: refLangCodeValue.toLowerCase(),
               version: refVersion.toLowerCase(),
-              usfmFile: filePath,
+              usfmFile: file,
               targetDb: 'refs',
               scriptDirection: AutographaStore.refScriptDirection
             }
