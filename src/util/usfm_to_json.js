@@ -168,8 +168,13 @@ module.exports = {
                                 var versesLen = Math.min(book.chapters[j].verses.length, doc.chapters[i].verses.length);
                                 for (k = 0; k < versesLen; k++) {
                                     var verseNum = book.chapters[j].verses[k].verse_number;
-                                    doc.chapters[i].verses[verseNum - 1].verse = book.chapters[j].verses[k].verse;
-                                    book.chapters[j].verses[k] = undefined;
+                                    if (doc.chapters[i].verses[verseNum - 1] != undefined){
+                                        doc.chapters[i].verses[verseNum - 1].verse = book.chapters[j].verses[k].verse;
+                                        book.chapters[j].verses[k] = undefined;
+                                    }
+                                    else{
+                                        return callback(new Error(`${fileName(options.usfmFile)} ${AutographaStore.currentTrans["usfm-not-valid"]}`))
+                                    }
                                 }
                                 //check for extra verses in the imported usfm here.
                                 break;
