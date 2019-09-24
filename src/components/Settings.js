@@ -424,7 +424,6 @@ class SettingsModal extends React.Component {
                     return res;
 
                 }).catch((err) => {
-                    console.log(err)
                     var errorpath = `${appPath}/report/error${date.getDate()}${date.getMonth()+1}${date.getFullYear()}.log`;
                     fs.appendFile(errorpath, err+"\n" , (err) => {
                         if (err) {
@@ -445,7 +444,7 @@ class SettingsModal extends React.Component {
             this.setState({showLoader:false});
             this.setState({show:true});
             AutographaStore.showModalSettings = false;
-        }) //.finally(() => window.location.reload());
+        }).finally(() => this.transImport());
     };
 
     reference_setting() {
@@ -622,7 +621,18 @@ class SettingsModal extends React.Component {
             this.setState({showLoader:false});
             this.setState({show:true});
             AutographaStore.showModalSettings = false
-        })//.finally(() => window.location.reload())
+        }).finally(() => this.referenceImport())
+    }
+
+    referenceImport = () => {
+        this.loadReference()
+        //clearing state fields after loading
+        this.setState({ refSetting: "" })
+    }
+
+    transImport = () => {
+        this.props.loadData()
+        this.setState({ folderPathImport: "" })
     }
 
     clickListSettingData = (evt, obj) => {
@@ -860,7 +870,16 @@ class SettingsModal extends React.Component {
 
     handleClose = () => {
         this.setState({ show: false });
-        window.location.reload();
+        //clearing import report states
+        this.setState({
+            successFile: [],
+            errorFile: [],
+            warningFile: [],
+            warningTitle: "",
+            successTitle:"",
+            errorTitle:"",
+        })
+        AutographaStore.warningMsg = []
     }
     
     handleChange = panel => (event, isExpanded) => {
@@ -888,7 +907,6 @@ class SettingsModal extends React.Component {
     }
 
     handleSelect = key => {
-        console.log("selected" + key);
         this.setState({ key: key });
     };
 
