@@ -266,8 +266,7 @@ class Navbar extends React.Component {
     }
 
     loadData = () => {
-        this.getRefContents(AutographaStore.refId+'_'+Constant.bookCodeList[parseInt(AutographaStore.bookId, 10) - 1] , AutographaStore.chapterActive)
-        this.getValue(AutographaStore.chapterActive, AutographaStore.bookActive)
+        this.getValue(AutographaStore.chapterId, AutographaStore.bookId)
     }
 
     getValue(chapter, bookId){
