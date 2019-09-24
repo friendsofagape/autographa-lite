@@ -879,7 +879,7 @@ class SettingsModal extends React.Component {
             successTitle:"",
             errorTitle:"",
         })
-        AutographaStore.warningMsg = ""
+        AutographaStore.warningMsg = []
     }
     
     handleChange = panel => (event, isExpanded) => {
