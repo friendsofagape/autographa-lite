@@ -445,7 +445,7 @@ class SettingsModal extends React.Component {
             this.setState({showLoader:false});
             this.setState({show:true});
             AutographaStore.showModalSettings = false;
-        }) //.finally(() => window.location.reload());
+        }).finally(() => this.props.loadData());
     };
 
     reference_setting() {
@@ -622,7 +622,7 @@ class SettingsModal extends React.Component {
             this.setState({showLoader:false});
             this.setState({show:true});
             AutographaStore.showModalSettings = false
-        })//.finally(() => window.location.reload())
+        }).finally(() => this.loadReference())
     }
 
     clickListSettingData = (evt, obj) => {
@@ -860,7 +860,6 @@ class SettingsModal extends React.Component {
 
     handleClose = () => {
         this.setState({ show: false });
-        window.location.reload();
     }
     
     handleChange = panel => (event, isExpanded) => {
@@ -888,7 +887,6 @@ class SettingsModal extends React.Component {
     }
 
     handleSelect = key => {
-        console.log("selected" + key);
         this.setState({ key: key });
     };
 
