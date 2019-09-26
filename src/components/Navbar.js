@@ -732,7 +732,7 @@ class Navbar extends React.Component {
                 </Modal>
                 <SettingsModal show={AutographaStore.showModalSettings} loadData={this.loadData} />
                 <AboutUsModal show={AutographaStore.showModalAboutUs} />
-                <SearchModal show={AutographaStore.showModalSearch}/>
+                <SearchModal show={AutographaStore.showModalSearch} loadData={this.loadData} />
                 <DownloadModal show={AutographaStore.showModalDownload} />
                 <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div className="container-fluid">

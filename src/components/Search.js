@@ -128,6 +128,7 @@ class SearchModal extends React.Component {
     }
 
     saveReplacedText = () => {
+    const that = this;
     db.get(AutographaStore.bookId.toString()).then((doc) => {
         if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
@@ -141,7 +142,7 @@ class SearchModal extends React.Component {
                         // $("#replaced-text-change").modal('toggle');
                         // alertModal("dynamic-msg-error", "dynamic-msg-went-wrong");
                     } else {
-                        window.location.reload();
+                        that.loadData()
                     }
                 });
             }
@@ -158,14 +159,19 @@ class SearchModal extends React.Component {
                     chapter_arr = [];
                     replacedChapter = {};
                     replacedVerse = {};
-                    window.location.reload();
+                    that.loadData()
                 }
             })
         }
     })
   }
 
-  
+  loadData = () => {
+    this.props.loadData()
+    this.setState({replaceInfo: false})
+    AutographaStore.replaceOption = "chapter";
+  }
+
     replaceContentAndSave(){
       let newContent;
       let replaceCount;
