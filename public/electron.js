@@ -86,7 +86,6 @@ const menuTemplate = [
       { role: 'copy' },
       { role: 'paste' },
       ...(isMac ? [
-        { role: 'pasteAndMatchStyle' },
         { role: 'delete' },
         { role: 'selectAll' },
         { type: 'separator' },
