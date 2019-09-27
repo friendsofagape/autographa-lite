@@ -162,7 +162,7 @@ export default {
 	"book-psalms" : "Salmos",
 	"book-proverbs" : "Provérbios",
 	"book-ecclesiastes" : "Eclesiastes",
-	"book-song-of-songs" : "Cântico dos Cânticos",
+	"book-song-of-solomon" : "Cântico dos Cânticos",
 	"book-isaiah" : "Isaías",
 	"book-jeremiah" : "Jeremias",
 	"book-lamentations" : "Lamentações",

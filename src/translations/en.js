@@ -164,7 +164,7 @@ export default {
 	"book-psalms" : "Psalms",
 	"book-proverbs" : "Proverbs",
 	"book-ecclesiastes" : "Ecclesiastes",
-	"book-song-of-songs" : "Song of Songs",
+	"book-song-of-solomon" : "Song of Solomon",
 	"book-isaiah" : "Isaiah",
 	"book-jeremiah" : "Jeremiah",
 	"book-lamentations" : "Lamentations",

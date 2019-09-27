@@ -164,7 +164,7 @@ export default {
 	"book-psalms" : "مزامير",
 	"book-proverbs" : "امثال",
 	"book-ecclesiastes" : "جامعة",
-	"book-song-of-songs" : "نشيد الانشاد",
+	"book-song-of-solomon" : "نشيد الانشاد",
 	"book-isaiah" : "اشعياء",
 	"book-jeremiah" : "ارميا",
 	"book-lamentations" : "مراثي",

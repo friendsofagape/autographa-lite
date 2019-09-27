@@ -22,7 +22,8 @@ class Statistic extends React.Component {
         const incompleteVerse = mobx.toJS(AutographaStore.incompleteVerse);
         const multipleSpaces = mobx.toJS(AutographaStore.multipleSpaces);
         const emptyChapters = mobx.toJS(AutographaStore.emptyChapter);
-        const bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        let bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        bookName = bookName.replace(/\s/g, '-');
         const { show } = this.props;
         
         return (  
