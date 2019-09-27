@@ -13,13 +13,15 @@ It is relatively easy to setup the application locally for development.
 
 ### Build and run
 1. Fork and clone this repository
-2. Install dependencies with ```npm install```
-3. Start the application with ```npm start```
+2. Set environment variable ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
+3. Install dependencies with ```npm install```
+4. Start the application with ```npm start```
 
 #### Mac and *nix (tested on MacOS Sierra 10.14 and Ubuntu 19.04)  
 In Bash-like shell:
 
-```   
+```
+export ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true
 cd autographa-lite && npm install
 npm start
 ```
