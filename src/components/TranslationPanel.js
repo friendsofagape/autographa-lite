@@ -38,7 +38,12 @@ class TranslationPanel extends React.Component {
 			$('div[data-verse="r' + (limits[0] + 1) + '"]').css({ "border-radius": "10px 10px 0px 0px" });
 			$('div[data-verse="r' + (limits[1] + 1) + '"]').css({ "border-radius": "0px 0px 10px 10px" });
 		}
-		}*/}
+        }*/}
+        document.getElementById(vId).addEventListener("paste", function (e) {
+			e.preventDefault();
+			var text = e.clipboardData.getData("text/plain");
+			document.execCommand("insertHTML", false, text);
+		})
       	let refContent = document.getElementsByClassName('ref-contents');
       	for(let l=0; l<AutographaStore.layout; l++){
         	let ref = refContent[l] ? refContent[l].querySelectorAll('div[data-verse^="r"]') : [];
