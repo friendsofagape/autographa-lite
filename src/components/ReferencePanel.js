@@ -24,7 +24,7 @@ class ReferencePanel extends React.Component {
             }
         });
     }
-    copiedText = () => {
+    copiedSelection = () => {
         document.addEventListener('copy', (event) => {
             const selection = document.getSelection();
             event.clipboardData.setData('text/plain', selection.toString());
@@ -36,7 +36,7 @@ class ReferencePanel extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row row-col-fixed rmvflex" style={{ display: 'flex' }}>
-                    <div className="col-sm-12 col-fixed" onClick={this.copiedTex} id="section-0">
+                    <div className="col-sm-12 col-fixed" onClick={this.copiedSelection} id="section-0">
                         {tIns || tDel ? <div style={{ textAlign: 'center' }}><span style={{ color: '#27b97e', fontWeight: 'bold' }}>(+) {tIns}</span> | <span style={{ color: '#f50808', fontWeight: 'bold' }}> (-) {tDel}</span></div> : ""}
                         <div className="row">
                             <div dangerouslySetInnerHTML={{ __html: this.props.refContent }} className="col-12 col-ref"></div>
