@@ -11,21 +11,27 @@ export class AutographaStore {
   @observable showModalAboutUs = false
   @observable showModalSearch = false
   @observable showModalDownload = false
-  @observable  showModalStat = false
+  @observable showModalStat = false
   @observable bookChapterContent = ''
   @observable chunkGroup = ''
   @observable content = ''
-  @observable contentOne =''
-  @observable contentTwo =''
-  @observable contentCommon =''
+  @observable contentOne = ''
+  @observable contentTwo = ''
+  @observable contentCommon = ''
   // @observable contentThree =''
   @observable bookActive = 1;
   @observable chapterActive = 1
   @observable currentRef = 'eng_ult'
   @observable bookData = Constant.booksList
+  @observable editBookData = Constant.booksEditList
+  @observable openEditBook = false
+  @observable UpdatedBookName = ''
+  @observable RequiredIndex = 0
+  @observable editMode = false
+  @observable editPopup = false
   @observable bookName = ''
-  @observable translationContent =  ''
-  @observable selectId =  1
+  @observable translationContent = ''
+  @observable selectId = 1
   @observable chunks = ''
   @observable verses = ''
   // @observable step = 1
@@ -43,7 +49,7 @@ export class AutographaStore {
   @observable replaceValue = ''
   // @observable currentValue = 14
   @observable fontSize = 14
-  @observable aId =''
+  @observable aId = ''
   @observable appLang = 'en'
   @observable currentTrans = {}
   @observable scriptDirection = "LTR"
@@ -51,7 +57,7 @@ export class AutographaStore {
   @observable refList = []
   @observable refListEdit = []
   @observable refListExist = []
-  @observable activeRefs = {0: "eng_ult", 1: "eng_ult", 2: "eng_ult"}
+  @observable activeRefs = { 0: "eng_ult", 1: "eng_ult", 2: "eng_ult" }
   @observable transSaveTime = ""
   @observable replaceOption = "chapter"
   @observable toggle = false
@@ -66,8 +72,8 @@ export class AutographaStore {
   @observable errorFile = []
   @observable warningMsg = []
 
-  constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId){
+  constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId) {
 
-  }  
+  }
 }
 export default new AutographaStore()
