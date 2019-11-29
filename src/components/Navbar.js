@@ -49,7 +49,7 @@ class Navbar extends React.Component {
             searchVal: "",
             replaceVal: "",
             toggled: false,
-            setDiff: false,
+            setDiff: false
         };
 
         var verses, chapter;
@@ -225,10 +225,30 @@ class Navbar extends React.Component {
     openpopupAboutUs() {
         AutographaStore.showModalAboutUs = true
     }
-
+    componentDidMount() {
+        db.get('001', function (err, doc) {
+            if (err) {
+                let doc = {
+                    _id: "001",
+                    books: Constant.booksEditList
+                }
+                db.put(doc, function (err, response) {
+                    if (err) {
+                        return console.log(err);
+                    } else {
+                        console.log("Documents created Successfully");
+                    }
+                });
+                return console.log(err);
+            } else {
+                // _this.setState({ editBookData: doc.books })
+                AutographaStore.editBookData = doc.books
+            }
+        })
+    }
     editbooks = () => {
         AutographaStore.editMode = true
-        AutographaStore.openEditBook = true
+        AutographaStore.openEditBook = !AutographaStore.openEditBook
     }
     resetToDefault = () => {
         AutographaStore.editMode = false
@@ -261,12 +281,8 @@ class Navbar extends React.Component {
     onItemClick(bookName, requiredIndex) {
         if (AutographaStore.openEditBook === true) {
             AutographaStore.editPopup = true
-            console.log(bookName, requiredIndex)
             AutographaStore.RequiredIndex = requiredIndex
-            console.log("AutographaStore.UpdatedBookName", AutographaStore.UpdatedBookName)
-            console.log(Constant.booksEditList)
         }
-        console.log("AutographaStore.editPopup", AutographaStore.editPopup)
         AutographaStore.bookName = bookName;
         AutographaStore.chapterActive = 0;
         // getting chapter list
@@ -661,7 +677,7 @@ class Navbar extends React.Component {
         var NTbooksstart = 39;
         var NTbooksend = 65;
         let bookData = (AutographaStore.editMode) ? AutographaStore.editBookData : AutographaStore.bookData
-        const msg = AutographaStore.openEditBook ? "Enabled BookName Edit-Mode" : "Disabled BookName Edit-Mode"
+        const msg = AutographaStore.openEditBook ? "Enabled BookNames Edit-Mode" : "Saved Changes & Disabled Edit-Mode"
         const refContent = AutographaStore.content;
         const refContentOne = AutographaStore.contentOne;
         const refContentTwo = AutographaStore.contentTwo;
@@ -673,6 +689,8 @@ class Navbar extends React.Component {
         for (var i = 0; i < AutographaStore.bookChapter["chapterLength"]; i++) {
             chapterList.push(<li key={i} value={i + 1} ><a href="#" className={(i + 1 == AutographaStore.chapterActive) ? 'link-active' : ""} onClick={this.getValue.bind(this, i + 1, AutographaStore.bookChapter["bookId"])} >{(i + 1)}</a></li>);
         }
+        console.log("edit", AutographaStore.editBookData)
+
 
         return (
             <div>
@@ -727,8 +745,8 @@ class Navbar extends React.Component {
                                 ) : ''
                             }
                             <Tab eventKey={1} title="Book" >
-                                <RaisedButton style={{ float: "right" }} onClick={this.editbooks}><EditIcon /></RaisedButton>
-                                <RaisedButton style={{ float: "right" }} onClick={this.resetToDefault}><RestoreIcon /></RaisedButton>
+                                <RaisedButton className="edit-reset-button" primary onClick={this.editbooks}>Edit<EditIcon /></RaisedButton>
+                                <RaisedButton className="edit-reset-button" secondary onClick={this.resetToDefault}><RestoreIcon /></RaisedButton>
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">

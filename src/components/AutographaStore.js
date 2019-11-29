@@ -23,7 +23,7 @@ export class AutographaStore {
   @observable chapterActive = 1
   @observable currentRef = 'eng_ult'
   @observable bookData = Constant.booksList
-  @observable editBookData = Constant.booksEditList
+  @observable editBookData = null
   @observable openEditBook = false
   @observable UpdatedBookName = ''
   @observable RequiredIndex = 0

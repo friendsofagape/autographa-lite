@@ -6,7 +6,8 @@ export default function SnackBar({ show, msg }) {
     const [Snackupdate, setSnackupdate] = useState(show)
     setTimeout(() => {
         setSnackupdate(false)
-    }, 4000);
+    }, 2000);
+
 
     return (
         <div>
