@@ -19,6 +19,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import RestoreIcon from '@material-ui/icons/Restore';
 import BookEditList from './BookEditList';
 import SnackBar from './SnackBar';
+import * as mobx from "mobx";
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -228,15 +229,17 @@ class Navbar extends React.Component {
     componentDidMount() {
         db.get('001', function (err, doc) {
             if (err) {
+                localStorage.setItem('editMode', false);
                 let doc = {
                     _id: "001",
-                    books: Constant.booksEditList
+                    books: Constant.booksEditList,
                 }
                 db.put(doc, function (err, response) {
                     if (err) {
                         return console.log(err);
                     } else {
                         console.log("Documents created Successfully");
+                        window.location.reload()
                     }
                 });
                 return console.log(err);
@@ -245,13 +248,16 @@ class Navbar extends React.Component {
                 AutographaStore.editBookData = doc.books
             }
         })
+        AutographaStore.editMode = localStorage.getItem('editMode');
     }
     editbooks = () => {
         AutographaStore.editMode = true
+        localStorage.setItem('editMode', AutographaStore.editMode);
         AutographaStore.openEditBook = !AutographaStore.openEditBook
     }
     resetToDefault = () => {
         AutographaStore.editMode = false
+        localStorage.setItem('editMode', AutographaStore.editMode);
     }
     updateBookList = (index) => {
         console.log(index)
@@ -264,7 +270,8 @@ class Navbar extends React.Component {
         AutographaStore.showModalBooks = true;
         AutographaStore.activeTab = tab;
         AutographaStore.bookActive = AutographaStore.bookId;
-        AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        // AutographaStore.bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        AutographaStore.bookName = AutographaStore.editMode && (AutographaStore.editBookData !== null) ? AutographaStore.editBookData[parseInt(AutographaStore.bookId, 10) - 1] : Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1];
         AutographaStore.chapterActive = AutographaStore.chapterId;
         this.getData();
     }
@@ -676,12 +683,19 @@ class Navbar extends React.Component {
         var OTbooksend = 38;
         var NTbooksstart = 39;
         var NTbooksend = 65;
-        let bookData = (AutographaStore.editMode) ? AutographaStore.editBookData : AutographaStore.bookData
+        var bookData;
+        let mode = mobx.toJS(AutographaStore.editMode)
+        if ((mode.toString() === "true")) {
+            bookData = AutographaStore.editBookData
+        }
+        else {
+            bookData = AutographaStore.bookData
+        }
         const msg = AutographaStore.openEditBook ? "Enabled BookNames Edit-Mode" : "Saved Changes & Disabled Edit-Mode"
         const refContent = AutographaStore.content;
         const refContentOne = AutographaStore.contentOne;
         const refContentTwo = AutographaStore.contentTwo;
-        const bookName = Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1]
+        const bookName = ((mode.toString() === "true") && (AutographaStore.editBookData !== null)) ? AutographaStore.editBookData[parseInt(AutographaStore.bookId, 10) - 1] : Constant.booksList[parseInt(AutographaStore.bookId, 10) - 1];
         let close = () => AutographaStore.showModalBooks = false;
         const test = (AutographaStore.activeTab == 1);
         var chapterList = [];
@@ -689,9 +703,9 @@ class Navbar extends React.Component {
         for (var i = 0; i < AutographaStore.bookChapter["chapterLength"]; i++) {
             chapterList.push(<li key={i} value={i + 1} ><a href="#" className={(i + 1 == AutographaStore.chapterActive) ? 'link-active' : ""} onClick={this.getValue.bind(this, i + 1, AutographaStore.bookChapter["bookId"])} >{(i + 1)}</a></li>);
         }
-        console.log("edit", AutographaStore.editBookData)
-
-
+        if (localStorage.getItem('editMode') === false) {
+            bookData = AutographaStore.bookData
+        }
         return (
             <div>
                 <Modal show={AutographaStore.showModalBooks} onHide={close} id="tab-books">
@@ -750,7 +764,7 @@ class Navbar extends React.Component {
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
-                                        {
+                                        {AutographaStore.editBookData !== null && (
                                             bookData.map((item, index) => {
                                                 return <li key={index}>
                                                     <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
@@ -759,7 +773,7 @@ class Navbar extends React.Component {
                                                     </Link>
                                                 </li>
                                             })
-                                        }
+                                        )}
                                     </ul>
                                 </div>
                                 <div className="clearfix"></div>

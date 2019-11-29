@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AutographaStore from "./AutographaStore";
 import Snackbar from '@material-ui/core/Snackbar';
 
 
@@ -13,6 +14,17 @@ export default function SnackBar({ show, msg }) {
         <div>
             <Snackbar
                 open={Snackupdate}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                ContentProps={{
+                    'aria-describedby': 'message-id',
+                }}
+                message={<span id="message-id">{msg}</span>}
+            />
+            <Snackbar
+                open={AutographaStore.openEditBook}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'left',

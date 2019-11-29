@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
 import AutographaStore from "./AutographaStore"
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TextField, RaisedButton } from 'material-ui';
-import SnackBar from './SnackBar';
 const { Modal } = require("react-bootstrap/lib");
-let Constant = require("../util/constants");
 let db = require(`${__dirname}/../util/data-provider`).targetDb()
 
 

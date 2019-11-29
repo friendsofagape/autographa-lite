@@ -18,7 +18,6 @@ export class AutographaStore {
   @observable contentOne = ''
   @observable contentTwo = ''
   @observable contentCommon = ''
-  // @observable contentThree =''
   @observable bookActive = 1;
   @observable chapterActive = 1
   @observable currentRef = 'eng_ult'
@@ -34,9 +33,6 @@ export class AutographaStore {
   @observable selectId = 1
   @observable chunks = ''
   @observable verses = ''
-  // @observable step = 1
-  // @observable max = 40
-  // @observable min = 14
   @observable fontStep = 1
   @observable fontMax = 40
   @observable fontMin = 14
@@ -47,7 +43,6 @@ export class AutographaStore {
   @observable layout2xDirect = true
   @observable searchValue = ''
   @observable replaceValue = ''
-  // @observable currentValue = 14
   @observable fontSize = 14
   @observable aId = ''
   @observable appLang = 'en'
