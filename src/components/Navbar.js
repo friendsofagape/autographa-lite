@@ -256,8 +256,22 @@ class Navbar extends React.Component {
         AutographaStore.openEditBook = !AutographaStore.openEditBook
     }
     resetToDefault = () => {
-        AutographaStore.editMode = false
-        localStorage.setItem('editMode', AutographaStore.editMode);
+        swal({
+            title: "Are you sure to set Default BookNames?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    AutographaStore.editMode = false
+                    localStorage.setItem('editMode', AutographaStore.editMode);
+                    swal("Done", {
+                        icon: "success",
+                    });
+                }
+            });
+
     }
     updateBookList = (index) => {
         console.log(index)
@@ -760,7 +774,7 @@ class Navbar extends React.Component {
                             }
                             <Tab eventKey={1} title="Book" >
                                 <RaisedButton className="edit-reset-button" primary onClick={this.editbooks}>Edit<EditIcon /></RaisedButton>
-                                <RaisedButton className="edit-reset-button" secondary onClick={this.resetToDefault}><RestoreIcon /></RaisedButton>
+                                <RaisedButton className="edit-reset-button" secondary onClick={this.resetToDefault}>Reset<RestoreIcon /></RaisedButton>
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
