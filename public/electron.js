@@ -1,6 +1,7 @@
 
 const path = require('path');
-const {app, Menu} = require('electron');
+const { app, Menu, ipcMain } = require('electron');
+const { autoUpdater } = require('electron-updater');
 
 // import settings from 'electron-settings';
 const {
@@ -97,10 +98,10 @@ const menuTemplate = [
           ]
         }
       ] : [
-        { role: 'delete' },
-        { type: 'separator' },
-        { role: 'selectAll' }
-      ])
+          { role: 'delete' },
+          { type: 'separator' },
+          { role: 'selectAll' }
+        ])
     ]
   },
   {
@@ -180,6 +181,7 @@ app.on('ready', async () => {
   // dbUtil.dbSetupAll();
   const splashWindow = createSplashWindow();
   const mainWindow = createMainWindow();
+  autoUpdater.checkForUpdatesAndNotify();
   mainWindow.once('ready-to-show', () => {
     setTimeout(() => {
       splashWindow.close();
@@ -188,3 +190,20 @@ app.on('ready', async () => {
   });
   // await preProcess();
 });
+let newmainWindow = createMainWindow();
+
+ipcMain.on('app_version', (event) => {
+  event.sender.send('app_version', { version: app.getVersion() });
+});
+
+autoUpdater.on('update-available', () => {
+  newmainWindow.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  newmainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
+});
+
