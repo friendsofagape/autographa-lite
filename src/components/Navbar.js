@@ -16,10 +16,9 @@ import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
 import { tokenize } from 'string-punctuation-tokenizer';
 import { Link } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import RestoreIcon from '@material-ui/icons/Restore';
 import BookEditList from './BookEditList';
-import SnackBar from './SnackBar';
 import * as mobx from "mobx";
+import { flexbox } from '@material-ui/system';
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -50,7 +49,9 @@ class Navbar extends React.Component {
             searchVal: "",
             replaceVal: "",
             toggled: false,
-            setDiff: false
+            setDiff: false,
+            toggleEdit: false,
+            selected: false
         };
 
         var verses, chapter;
@@ -250,29 +251,6 @@ class Navbar extends React.Component {
         })
         AutographaStore.editMode = localStorage.getItem('editMode');
     }
-    editbooks = () => {
-        AutographaStore.editMode = true
-        localStorage.setItem('editMode', AutographaStore.editMode);
-        AutographaStore.openEditBook = !AutographaStore.openEditBook
-    }
-    resetToDefault = () => {
-        swal({
-            title: "Are you sure to set Default BookNames?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    AutographaStore.editMode = false
-                    localStorage.setItem('editMode', AutographaStore.editMode);
-                    swal("Done", {
-                        icon: "success",
-                    });
-                }
-            });
-
-    }
     updateBookList = (index) => {
         console.log(index)
     }
@@ -307,7 +285,7 @@ class Navbar extends React.Component {
         AutographaStore.bookName = bookName;
         AutographaStore.chapterActive = 0;
         // getting chapter list
-        let bookIndex = (AutographaStore.editMode) ? requiredIndex : Constant.booksList.findIndex((book) => book.toLowerCase() === bookName.toLowerCase());
+        let bookIndex = (AutographaStore.editMode) ? AutographaStore.index : Constant.booksList.findIndex((book) => book.toLowerCase() === bookName.toLowerCase());
         const bookSkel = bibleJson[bookIndex + 1];
         AutographaStore.bookActive = bookIndex + 1
         AutographaStore.bookChapter["chapterLength"] = bookSkel.chapters.length;
@@ -691,7 +669,21 @@ class Navbar extends React.Component {
             AutographaStore.tDel[i] = 0;
         }
     }
-
+    editbooks = () => {
+        AutographaStore.editMode = true
+        localStorage.setItem('editMode', AutographaStore.editMode);
+        AutographaStore.openEditBook = !AutographaStore.openEditBook
+    }
+    handlepopper = (event) => {
+        let book = event.currentTarget.getAttribute('value')
+        var index1;
+        (AutographaStore.editBookData).map((value, index) => {
+            if (value === book) {
+                index1 = index
+            }
+        })
+        AutographaStore.index = index1
+    }
     render() {
         var OTbooksstart = 0;
         var OTbooksend = 38;
@@ -773,21 +765,23 @@ class Navbar extends React.Component {
                                 ) : ''
                             }
                             <Tab eventKey={1} title="Book" >
-                                <RaisedButton className="edit-reset-button" primary onClick={this.editbooks}>Edit<EditIcon /></RaisedButton>
-                                <RaisedButton className="edit-reset-button" secondary onClick={this.resetToDefault}>Reset<RestoreIcon /></RaisedButton>
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
                                         {AutographaStore.editBookData !== null && (
                                             bookData.map((item, index) => {
-                                                return <li key={index}>
-                                                    <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
-                                                        value={item} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
-                                                        {item}
-                                                    </Link>
-                                                </li>
+                                                return <span>
+                                                    <li key={index} >
+                                                        <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
+                                                            value={item} onMouseEnter={this.handlepopper} onMouseLeave={this.toggleEditoff} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
+                                                            {item}
+                                                            <EditIcon style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.index !== index} onClick={this.editbooks} />
+                                                        </Link>
+                                                    </li>
+                                                </span>
                                             })
                                         )}
+
                                     </ul>
                                 </div>
                                 <div className="clearfix"></div>
@@ -928,12 +922,6 @@ class Navbar extends React.Component {
                     </div>
                 }
                 <Footer onSave={this.saveTarget} getRef={this.getRefContents} />
-                {(AutographaStore.openEditBook && AutographaStore.editMode) && (
-                    <SnackBar show={AutographaStore.openEditBook} msg={msg} />
-                )}
-                {(AutographaStore.openEditBook === false && AutographaStore.editMode) && (
-                    <SnackBar show={true} msg={msg} />
-                )}
                 <BookEditList show={AutographaStore.editPopup} />
             </div>
         )

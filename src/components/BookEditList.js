@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import AutographaStore from "./AutographaStore"
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TextField, RaisedButton } from 'material-ui';
+import RestoreIcon from '@material-ui/icons/Restore';
+import swal from 'sweetalert';
+const constants = require("../util/constants");
 const { Modal } = require("react-bootstrap/lib");
 let db = require(`${__dirname}/../util/data-provider`).targetDb()
 
@@ -18,6 +21,7 @@ export default function BookEditList({ show }) {
     const onChange = (event, value) => {
         setUpdatedValue(event.target.value)
     }
+
     const updateBooks = () => {
         if (updatedValue !== "") {
             AutographaStore.UpdatedBookName = updatedValue;
@@ -42,6 +46,25 @@ export default function BookEditList({ show }) {
             AutographaStore.editPopup = false
             setUpdatedValue("")
         }
+    }
+    const resetToDefault = () => {
+        swal({
+            title: "Are you sure to set Default BookNames?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    //resetting booknames
+                    let BookName = constants.booksList[parseInt(AutographaStore.RequiredIndex, 10)]
+                    setUpdatedValue(BookName)
+                    swal("Done", {
+                        icon: "success",
+                    });
+                }
+            });
+
     }
 
     return (
@@ -70,7 +93,9 @@ export default function BookEditList({ show }) {
                             value={updatedValue || ""}
                             name="updatedValue"
                             id="updatedValue"
+                            maxLength={20}
                         />
+                        <RaisedButton onClick={resetToDefault}><RestoreIcon /></RaisedButton>
                     </span>
                     <RaisedButton
                         style={{ marginTop: "35px", float: "right" }}

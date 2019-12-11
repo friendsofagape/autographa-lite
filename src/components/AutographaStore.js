@@ -25,7 +25,6 @@ export class AutographaStore {
   @observable editBookData = null
   @observable openEditBook = false
   @observable UpdatedBookName = ''
-  @observable RequiredIndex = 0
   @observable editMode = false
   @observable editPopup = false
   @observable bookName = ''
@@ -66,6 +65,7 @@ export class AutographaStore {
   @observable successFile = []
   @observable errorFile = []
   @observable warningMsg = []
+  @observable index = null
 
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId) {
 
