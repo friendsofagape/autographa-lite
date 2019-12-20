@@ -14,53 +14,26 @@
             left: 50%;
             transform: translatex(-50%);
         }
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 200px;
-            padding: 20px;
-            border-radius: 5px;
-            background-color: white;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        }
-        .hidden {
-          display: none;
-        }
     </style>
     </head>
   <body>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-    <div id="notification" class="hidden">
-      <p id="message"></p>
-      <button id="close-button" onClick="closeNotification()">
-        Close
-      </button>
-      <button id="restart-button" onClick="restartApp()" class="hidden">
-        Restart
-      </button>
-    </div>
-    <script>
-        if (typeof module === 'object') {
-            window.module = module;
-            module = undefined;
-        }
+    <p id="version"></p>
+      <div id="notification" className="hidden">
+        <p id="message"></p>
+        <button id="close-button" onClick={closeNotification()}>
+          Close
+        </button>
+        <button id="restart-button" onClick={restartApp()} class="hidden">
+          Restart
+        </button>
+      </div>
+      <script>
         const { ipcRenderer } = require('electron');
         const version = document.getElementById('version');
         const notification = document.getElementById('notification');
         const message = document.getElementById('message');
         const restartButton = document.getElementById('restart-button');
-        
         ipcRenderer.send('app_version');
         ipcRenderer.on('app_version', (event, arg) => {
             ipcRenderer.removeAllListeners('app_version');
@@ -77,13 +50,27 @@
             restartButton.classList.remove('hidden');
             notification.classList.remove('hidden');
         });
-
-
         function closeNotification() {
             notification.classList.add('hidden');
         }
         function restartApp() {
             ipcRenderer.send('restart_app');
+        }
+      </script>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
         }
     </script>
     <script>

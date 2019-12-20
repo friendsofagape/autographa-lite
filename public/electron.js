@@ -13,6 +13,7 @@ const {
 //const dbUtil = require('../src/util/DbUtil');
 
 //dbUtil.dbSetupAll()
+let mainWindow;
 const isMac = process.platform === 'darwin'
 
 
@@ -180,27 +181,26 @@ app.on('activate', () => {
 app.on('ready', async () => {
   // dbUtil.dbSetupAll();
   const splashWindow = createSplashWindow();
-  const mainWindow = createMainWindow();
-  autoUpdater.checkForUpdatesAndNotify();
+  mainWindow = createMainWindow();
   mainWindow.once('ready-to-show', () => {
     setTimeout(() => {
       splashWindow.close();
       mainWindow.show();
     }, 300);
   });
+  autoUpdater.checkForUpdatesAndNotify();
   // await preProcess();
 });
-let newmainWindow = createMainWindow();
 
 ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
 autoUpdater.on('update-available', () => {
-  newmainWindow.webContents.send('update_available');
+  mainWindow.webContents.send('update_available');
 });
 autoUpdater.on('update-downloaded', () => {
-  newmainWindow.webContents.send('update_downloaded');
+  mainWindow.webContents.send('update_downloaded');
 });
 
 ipcMain.on('restart_app', () => {

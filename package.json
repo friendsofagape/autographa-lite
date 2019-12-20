@@ -66,8 +66,8 @@
     "publish": null
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/friendsofagape/autographa-lite.git"
+    "type": "git",
+    "url": "https://github.com/friendsofagape/autographa-lite.git"
   },
   "keywords": [
     "Desktop",
