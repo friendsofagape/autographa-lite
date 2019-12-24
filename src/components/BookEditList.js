@@ -3,14 +3,25 @@ import AutographaStore from "./AutographaStore"
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TextField, RaisedButton } from 'material-ui';
 import RestoreIcon from '@material-ui/icons/Restore';
-import swal from 'sweetalert';
+import { makeStyles } from '@material-ui/core/styles';
+import { Tooltip, IconButton, Zoom } from '@material-ui/core';
 const constants = require("../util/constants");
 const { Modal } = require("react-bootstrap/lib");
-let db = require(`${__dirname}/../util/data-provider`).targetDb()
+let db = require(`${__dirname}/../util/data-provider`).targetDb();
+
+const useStyles = makeStyles({
+    root: {
+        width: 500,
+    },
+    tooltip: {
+        color: "lightblue",
+        backgroundColor: "green"
+    }
+});
 
 
 export default function BookEditList({ show }) {
-
+    const classes = useStyles();
     const [updatedValue, setUpdatedValue] = useState("")
     const handleClose = () => {
         AutographaStore.openEditBook = false
@@ -48,23 +59,8 @@ export default function BookEditList({ show }) {
         }
     }
     const resetToDefault = () => {
-        swal({
-            title: "Are you sure to set Default BookNames?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    //resetting booknames
-                    let BookName = constants.booksList[parseInt(AutographaStore.RequiredIndex, 10)]
-                    setUpdatedValue(BookName)
-                    swal("Done", {
-                        icon: "success",
-                    });
-                }
-            });
-
+        let BookName = constants.booksList[parseInt(AutographaStore.RequiredIndex, 10)]
+        setUpdatedValue(BookName)
     }
 
     return (
@@ -87,7 +83,6 @@ export default function BookEditList({ show }) {
                         <ArrowRightAltIcon />
                         <TextField
                             hintText="Translate BookName"
-                            style={{ marginLeft: "10px" }}
                             onChange={onChange}
                             required
                             value={updatedValue || ""}
@@ -95,7 +90,11 @@ export default function BookEditList({ show }) {
                             id="updatedValue"
                             maxLength={20}
                         />
-                        <RaisedButton onClick={resetToDefault}><RestoreIcon /></RaisedButton>
+                        <Tooltip TransitionComponent={Zoom} placement="top" title="Reset">
+                            <IconButton onClick={resetToDefault} style={{ float: "right", marginTop: "-45px", cursor: 'pointer' }}>
+                                <RestoreIcon />
+                            </IconButton>
+                        </Tooltip>
                     </span>
                     <RaisedButton
                         style={{ marginTop: "35px", float: "right" }}

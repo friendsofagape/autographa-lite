@@ -11,14 +11,14 @@ import ReferencePanel from '../components/ReferencePanel';
 import Footer from '../components/Footer';
 import Reference from "./Reference";
 import { FormattedMessage } from 'react-intl';
-import { Toggle, RaisedButton } from 'material-ui';
+import { Toggle } from 'material-ui';
 import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
 import { tokenize } from 'string-punctuation-tokenizer';
 import { Link } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import BookEditList from './BookEditList';
 import * as mobx from "mobx";
-import { flexbox } from '@material-ui/system';
+const brandLogo = require("../assets/images/logo.png")
 const Constant = require("../util/constants");
 const session = require('electron').remote.session;
 const DiffMatchPatch = require('diff-match-patch');
@@ -51,7 +51,6 @@ class Navbar extends React.Component {
             toggled: false,
             setDiff: false,
             toggleEdit: false,
-            selected: false
         };
 
         var verses, chapter;
@@ -770,15 +769,13 @@ class Navbar extends React.Component {
                                     <ul id="books-pane">
                                         {AutographaStore.editBookData !== null && (
                                             bookData.map((item, index) => {
-                                                return <span>
-                                                    <li key={index} >
-                                                        <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
-                                                            value={item} onMouseEnter={this.handlepopper} onMouseLeave={this.toggleEditoff} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
-                                                            {item}
-                                                            <EditIcon style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.index !== index} onClick={this.editbooks} />
-                                                        </Link>
-                                                    </li>
-                                                </span>
+                                                return <li key={index} >
+                                                    <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
+                                                        value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
+                                                        {item}
+                                                        <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.index !== index} onClick={this.editbooks} />
+                                                    </Link>
+                                                </li>
                                             })
                                         )}
 
@@ -816,7 +813,7 @@ class Navbar extends React.Component {
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <a href="javascript:;" className="navbar-brand" style={{ cursor: 'default' }}><img alt="Brand" src={require("../assets/images/logo.png")} /></a>
+                            <a href="#" className="navbar-brand" style={{ cursor: 'default' }}><img alt="Brand" src={brandLogo} /></a>
                         </div>
                         <div className="navbar-collapse collapse" id="navbar">
                             <ul className="nav navbar-nav" style={{ padding: "3px 0 0 0px" }}>
@@ -865,7 +862,7 @@ class Navbar extends React.Component {
                                 <li>
                                     <FormattedMessage id="tooltip-find-and-replace">
                                         {(message) =>
-                                            <a onClick={() => this.openpopupSearch()} href="javascript:;" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText" disabled={`${toggle ? "disabled" : ""}`} style={{ pointerEvents: `${toggle ? "none" : ""}` }}>
+                                            <a onClick={() => this.openpopupSearch()} href="#" data-toggle="tooltip" data-placement="bottom" title={message} id="searchText" disabled={`${toggle ? "disabled" : ""}`} style={{ pointerEvents: `${toggle ? "none" : ""}` }}>
                                                 <i className="fa fa-search fa-2x"></i>
                                             </a>}
                                     </FormattedMessage>
@@ -886,7 +883,7 @@ class Navbar extends React.Component {
                                 <li>
                                     <FormattedMessage id="tooltip-settings" >
                                         {(message) =>
-                                            <a onClick={() => this.openpopupSettings()} href="javascript:;" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message} disabled={`${toggle ? "disabled" : ""}`} style={{ pointerEvents: `${toggle ? "none" : ""}` }}><i className="fa fa-cog fa-2x"></i>
+                                            <a onClick={() => this.openpopupSettings()} href="#" id="btnSettings" data-target="#bannerformmodal" data-toggle="tooltip" data-placement="bottom" title={message} disabled={`${toggle ? "disabled" : ""}`} style={{ pointerEvents: `${toggle ? "none" : ""}` }}><i className="fa fa-cog fa-2x"></i>
                                             </a>}
                                     </FormattedMessage>
                                 </li>

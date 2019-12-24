@@ -113,7 +113,6 @@ class TranslationPanel extends React.Component {
   	render (){
     	let verseGroup = [];
     	const toggle = AutographaStore.toggle;
-
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
 		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
