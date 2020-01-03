@@ -20,12 +20,12 @@ const useStyles = makeStyles({
 });
 
 
-export default function BookEditList({ show }) {
+export default function BookNameEditor({ show }) {
     const classes = useStyles();
     const [updatedValue, setUpdatedValue] = useState("")
     const handleClose = () => {
-        AutographaStore.openEditBook = false
-        AutographaStore.editPopup = false
+        AutographaStore.openBookNameEditor = false
+        AutographaStore.bookNameEditorPopup = false
         setUpdatedValue("")
 
     };
@@ -35,26 +35,25 @@ export default function BookEditList({ show }) {
 
     const updateBooks = () => {
         if (updatedValue !== "") {
-            AutographaStore.UpdatedBookName = updatedValue;
-            db.get('001', function (err, doc) {
+            AutographaStore.updatedTranslatedBookNames = updatedValue;
+            db.get('translatedBookNames', function (err, doc) {
                 if (err) {
                     return console.log(err);
                 } else {
-                    doc.books.splice(AutographaStore.RequiredIndex, 1, AutographaStore.UpdatedBookName)
+                    doc.books.splice(AutographaStore.RequiredIndex, 1, AutographaStore.updatedTranslatedBookNames)
                 }
                 db.put(doc).then((response) => {
-                    console.log("updated", response)
-                    db.get('001', function (err, doc) {
+                    db.get('translatedBookNames', function (err, doc) {
                         if (err) {
                             return console.log(err);
                         } else {
-                            AutographaStore.editBookData = doc.books
+                            AutographaStore.translatedBookNames = doc.books
                         }
                     });
                 })
             });
-            AutographaStore.openEditBook = false
-            AutographaStore.editPopup = false
+            AutographaStore.openBookNameEditor = false
+            AutographaStore.bookNameEditorPopup = false
             setUpdatedValue("")
         }
     }
@@ -70,7 +69,7 @@ export default function BookEditList({ show }) {
                 style={{ "top": "52px", "left": "154px", "height": "643px", "position": "fixed" }}
             >
                 <Modal.Header className="head" >
-                    <Modal.Title>UpdateBookNames</Modal.Title>
+                    <Modal.Title>Translate Book Name</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ "height": "150px" }}>
                     <span>
@@ -82,7 +81,7 @@ export default function BookEditList({ show }) {
                         />
                         <ArrowRightAltIcon />
                         <TextField
-                            hintText="Translate BookName"
+                            hintText="Translate Book Name"
                             onChange={onChange}
                             required
                             value={updatedValue || ""}

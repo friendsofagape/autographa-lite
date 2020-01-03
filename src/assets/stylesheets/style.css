@@ -8726,7 +8726,9 @@ body {
   border: none; }
 
 #tab-books .modal-content {
-  width: 900px !important; }
+  width: 900px !important;
+  margin-left: -100px;
+}
 
 #tab-search label {
   color: #03a9f4; }

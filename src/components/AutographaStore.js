@@ -22,11 +22,11 @@ export class AutographaStore {
   @observable chapterActive = 1
   @observable currentRef = 'eng_ult'
   @observable bookData = Constant.booksList
-  @observable editBookData = null
-  @observable openEditBook = false
-  @observable UpdatedBookName = ''
-  @observable editMode = false
-  @observable editPopup = false
+  @observable translatedBookNames = null
+  @observable openBookNameEditor = false
+  @observable updatedTranslatedBookNames = ''
+  @observable editBookNamesMode = false
+  @observable bookNameEditorPopup = false
   @observable bookName = ''
   @observable translationContent = ''
   @observable selectId = 1
