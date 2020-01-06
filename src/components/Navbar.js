@@ -16,6 +16,7 @@ import { Modal, Tabs, Tab, NavDropdown, MenuItem } from 'react-bootstrap/lib';
 import { tokenize } from 'string-punctuation-tokenizer';
 import { Link } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import { Tooltip, IconButton, Zoom } from '@material-ui/core';
 import BookNameEditor from './BookNameEditor';
 import * as mobx from "mobx";
 const brandLogo = require("../assets/images/logo.png")
@@ -767,7 +768,9 @@ class Navbar extends React.Component {
                                                     <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
                                                         value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
                                                         {item}
+                                                        <Tooltip TransitionComponent={Zoom} placement="top" title="edit">
                                                         <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.index !== index} onClick={this.editbooks} />
+                                                        </Tooltip>
                                                     </Link>
                                                 </li>
                                             })

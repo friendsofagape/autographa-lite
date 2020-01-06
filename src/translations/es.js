@@ -51,6 +51,8 @@ export default {
 	"tbl-header-name" : "Nombre",
 	"tbl-header-action" : "Acción",
 	"modal-title-setting" : "Ajustes",
+	"modal-translate-book-name": "Traducir nombre del libro",
+	"icon-button-reset": "Reiniciar",
 	"tooltip-select-book" : "Seleccionar libro",
 	"tooltip-select-chapter" : "Seleccione el capítulo",
 	"tooltip-compare-mode" : "Modo de comparación",

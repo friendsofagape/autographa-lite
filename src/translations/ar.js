@@ -77,6 +77,8 @@ export default {
 	"tooltip-noerror-title" : "لم يتم الإبلاغ عن أي أخطاء.",
 	"modal-import-report" : "استيراد تقرير",
 	"modal-title-about" : "حول",
+	"modal-translate-book-name": "ترجمة اسم الكتاب",
+	"icon-button-reset": "إعادة تعيين",
 	"label-books-tab" : "الكتب",
 	"label-chapter-tab" : "الفصول",
 	"label-overview-tab" : "نظرة عامة",

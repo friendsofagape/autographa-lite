@@ -3,6 +3,7 @@ import AutographaStore from "./AutographaStore"
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TextField, RaisedButton } from 'material-ui';
 import RestoreIcon from '@material-ui/icons/Restore';
+import { FormattedMessage } from "react-intl";
 import { makeStyles } from '@material-ui/core/styles';
 import { Tooltip, IconButton, Zoom } from '@material-ui/core';
 const constants = require("../util/constants");
@@ -69,7 +70,9 @@ export default function BookNameEditor({ show }) {
                 style={{ "top": "52px", "left": "154px", "height": "643px", "position": "fixed" }}
             >
                 <Modal.Header className="head" >
-                    <Modal.Title>Translate Book Name</Modal.Title>
+                    <Modal.Title>
+                    <FormattedMessage id="modal-translate-book-name" />
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ "height": "150px" }}>
                     <span>
@@ -80,8 +83,10 @@ export default function BookNameEditor({ show }) {
                             id="defaultValue"
                         />
                         <ArrowRightAltIcon />
+                        <FormattedMessage id="modal-translate-book-name">
+                        {message => (
                         <TextField
-                            hintText="Translate Book Name"
+                            hintText={message}
                             onChange={onChange}
                             required
                             value={updatedValue || ""}
@@ -89,22 +94,28 @@ export default function BookNameEditor({ show }) {
                             id="updatedValue"
                             maxLength={20}
                         />
-                        <Tooltip TransitionComponent={Zoom} placement="top" title="Reset">
+                        )}
+                        </FormattedMessage>
+                        <FormattedMessage id="icon-button-reset">
+                        {message => (
+                        <Tooltip TransitionComponent={Zoom} placement="top" title={message}>
                             <IconButton onClick={resetToDefault} style={{ float: "right", marginTop: "-45px", cursor: 'pointer' }}>
                                 <RestoreIcon />
                             </IconButton>
                         </Tooltip>
+                        )}
+                        </FormattedMessage>
                     </span>
                     <RaisedButton
                         style={{ marginTop: "35px", float: "right" }}
-                        primary
+                        primary={true}
                         onClick={updateBooks}>
-                        Save
-                </RaisedButton>
+                        <FormattedMessage id="btn-save" />
+                    </RaisedButton>
                     <RaisedButton
                         style={{ marginTop: "35px", float: "right", marginRight: "10px" }}
                         onClick={handleClose}>
-                        Cancel
+                        <FormattedMessage id="btn-cancel" />
                 </RaisedButton>
                 </Modal.Body>
             </Modal >
