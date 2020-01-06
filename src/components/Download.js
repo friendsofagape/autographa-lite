@@ -45,7 +45,7 @@ class DownloadModal extends React.Component {
             let doc = await db.get('targetBible');
             if (books === 'current') {
                 book.bookNumber = AutographaStore.bookId.toString();
-                book.bookName = AutographaStore.editMode ? AutographaStore.editBookData[parseInt(book.bookNumber, 10) - 1] : constants.booksList[parseInt(book.bookNumber, 10) - 1];
+                book.bookName = AutographaStore.editBookNamesMode ? AutographaStore.translatedBookNames[parseInt(book.bookNumber, 10) - 1] : constants.booksList[parseInt(book.bookNumber, 10) - 1];
                 book.bookCode = constants.bookCodeList[parseInt(book.bookNumber, 10) - 1];
                 book.outputPath = doc.targetPath;
                 filepath = await bibUtil.toUsfm(book, stageInput, doc);
@@ -56,7 +56,7 @@ class DownloadModal extends React.Component {
                 constants.bookCodeList.forEach(async (value, index) => {
                     book = {};
                     book.bookNumber = (index + 1).toString();
-                    book.bookName = AutographaStore.editMode ? AutographaStore.editBookData[index] : constants.booksList[index];
+                    book.bookName = AutographaStore.editBookNamesMode ? AutographaStore.translatedBookNames[index] : constants.booksList[index];
                     book.bookCode = value;
                     book.outputPath = doc.targetPath;
                     filepath = await bibUtil.toUsfm(book, stageInput, doc);
