@@ -51,6 +51,8 @@ export default {
 	"tbl-header-name" : "नाम",
 	"tbl-header-action" : "कार्य",
 	"modal-title-setting" : "सेटिंग्स",
+	"modal-translate-book-name": "पुस्तक का नाम अनुवाद करें",
+	"icon-button-reset": "रीसेट",
 	"tooltip-select-book" : "पुस्तक चुनें",
 	"tooltip-select-chapter" : "पाठ चुनें",
 	"tooltip-compare-mode" : "मोड चुनें",
