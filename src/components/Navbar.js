@@ -280,7 +280,7 @@ class Navbar extends React.Component {
         AutographaStore.bookName = bookName;
         AutographaStore.chapterActive = 0;
         // getting chapter list
-        let bookIndex = (AutographaStore.editBookNamesMode) ? AutographaStore.index : Constant.booksList.findIndex((book) => book.toLowerCase() === bookName.toLowerCase());
+        let bookIndex = (AutographaStore.editBookNamesMode) ? AutographaStore.bookindex : Constant.booksList.findIndex((book) => book.toLowerCase() === bookName.toLowerCase());
         const bookSkel = bibleJson[bookIndex + 1];
         AutographaStore.bookActive = bookIndex + 1
         AutographaStore.bookChapter["chapterLength"] = bookSkel.chapters.length;
@@ -677,7 +677,7 @@ class Navbar extends React.Component {
                 index1 = index
             }
         })
-        AutographaStore.index = index1
+        AutographaStore.bookindex = index1
     }
     render() {
         var OTbooksstart = 0;
@@ -769,7 +769,7 @@ class Navbar extends React.Component {
                                                         value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
                                                         {item}
                                                         <Tooltip TransitionComponent={Zoom} placement="top" title="edit">
-                                                        <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.index !== index} onClick={this.editbooks} />
+                                                        <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.bookindex !== index} onClick={this.editbooks} />
                                                         </Tooltip>
                                                     </Link>
                                                 </li>

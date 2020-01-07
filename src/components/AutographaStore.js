@@ -65,7 +65,7 @@ export class AutographaStore {
   @observable successFile = []
   @observable errorFile = []
   @observable warningMsg = []
-  @observable index = null
+  @observable bookindex = null
 
   constructor(bookId, chapterId, bookChapter, activeTab, showModalBooks, bookChapterContent, chunkGroup, content, currentRef, booksList, selectId) {
 
