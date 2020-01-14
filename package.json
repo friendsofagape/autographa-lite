@@ -14,7 +14,6 @@
 		"customize-cra": "^0.2.12",
 		"diff-match-patch": "^1.0.0",
 		"electron-squirrel-startup": "^1.0.0",
-		"electron-log": "^2.2.7",
 		"fs-jetpack": "^1.0.0",
 		"jquery": "^3.3.1",
 		"leveldown": "^5.0.0-2",
