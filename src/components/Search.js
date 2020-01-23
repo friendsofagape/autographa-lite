@@ -5,6 +5,7 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
 const Modal = require('react-bootstrap/lib/Modal');
 const FormGroup = require('react-bootstrap/lib/FormGroup')
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
@@ -26,6 +27,8 @@ class SearchModal extends React.Component {
         checked: false,
         replaceInfo: false,
         replaceCount: 0,
+        disableSave: false,
+        loader: false,
       };
     }
 
@@ -66,6 +69,8 @@ class SearchModal extends React.Component {
                     return a + b;
               }, 0);
               this.setState({replaceCount: replacedCount, replaceInfo: true })
+              if(this.state.replaceCount === 0)
+              this.setState({ disableSave: true })
               totalReplacedWord = 0;
               allChapterReplaceCount = [];
           });
@@ -142,7 +147,8 @@ class SearchModal extends React.Component {
                         // $("#replaced-text-change").modal('toggle');
                         // alertModal("dynamic-msg-error", "dynamic-msg-went-wrong");
                     } else {
-                        that.loadData()
+                        that.setState({ loader:true })
+                        window.location.reload();
                     }
                 });
             }
@@ -159,18 +165,19 @@ class SearchModal extends React.Component {
                     chapter_arr = [];
                     replacedChapter = {};
                     replacedVerse = {};
-                    that.loadData()
+                    that.setState({ loader:true })
+                    window.location.reload();
                 }
             })
         }
     })
   }
 
-  loadData = () => {
-    this.props.loadData()
-    this.setState({replaceInfo: false})
-    AutographaStore.replaceOption = "chapter";
-  }
+//   loadData = () => {
+//     this.props.loadData()
+//     this.setState({replaceInfo: false})
+//     AutographaStore.replaceOption = "chapter";
+//   }
 
     replaceContentAndSave(){
       let newContent;
@@ -184,7 +191,6 @@ class SearchModal extends React.Component {
       AutographaStore.showModalSearch = false;
     }
 
-
   render (){
     let closeSearch = () => {
       AutographaStore.showModalSearch = false;
@@ -192,10 +198,14 @@ class SearchModal extends React.Component {
     }
     let closeReplaceModal = () => {
       this.setState({replaceInfo: false})
+      this.setState({ disableSave: false })
       AutographaStore.replaceOption = "chapter";
     }
     let wordBook = AutographaStore.currentTrans["dynamic-msg-book"];
     let wordReplace = AutographaStore.currentTrans["label-total-word-replaced"]
+    if(this.state.loader===true) {
+       return <Loader />
+    }
     return (  
       <div>
       <Modal show={AutographaStore.showModalSearch} onHide={closeSearch} id="tab-search">
@@ -267,6 +277,7 @@ class SearchModal extends React.Component {
             className="btn-save-changes"
             label={<FormattedMessage id="btn-save-changes" />}
             primary={true}
+            disabled={this.state.disableSave}
             onClick={this.saveReplacedText}
           />
           <RaisedButton
