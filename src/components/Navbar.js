@@ -77,6 +77,28 @@ class Navbar extends React.Component {
         });
         this.resetDiffValue();
     }
+    componentDidMount() {
+        db.get('translatedBookNames', function (err, doc) {
+            if (err) {
+                localStorage.setItem('editBookNamesMode', false);
+                let doc = {
+                    _id: "translatedBookNames",
+                    books: Constant.booksEditList,
+                }
+                db.put(doc, function (err, response) {
+                    if (err) {
+                        return console.log(err);
+                    } else {
+                        window.location.reload()
+                    }
+                });
+                return console.log(err);
+            } else {
+                AutographaStore.translatedBookNames = doc.books
+            }
+        })
+        AutographaStore.editBookNamesMode = localStorage.getItem('editBookNamesMode');
+    }
     getContent = (id, chapter) => {
         return refDb.get(id).then((doc) => {
             for (var i = 0; i < doc.chapters.length; i++) {
@@ -226,28 +248,6 @@ class Navbar extends React.Component {
 
     openpopupAboutUs() {
         AutographaStore.showModalAboutUs = true
-    }
-    componentDidMount() {
-        db.get('translatedBookNames', function (err, doc) {
-            if (err) {
-                localStorage.setItem('editBookNamesMode', false);
-                let doc = {
-                    _id: "translatedBookNames",
-                    books: Constant.booksEditList,
-                }
-                db.put(doc, function (err, response) {
-                    if (err) {
-                        return console.log(err);
-                    } else {
-                        window.location.reload()
-                    }
-                });
-                return console.log(err);
-            } else {
-                AutographaStore.translatedBookNames = doc.books
-            }
-        })
-        AutographaStore.editBookNamesMode = localStorage.getItem('editBookNamesMode');
     }
 
     openpopupBooks(tab) {

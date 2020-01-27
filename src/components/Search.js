@@ -52,7 +52,6 @@ class SearchModal extends React.Component {
       let allChapterReplaceCount = [];
 
       db.get(AutographaStore.bookId.toString()).then((doc) => {
-          
               let currentBook = doc;
               let totalReplacedWord = 0;
               if (option == "chapter") {
@@ -137,7 +136,7 @@ class SearchModal extends React.Component {
     db.get(AutographaStore.bookId.toString()).then((doc) => {
         if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
-                var verses = doc.chapters[AutographaStore.chapterId-1].verses
+                var verses = (doc.chapters[AutographaStore.chapterId-1]).verses
                 verses.forEach((verse, index)=> {
                     verse.verse = replacedChapter[c][index + 1];
                 });
@@ -186,7 +185,6 @@ class SearchModal extends React.Component {
       const searchValue = AutographaStore.searchValue;
       const replaceValue = AutographaStore.replaceValue;
       let oldContent = AutographaStore.translationContent;
-
       this.findAndReplaceText(AutographaStore.searchValue, AutographaStore.replaceValue, AutographaStore.replaceOption);
       AutographaStore.showModalSearch = false;
     }
@@ -197,9 +195,11 @@ class SearchModal extends React.Component {
       AutographaStore.replaceOption = "chapter";
     }
     let closeReplaceModal = () => {
-      this.setState({replaceInfo: false})
+      this.setState({ replaceInfo: false })
       this.setState({ disableSave: false })
+      this.setState({ replaceCount: 0 })
       AutographaStore.replaceOption = "chapter";
+      window.location.reload()
     }
     let wordBook = AutographaStore.currentTrans["dynamic-msg-book"];
     let wordReplace = AutographaStore.currentTrans["label-total-word-replaced"]
