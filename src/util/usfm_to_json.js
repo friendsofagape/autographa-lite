@@ -39,7 +39,7 @@ module.exports = {
                 return callback(new Error(`${fileName(options.usfmFile)} ${AutographaStore.currentTrans["usfm-bookid-missing"]}`));
 
             validLineCount++;
-            line = line.trim();
+            line = line.trim()
             var splitLine = line.split(/ +/);
             if (!line) {
                 validLineCount--;
@@ -85,12 +85,14 @@ module.exports = {
                 //Do nothing for section headers now.
             } else if (splitLine.length === 1) {
                 // Do nothing here for now.
-            } else if (splitLine[0].startsWith('\\m')) {
-                // Do nothing here for now
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
             } else if (c > 0 && v > 0) {
-                let cleanedStr = replaceMarkers(line);
+                let cleanedStr = replaceMarkers(line)
+                if(line.startsWith('') === true){
+                    console.log(line)
+                }
+                cleanedStr = ('\\m'+line);
                 book.chapters[c - 1].verses[v - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
 
             }

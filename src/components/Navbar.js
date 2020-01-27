@@ -394,7 +394,7 @@ class Navbar extends React.Component {
         return verse
             .replace(/&gt;/g, '>')
             .replace(/&lt;/g, '<')
-            .replace(/\n/g, ' ');
+            .replace(/\\m/g, '\n');
     }
 
     saveTarget = () => {
