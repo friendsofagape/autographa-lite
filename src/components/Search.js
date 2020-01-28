@@ -5,6 +5,7 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore";
 import { FormattedMessage } from 'react-intl';
+import Loader from './Loader';
 const Modal = require('react-bootstrap/lib/Modal');
 const FormGroup = require('react-bootstrap/lib/FormGroup')
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
@@ -26,6 +27,8 @@ class SearchModal extends React.Component {
         checked: false,
         replaceInfo: false,
         replaceCount: 0,
+        disableSave: false,
+        loader: false,
       };
     }
 
@@ -49,7 +52,6 @@ class SearchModal extends React.Component {
       let allChapterReplaceCount = [];
 
       db.get(AutographaStore.bookId.toString()).then((doc) => {
-          
               let currentBook = doc;
               let totalReplacedWord = 0;
               if (option == "chapter") {
@@ -66,6 +68,8 @@ class SearchModal extends React.Component {
                     return a + b;
               }, 0);
               this.setState({replaceCount: replacedCount, replaceInfo: true })
+              if(this.state.replaceCount === 0)
+              this.setState({ disableSave: true })
               totalReplacedWord = 0;
               allChapterReplaceCount = [];
           });
@@ -132,7 +136,7 @@ class SearchModal extends React.Component {
     db.get(AutographaStore.bookId.toString()).then((doc) => {
         if (AutographaStore.replaceOption === "chapter") {
             for (var c in replacedChapter) {
-                var verses = doc.chapters[AutographaStore.chapterId-1].verses
+                var verses = (doc.chapters[AutographaStore.chapterId-1]).verses
                 verses.forEach((verse, index)=> {
                     verse.verse = replacedChapter[c][index + 1];
                 });
@@ -142,7 +146,8 @@ class SearchModal extends React.Component {
                         // $("#replaced-text-change").modal('toggle');
                         // alertModal("dynamic-msg-error", "dynamic-msg-went-wrong");
                     } else {
-                        that.loadData()
+                        that.setState({ loader:true })
+                        window.location.reload();
                     }
                 });
             }
@@ -159,18 +164,19 @@ class SearchModal extends React.Component {
                     chapter_arr = [];
                     replacedChapter = {};
                     replacedVerse = {};
-                    that.loadData()
+                    that.setState({ loader:true })
+                    window.location.reload();
                 }
             })
         }
     })
   }
 
-  loadData = () => {
-    this.props.loadData()
-    this.setState({replaceInfo: false})
-    AutographaStore.replaceOption = "chapter";
-  }
+//   loadData = () => {
+//     this.props.loadData()
+//     this.setState({replaceInfo: false})
+//     AutographaStore.replaceOption = "chapter";
+//   }
 
     replaceContentAndSave(){
       let newContent;
@@ -179,11 +185,9 @@ class SearchModal extends React.Component {
       const searchValue = AutographaStore.searchValue;
       const replaceValue = AutographaStore.replaceValue;
       let oldContent = AutographaStore.translationContent;
-
       this.findAndReplaceText(AutographaStore.searchValue, AutographaStore.replaceValue, AutographaStore.replaceOption);
       AutographaStore.showModalSearch = false;
     }
-
 
   render (){
     let closeSearch = () => {
@@ -191,11 +195,17 @@ class SearchModal extends React.Component {
       AutographaStore.replaceOption = "chapter";
     }
     let closeReplaceModal = () => {
-      this.setState({replaceInfo: false})
+      this.setState({ replaceInfo: false })
+      this.setState({ disableSave: false })
+      this.setState({ replaceCount: 0 })
       AutographaStore.replaceOption = "chapter";
+      window.location.reload()
     }
     let wordBook = AutographaStore.currentTrans["dynamic-msg-book"];
     let wordReplace = AutographaStore.currentTrans["label-total-word-replaced"]
+    if(this.state.loader===true) {
+       return <Loader />
+    }
     return (  
       <div>
       <Modal show={AutographaStore.showModalSearch} onHide={closeSearch} id="tab-search">
@@ -267,6 +277,7 @@ class SearchModal extends React.Component {
             className="btn-save-changes"
             label={<FormattedMessage id="btn-save-changes" />}
             primary={true}
+            disabled={this.state.disableSave}
             onClick={this.saveReplacedText}
           />
           <RaisedButton
