@@ -79,7 +79,7 @@ module.exports = {
 	                                    </li><li><ol>`
 	                        for( let i=0; i<obj.verses.length; i++){
 	                            if (obj.verses[i].verse !== "" && obj.verses[i].verse !== null){
-									contentFlag = true;
+                                    contentFlag = true;
 	                            }
 	                            htmlContent += `<li><p class="prespace">${obj.verses[i].verse}</p></li>`
 	                        }
