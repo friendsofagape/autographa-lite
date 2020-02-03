@@ -116,19 +116,14 @@ class TranslationPanel extends React.Component {
 		let verseNumber = (data.target.outerHTML).match(/id="v(\d+)"/);
 		db.get(AutographaStore.bookId.toString()).then((doc) => {
 			let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
-			verses.forEach( (verse, index) => {
-			console.log(verse);
-			});
-			console.log(doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses);
-			// Preceeding verse is joint verse then check for preceeding verse without joint
 			let jointVerse;
+			// Preceeding verse is joint verse then check for preceeding verse without joint
 			if (verses[parseInt(verseNumber[1]) - 2].joint_verse){
 				jointVerse = verses[parseInt(verseNumber[1]) - 2].joint_verse;
 			}
 			else {
 				jointVerse = (parseInt(verseNumber[1], 10) - 1);
 			}
-			console.log("jointVerse---->",jointVerse);
 			// Add joint by adding the content to preceeding verse
 			doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[jointVerse - 1] = ({
 				"verse_number": jointVerse,
@@ -139,7 +134,6 @@ class TranslationPanel extends React.Component {
 				"verse": "----- Joint with preceeding verse(s) -----",
 				"joint_verse": jointVerse
 			});
-			console.log(verses[parseInt(verseNumber[1])]);
 			// Change the "joint_verse" number to current verse for next verse, if they are join verses 
 			for ( let i = 0;(verses[parseInt(verseNumber[1]) + i].joint_verse === parseInt(verseNumber[1])); i++){
 				doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber[1]) + i] = ({
@@ -190,7 +184,7 @@ class TranslationPanel extends React.Component {
 		let vid="v"+(i+1);
 		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
 			<ContextMenuTrigger id={(i+1) === 1 ? undefined : (AutographaStore.jointVerse[i] === undefined ? "true" : "false")} data={vid}><span className='verse-num' key={i}>{(i+1)}</span>
-			<span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
+			<span contentEditable={AutographaStore.jointVerse[i] === undefined ? true : false} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
 			{AutographaStore.translationContent[i]}
 			</span>
 			</ContextMenuTrigger>
