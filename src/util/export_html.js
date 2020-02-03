@@ -31,7 +31,7 @@ module.exports = {
 									contentFlag = true;
 								}
 								
-								htmlContent += `<div><li><p>${obj.verses[i].verse}</p></li></div>`
+								htmlContent += `<div><li><p class="prespace">${obj.verses[i].verse}</p></li></div>`
 								
 							}
 							htmlContent+= `</ol></li></ul>`
@@ -79,9 +79,9 @@ module.exports = {
 	                                    </li><li><ol>`
 	                        for( let i=0; i<obj.verses.length; i++){
 	                            if (obj.verses[i].verse !== "" && obj.verses[i].verse !== null){
-	                                contentFlag = true;
+									contentFlag = true;
 	                            }
-	                            htmlContent += `<li><p>${obj.verses[i].verse}</p></li>`
+	                            htmlContent += `<li><p class="prespace">${obj.verses[i].verse}</p></li>`
 	                        }
 	                        htmlContent+= `</ol></li></ul>`
 	                        if(contentFlag)

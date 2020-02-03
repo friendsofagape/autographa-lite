@@ -14,6 +14,12 @@ module.exports = {
 				usfmContent.push('\\p');
 				chapter.verses.forEach((verse) => {
 					// Push verse number and content.
+
+					// For verse with \\m tag
+					if(verse.verse.indexOf('\n') !==-1 ){
+						let newVerse = verse.verse.replace(new RegExp(/[\n\r]/, 'gu'), '\n\\m ')
+						verse.verse = newVerse
+					}
 					usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
 				});
 				if(index === chapterLimit-1) {
