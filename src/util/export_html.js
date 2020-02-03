@@ -89,6 +89,9 @@ module.exports = {
 	                var contentFlag = false;
 	                db.get(currentBook._id).then(function(doc) {
 	                    doc.chapters.map((obj, i) => {
+							var count = 0;
+							var verseNumber;
+							var verses;
 	                    	htmlContent += 
 	                                `<ul class="list">
 	                                    <li>
@@ -97,8 +100,24 @@ module.exports = {
 	                        for( let i=0; i<obj.verses.length; i++){
 	                            if (obj.verses[i].verse !== "" && obj.verses[i].verse !== null){
 	                                contentFlag = true;
-	                            }
-	                            htmlContent += `<li><p>${obj.verses[i].verse}</p></li>`
+								}
+								count = count + 1;
+								if (count < obj.verses.length && obj.verses[count].joint_verse) {
+									// Finding out the join verses and get their verse number(s)
+									verseNumber = obj.verses[count].joint_verse + "-" + obj.verses[count].verse_number;
+									verses = obj.verses[(obj.verses[count].joint_verse)-1].verse;
+									continue;
+								} else {
+									if (verseNumber) {
+										// Push join verse number (1-3) and content.
+										htmlContent += `<div><p><span>${verseNumber} </span>${verses}</p></div>`
+										verseNumber = undefined;
+										verses = undefined;
+									} else {
+										// Push verse number and content.
+										htmlContent += `<div><p><span>${obj.verses[i].verse_number} </span>${obj.verses[i].verse}</p></div>`
+									}
+								}
 	                        }
 	                        htmlContent+= `</ol></li></ul>`
 	                        if(contentFlag)
