@@ -17,7 +17,7 @@ module.exports = {
 
 					// For verse with \\m tag
 					if(verse.verse.indexOf('\n') !== -1 ){
-						let newVerse = verse.verse.replace(new RegExp(/[\n\r]/, 'gu'), '\n\\m ')
+						let newVerse = verse.verse.trim().replace(new RegExp(/[\n\r]/, 'gu'), '\n\\m ')
 						verse.verse = newVerse
 					}
 					usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
