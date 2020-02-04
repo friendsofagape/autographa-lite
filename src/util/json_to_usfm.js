@@ -16,7 +16,7 @@ module.exports = {
 					// Push verse number and content.
 
 					// For verse with \\m tag
-					if(verse.verse.indexOf('\n') !==-1 ){
+					if(verse.verse.indexOf('\n') !== -1 ){
 						let newVerse = verse.verse.replace(new RegExp(/[\n\r]/, 'gu'), '\n\\m ')
 						verse.verse = newVerse
 					}
