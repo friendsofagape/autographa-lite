@@ -29,6 +29,7 @@ export class AutographaStore {
   @observable bookNameEditorPopup = false
   @observable bookName = ''
   @observable translationContent = ''
+  @observable jointVerse = ''
   @observable selectId = 1
   @observable chunks = ''
   @observable verses = ''

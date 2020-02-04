@@ -3,6 +3,8 @@ import { observer } from "mobx-react"
 import AutographaStore from "./AutographaStore"
 import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+import '../assets/stylesheets/context-menu.css';
 const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 
@@ -108,18 +110,84 @@ class TranslationPanel extends React.Component {
             AutographaStore.incompleteVerse = incompleteVerseChapter;
             AutographaStore.multipleSpaces = multipleSpacesChapter;      
         })  
-    }
+	}
+	
+	addJoint = (event, data) => {
+		let verseNumber = parseInt(data[1], 10);
+		db.get(AutographaStore.bookId.toString()).then((doc) => {
+			let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+			let jointVerse;
+			// Preceeding verse is joint verse then check for preceeding verse without joint
+			if (verses[parseInt(verseNumber) - 2].joint_verse){
+				jointVerse = verses[parseInt(verseNumber) - 2].joint_verse;
+			}
+			else {
+				jointVerse = (parseInt(verseNumber, 10) - 1);
+			}
+			// Add joint by adding the content to preceeding verse
+			doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[jointVerse - 1] = ({
+				"verse_number": jointVerse,
+				"verse": verses[jointVerse - 1].verse + " " + verses[parseInt(verseNumber)-1].verse
+			});
+			doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber)-1] = ({
+				"verse_number": parseInt(verseNumber, 10),
+				"verse": "",
+				"joint_verse": jointVerse
+			});
+			// Change the "joint_verse" number to current verse for next verse, if they are join verses 
+			for ( let i = 0;(verses[parseInt(verseNumber) + i].joint_verse === parseInt(verseNumber)); i++){
+				doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber) + i] = ({
+					"verse_number": (parseInt(verseNumber, 10) + 1 + i),
+					"verse": "",
+					"joint_verse": jointVerse
+				});
+			}
+			db.put(doc, function (err, response) {
+				if (err) {
+					return console.log(err);
+				} else {
+					window.location.reload()
+				}
+			});
+		});
+	}
+
+	removeJoint = (event, data) => {
+		let verseNumber = parseInt(data[1], 10);
+		db.get(AutographaStore.bookId.toString()).then((doc) => {
+			let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
+			doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber)-1] = ({
+				"verse_number": parseInt((verseNumber), 10),
+				"verse": ""
+			});
+			for ( let i = 0;(verses[parseInt(verseNumber) + i].joint_verse); i++){
+				doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber) + i] = ({
+					"verse_number": (parseInt(verseNumber, 10) + 1 + i),
+					"verse": "",
+					"joint_verse": parseInt(verseNumber, 10)
+				});
+			}
+			db.put(doc, function (err, response) {
+				if (err) {
+					return console.log(err);
+				} else {
+					window.location.reload()
+				}
+			});
+		});
+	}
   
   	render (){
-    	let verseGroup = [];
+		let verseGroup = [];
     	const toggle = AutographaStore.toggle;
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
 		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
-			<span className='verse-num' key={i}>{(i+1)}</span>
-			<span contentEditable={true} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
-			{AutographaStore.translationContent[i]}
+			<ContextMenuTrigger id={(i+1) === 1 ? undefined : (AutographaStore.jointVerse[i] === undefined ? "true" : "false")} collect={props => vid}><span className='verse-num' key={i}>{(i+1)}</span>
+			<span contentEditable={AutographaStore.jointVerse[i] === undefined ? true : false} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
+			{AutographaStore.jointVerse[i] === undefined ? AutographaStore.translationContent[i] : <FormattedMessage id="label-joint-with-the-preceding-verse(s)"/>}
 			</span>
+			</ContextMenuTrigger>
 			</div>
 		); 
 		}
@@ -135,6 +203,20 @@ class TranslationPanel extends React.Component {
 				{tIns || tDel ? <div style={{textAlign: "center"}}><span style={{color: '#27b97e', fontWeight: 'bold'}}>(+) <span id="tIns">{tIns}</span></span> | <span style={{color: '#f50808', fontWeight: 'bold'}}> (-) <span id="tDel">{tDel}</span></span></div> : "" }
 				<div id="input-verses" className={`col-12 col-ref verse-input ${AutographaStore.scriptDirection.toLowerCase()} ${tIns || tDel ? 'disable-input' : ''}`} dir={AutographaStore.scriptDirection} style={{pointerEvents: tIns || tDel ? 'none': ''}}>{verseGroup}</div>
 				</div>
+				<ContextMenu id={"false"}>
+					<MenuItem
+						onClick={this.removeJoint}
+					>
+					<FormattedMessage id="label-unjoin-this-verse" />
+					</MenuItem>
+				</ContextMenu>
+				<ContextMenu id={"true"}>
+					<MenuItem
+						onClick={this.addJoint}
+					>
+					<FormattedMessage id="label-join-to-preceding-verse" />
+					</MenuItem>
+				</ContextMenu>
 				<Statistic show={AutographaStore.showModalStat}  showReport = {this.showReport}/>
 			</div>
 		) 

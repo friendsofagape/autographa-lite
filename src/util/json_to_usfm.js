@@ -12,10 +12,28 @@ module.exports = {
 			doc.chapters.forEach((chapter, index) => {
 				usfmContent.push('\n\\c ' + chapter.chapter);
 				usfmContent.push('\\p');
-				chapter.verses.forEach((verse) => {
-					// Push verse number and content.
-					usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
-				});
+				let i = 0;
+				let verseNumber;
+				let verses;
+				for (const verse of chapter.verses) {
+					i = i + 1;
+					if (i < (chapter.verses).length && chapter.verses[i].joint_verse) {
+						// Finding out the join verses and get their verse number(s)
+						verseNumber = chapter.verses[i].joint_verse + "-" + chapter.verses[i].verse_number;
+						verses = chapter.verses[(chapter.verses[i].joint_verse)-1].verse;
+						continue;
+					} else {
+						if (verseNumber) {
+							// Push join verse number (1-3) and content.
+							usfmContent.push('\\v ' + verseNumber + ' ' + verses);
+							verseNumber = undefined;
+							verses = undefined;
+						} else {
+							// Push verse number and content.
+							usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
+						}
+					}
+				}
 				if(index === chapterLimit-1) {
                     var exportName = targetLangDoc.targetLang+"_"+ targetLangDoc.targetVersion+"_"+book.bookCode+"_"+stage+ "_" + getTimeStamp(new Date());
                     filePath = path.join(Array.isArray(book.outputPath) ? book.outputPath[0] : book.outputPath, exportName);

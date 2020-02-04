@@ -28,6 +28,7 @@
 		"react-addons-shallow-compare": "^15.5.2",
 		"react-bootstrap": "^0.32.1",
 		"react-bootstrap-slider": "^2.1.5",
+		"react-contextmenu": "^2.13.0",
 		"react-dom": "^16.8.6",
 		"react-intl": "^2.4.0",
 		"react-scripts": "3.3.0",

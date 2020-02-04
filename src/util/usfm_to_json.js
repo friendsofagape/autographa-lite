@@ -72,11 +72,31 @@ module.exports = {
                 if (bookIndex !== -1){
                     if(bibleSkel[bookIndex + 1].chapters[c - 1] !== undefined){
                     if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
-                        book.chapters[c - 1].verses.push({
-                            "verse_number": parseInt(splitLine[1], 10),
-                            "verse": verseStr
-                        });
-                        v++;
+                        if (splitLine[1].match((/\W/gm))){
+                            let verseNumber = splitLine[1].match(/\d+/g);
+                            book.chapters[c - 1].verses.push({
+                                "verse_number": parseInt(verseNumber[0], 10),
+                                "verse": verseStr
+                            });
+                            v++;
+                            // Here instead of i = verseNumber[1], used i = verseNumber[0] so that won't miss any number
+                            // If the number is 1,3, therefore the verseNumber[1] will 3 and will miss number 2
+                            for (let i = (parseInt(verseNumber[0])+1); i <= verseNumber[(verseNumber.length)-1]; i++) {
+                                book.chapters[c - 1].verses.push({
+                                    "verse_number": parseInt(i, 10),
+                                    "verse": "",
+                                    "joint_verse": parseInt(verseNumber[0])
+                                });
+                                v++;
+                            }
+                        }
+                        else{
+                            book.chapters[c - 1].verses.push({
+                                "verse_number": parseInt(splitLine[1], 10),
+                                "verse": verseStr
+                            });
+                            v++;
+                        }
                     }
                 }
             }
@@ -169,7 +189,19 @@ module.exports = {
                                 for (k = 0; k < versesLen; k++) {
                                     var verseNum = book.chapters[j].verses[k].verse_number;
                                     if (doc.chapters[i].verses[verseNum - 1] != undefined){
-                                        doc.chapters[i].verses[verseNum - 1].verse = book.chapters[j].verses[k].verse;
+                                        // Adding joint verse data into DB
+                                        if (book.chapters[j].verses[k].joint_verse){
+                                            doc.chapters[i].verses[verseNum - 1] = ({
+                                                "verse_number": book.chapters[j].verses[k].verse_number,
+                                                "verse": book.chapters[j].verses[k].verse,
+                                                "joint_verse": book.chapters[j].verses[k].joint_verse
+                                            });
+                                        } else {
+                                            doc.chapters[i].verses[verseNum - 1] = ({
+                                                "verse_number": book.chapters[j].verses[k].verse_number,
+                                                "verse": book.chapters[j].verses[k].verse
+                                            });
+                                        }
                                         book.chapters[j].verses[k] = undefined;
                                     }
                                     else{
