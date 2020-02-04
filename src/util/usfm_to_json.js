@@ -84,7 +84,7 @@ module.exports = {
                             for (let i = (parseInt(verseNumber[0])+1); i <= verseNumber[(verseNumber.length)-1]; i++) {
                                 book.chapters[c - 1].verses.push({
                                     "verse_number": parseInt(i, 10),
-                                    "verse": "----- Joint with preceeding verse(s) -----",
+                                    "verse": "",
                                     "joint_verse": parseInt(verseNumber[0])
                                 });
                                 v++;
