@@ -42,12 +42,12 @@ module.exports = {
 								} else {
 									if (verseNumber) {
 										// Push join verse number (1-3) and content.
-										htmlContent += `<div><p><span>${verseNumber} </span>${verses}</p></div>`
+										htmlContent += `<div><p class="prespace"><span>${verseNumber}</span>${verses}</p></div>`
 										verseNumber = undefined;
 										verses = undefined;
 									} else {
 										// Push verse number and content.
-										htmlContent += `<div><p><span>${obj.verses[i].verse_number} </span>${obj.verses[i].verse}</p></div>`
+										htmlContent += `<div><p class="prespace"><span>${obj.verses[i].verse_number} </span>${obj.verses[i].verse}</p></div>`
 									}
 								}	
 							}
@@ -110,12 +110,12 @@ module.exports = {
 								} else {
 									if (verseNumber) {
 										// Push join verse number (1-3) and content.
-										htmlContent += `<div><p><span>${verseNumber} </span>${verses}</p></div>`
+										htmlContent += `<div><p class="prespace"><span>${verseNumber} </span>${verses}</p></div>`
 										verseNumber = undefined;
 										verses = undefined;
 									} else {
 										// Push verse number and content.
-										htmlContent += `<div><p><span>${obj.verses[i].verse_number} </span>${obj.verses[i].verse}</p></div>`
+										htmlContent += `<div><p class="prespace"><span>${obj.verses[i].verse_number} </span>${obj.verses[i].verse}</p></div>`
 									}
 								}
 	                        }

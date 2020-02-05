@@ -105,15 +105,24 @@ module.exports = {
                 //Do nothing for section headers now.
             } else if (splitLine.length === 1) {
                 // Do nothing here for now.
-            } else if (splitLine[0].startsWith('\\m')) {
-                // Do nothing here for now
+            } else if (splitLine[0].match(new RegExp(/\\m$/gm))) {
+                let cleanedStr = replaceMarkers(line);
+                cleanedStr = "\n" + cleanedStr;
+                book.chapters[c - 1].verses[v - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
             } else if (c > 0 && v > 0) {
+                var qflag = false;
+                if(line.match(new RegExp(/[\\q\n]/g))){
+                    qflag = true
+                }
                 let cleanedStr = replaceMarkers(line);
+                if(qflag === false){
+                    cleanedStr = "\n" + cleanedStr;
+                }
                 book.chapters[c - 1].verses[v - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
-
             }
+            
         });
 
         lineReader.on('close', function (line) {
