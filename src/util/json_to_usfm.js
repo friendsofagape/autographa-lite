@@ -25,12 +25,14 @@ module.exports = {
 					} else {
 						if (verseNumber) {
 							// Push join verse number (1-3) and content.
-							usfmContent.push('\\v ' + verseNumber + ' ' + verses);
+							let newverse = addMtag(verses);
+							usfmContent.push('\\v ' + verseNumber + ' ' + newverse);
 							verseNumber = undefined;
 							verses = undefined;
 						} else {
+							let newverse = addMtag(verse.verse)
 							// Push verse number and content.
-							usfmContent.push('\\v ' + verse.verse_number + ' ' + verse.verse);
+							usfmContent.push('\\v ' + verse.verse_number + ' ' + newverse);
 						}
 					}
 				}
@@ -49,6 +51,15 @@ module.exports = {
 		});
     }
 };
+
+function addMtag(verses) {
+	let newVerse = verses;
+	if(verses.indexOf('\n') !== -1 ){
+		newVerse = verses.trim().replace(new RegExp(/[\n\r]/, 'gu'), '\n\\m ')
+		verses = newVerse
+	}
+	return newVerse;
+}
 
 function getTimeStamp(date) {
     var year = date.getFullYear(),
