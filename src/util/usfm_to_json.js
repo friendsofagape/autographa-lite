@@ -24,6 +24,7 @@ module.exports = {
                 refDb = require(`${__dirname}/../util/data-provider`).referenceDb(),
                 c = 0,
                 v = 0,
+                vnum = 0,
                 usfmBibleBook = false,
                 validLineCount = 0,
                 id_prefix = options.lang + '_' + options.version + '_' + options.bibleName + '_';
@@ -39,7 +40,6 @@ module.exports = {
                 return callback(new Error(`${fileName(options.usfmFile)} ${AutographaStore.currentTrans["usfm-bookid-missing"]}`));
 
             validLineCount++;
-            line = line.trim();
             var splitLine = line.split(/ +/);
             if (!line) {
                 validLineCount--;
@@ -74,6 +74,7 @@ module.exports = {
                     if (v < bibleSkel[bookIndex + 1].chapters[c - 1].verses.length) {
                         if (splitLine[1].match((/\W/gm))){
                             let verseNumber = splitLine[1].match(/\d+/g);
+                            vnum = parseInt(verseNumber[0], 10)
                             book.chapters[c - 1].verses.push({
                                 "verse_number": parseInt(verseNumber[0], 10),
                                 "verse": verseStr
@@ -91,6 +92,7 @@ module.exports = {
                             }
                         }
                         else{
+                            vnum = parseInt(splitLine[1], 10)
                             book.chapters[c - 1].verses.push({
                                 "verse_number": parseInt(splitLine[1], 10),
                                 "verse": verseStr
@@ -108,10 +110,10 @@ module.exports = {
             } else if (splitLine[0].match(new RegExp(/\\m$/gm))) {
                 let cleanedStr = replaceMarkers(line);
                 cleanedStr = "\n" + cleanedStr;
-                book.chapters[c - 1].verses[v - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
-            } else if (c > 0 && v > 0) {
+            } else if (c > 0 && vnum > 0) {
                 var qflag = false;
                 if(line.match(new RegExp(/[\\q\n]/g))){
                     qflag = true
@@ -120,7 +122,7 @@ module.exports = {
                 if(qflag === false){
                     cleanedStr = "\n" + cleanedStr;
                 }
-                book.chapters[c - 1].verses[v - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             }
             
         });
