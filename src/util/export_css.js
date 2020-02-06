@@ -274,6 +274,7 @@ body {
 .verseDiv {
     padding-left: 5%;
     line-height: 125%;
+    margin-right: 3%;
 }
 
 .verseSpan {
@@ -455,6 +456,7 @@ const css_1_col_rtl = `<style>
     .verseDiv {
         padding-right: 5%;
         line-height: 125%;
+        margin-left: 3%;
     }
 
     .verseSpan {
@@ -588,6 +590,7 @@ const css_2_col_rtl = `<style>
     .verseDiv {
         padding-right: 5%;
         line-height: 125%;
+        margin-left: 3%;
     }
 
     .verseSpan {
