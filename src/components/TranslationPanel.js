@@ -135,7 +135,7 @@ class TranslationPanel extends React.Component {
 				"joint_verse": jointVerse
 			});
 			// Change the "joint_verse" number to current verse for next verse, if they are join verses 
-			for ( let i = 0;(verses[parseInt(verseNumber[1]) + i].joint_verse === parseInt(verseNumber[1])); i++){
+			for ( let i = 0;(verses.length) > (parseInt(verseNumber[1]) + i) && (verses[parseInt(verseNumber[1]) + i].joint_verse === parseInt(verseNumber[1])); i++){
 				doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber[1]) + i] = ({
 					"verse_number": (parseInt(verseNumber[1], 10) + 1 + i),
 					"verse": "",
@@ -153,14 +153,14 @@ class TranslationPanel extends React.Component {
 	}
 
 	removeJoint = (event, data) => {
-		let verseNumber = (data.target.outerHTML).match(/id="v(\d+)"/);
+		let verseNumber = (data.target.parentElement.id).match(/v(\d+)/);
 		db.get(AutographaStore.bookId.toString()).then((doc) => {
 			let verses = doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses;
 			doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber[1])-1] = ({
 				"verse_number": parseInt((verseNumber[1]), 10),
 				"verse": ""
 			});
-			for ( let i = 0;(verses[parseInt(verseNumber[1]) + i].joint_verse); i++){
+			for ( let i = 0;(verses.length) > (parseInt(verseNumber[1]) + i) && (verses[parseInt(verseNumber[1]) + i].joint_verse); i++){
 				doc.chapters[parseInt(AutographaStore.chapterId, 10) - 1].verses[parseInt(verseNumber[1]) + i] = ({
 					"verse_number": (parseInt(verseNumber[1], 10) + 1 + i),
 					"verse": "",
