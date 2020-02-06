@@ -96,9 +96,13 @@ body {
     box-sizing: border-box;
 }
 
+.verseDiv {
+    padding-left: 5%;
+    line-height: 125%;
+}
+
 .verseSpan {
     margin-right: 8px;
-    padding-left: 55px;
     float: left;
     font-size: 62%;
     font-weight: bold;
@@ -266,9 +270,13 @@ body {
     box-sizing: border-box;
 }
 
+.verseDiv {
+    padding-left: 5%;
+    line-height: 125%;
+}
+
 .verseSpan {
     margin-right: 8px;
-    padding-left: 55px;
     float: left;
     font-size: 62%;
     font-weight: bold;
@@ -443,9 +451,13 @@ const css_1_col_rtl = `<style>
         text-align: right;
     }
 
+    .verseDiv {
+        padding-right: 5%;
+        line-height: 125%;
+    }
+
     .verseSpan {
         margin-left: 8px;
-        padding-right: 55px;
         float: right;
         font-size: 62%;
         font-weight: bold;
@@ -572,9 +584,13 @@ const css_2_col_rtl = `<style>
     text-align: right;
     }
 
+    .verseDiv {
+        padding-right: 5%;
+        line-height: 125%;
+    }
+
     .verseSpan {
         margin-left: 8px;
-        padding-right: 55px;
         float: right;
         font-size: 62%;
         font-weight: bold;
