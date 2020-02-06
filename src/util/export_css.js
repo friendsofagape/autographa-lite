@@ -99,6 +99,7 @@ body {
 .verseDiv {
     padding-left: 5%;
     line-height: 125%;
+    margin-right: 3%;
 }
 
 .verseSpan {
