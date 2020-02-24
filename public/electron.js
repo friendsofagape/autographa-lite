@@ -1,6 +1,6 @@
 
 const path = require('path');
-const {app, Menu} = require('electron');
+const {app, Menu} = require('electronite');
 
 // import settings from 'electron-settings';
 const {

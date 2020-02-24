@@ -1,6 +1,6 @@
 const PouchDB = require('pouchdb').default;
 const path = require('path');
-const app = require('electron').remote.app 
+const app = require('electronite').remote.app 
 let basepath = app.getAppPath();
 let _targetDb, _referenceDb, _lookupsDb;
 

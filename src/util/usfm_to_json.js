@@ -2,7 +2,7 @@ import AutographaStore from "../components/AutographaStore";
 const booksCodes = require(`${__dirname}/constants.js`).bookCodeList;
 const bibleSkel = require(`${__dirname}/../lib/full_bible_skel.json`)
 const path = require('path');
-const remote = require('electron').remote;
+const remote = require('electronite').remote;
 const appPath = remote.app.getAppPath();
 // const configFile = 
 

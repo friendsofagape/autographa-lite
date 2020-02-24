@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Icon from '@material-ui/core/Icon';
 const numberFormat = require("../util/getNumberFormat")
-const { dialog, getCurrentWindow } = require("electron").remote;
+const { dialog, getCurrentWindow } = require("electronite").remote;
 const { Tab, Tabs, Modal, Col, Row, Nav, NavItem } = require("react-bootstrap/lib");
 const refDb = require(`${__dirname}/../util/data-provider`).referenceDb();
 const lookupsDb = require(`${__dirname}/../util/data-provider`).lookupsDb();
@@ -258,6 +258,7 @@ class SettingsModal extends React.Component {
             targetPath: folderPath,
             langScript: AutographaStore.scriptDirection.toUpperCase()
         };
+        (AutographaStore.scriptDirection === 'RTL') ? AutographaStore.setTransfont = 'Awami Nastaliq' : AutographaStore.setTransfont = '' ;
         db.get("targetBible").then(
             doc => {
                 settingData._rev = doc._rev;

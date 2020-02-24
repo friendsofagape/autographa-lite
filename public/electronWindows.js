@@ -1,4 +1,4 @@
-const {BrowserWindow} = require('electron');
+const {BrowserWindow} = require('electronite');
 const path = require('path');
 
 
