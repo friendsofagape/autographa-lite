@@ -40,6 +40,10 @@ module.exports = {
                 return callback(new Error(`${fileName(options.usfmFile)} ${AutographaStore.currentTrans["usfm-bookid-missing"]}`));
 
             validLineCount++;
+            if(line.match(new RegExp(/\\m$/gm))) {
+                //do nothing
+            }
+            else line = line.trim()
             var splitLine = line.split(/ +/);
             if (!line) {
                 validLineCount--;
