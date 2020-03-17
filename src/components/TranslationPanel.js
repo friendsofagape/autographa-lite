@@ -184,7 +184,7 @@ class TranslationPanel extends React.Component {
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
 		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
-			<ContextMenuTrigger id={(i+1) === 1 ? undefined : (AutographaStore.jointVerse[i] === undefined ? "true" : "false")} verseId = {parseInt(i,10)+1}  collect = {props => props}><span className='verse-num' key={i}>{(i+1)}</span>
+			<ContextMenuTrigger id={(AutographaStore.jointVerse[i] === undefined ? "true" : "false")} disable={(i+1) === 1 ? true : false } verseId = {parseInt(i,10)+1}  collect = {props => props}><span className='verse-num' key={i}>{(i+1)}</span>
 			<span contentEditable={AutographaStore.jointVerse[i] === undefined ? true : false} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
 			{AutographaStore.jointVerse[i] === undefined ? AutographaStore.translationContent[i] : <FormattedMessage id="label-joint-with-the-preceding-verse(s)"/>}
 			</span>
