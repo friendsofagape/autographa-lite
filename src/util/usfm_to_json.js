@@ -108,8 +108,10 @@ module.exports = {
             } else if (splitLine[0].match(new RegExp(/\\mt$/gm))) {
                 let cleanedStr = replaceMarkers(line);
                 let bookid = book._id.split(/_+/)
-                let userBookList = AutographaStore.translatedBookNames
-                userBookList.splice(booksCodes.indexOf(bookid[2]), 1, cleanedStr)
+                if (booksCodes.includes(bookid[2].toUpperCase())){
+                    let userBookList = AutographaStore.translatedBookNames
+                    userBookList.splice(booksCodes.indexOf(bookid[2]), 1, cleanedStr)
+                }
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
             } else if (splitLine.length === 1) {

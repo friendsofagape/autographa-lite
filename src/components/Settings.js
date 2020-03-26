@@ -363,11 +363,9 @@ class SettingsModal extends React.Component {
         const { langCode, langVersion } = this.state.settingData;
         let inputPath = Array.isArray(this.state.folderPathImport) ? this.state.folderPathImport : [this.state.folderPathImport];
         // var files = fs.readdirSync(inputPath[0]);
-        fs.exists(`${appPath}/report/error${date.getDate()}${date.getMonth()}${date.getFullYear()}.log`, function(exists) {
-            if (exists) console.log("Directory Exists")
-            else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
-        });
-       
+        if(!fs.existsSync(`${appPath}/report/error${date.getDate()}${date.getMonth()}${date.getFullYear()}.log`))
+            fs.mkdirSync(`${appPath}/report`, {  recursive:  true  })
+
         Promise.map(inputPath, file => {
             // var filePath = path.join(inputPath[0], file);
             if (fs.statSync(file).isFile() && !file.startsWith(".")) {
@@ -554,10 +552,7 @@ class SettingsModal extends React.Component {
     saveJsonToDB = (files) => {
         const { bibleName, refVersion, refLangCodeValue } = this.state.refSetting;
         const that = this;
-        fs.exists(appPath+"/report", function(exists) {
-            if (exists) console.log("Directory Exists")
-            else fs.mkdir(`${appPath}/report`, (err) => {if (err) throw err;});
-        });
+        fs.mkdirSync(`${appPath}/report`, {  recursive:  true  })
         Promise.map(files, (file) => {
           if (fs.statSync(file).isFile() && !file.startsWith('.')) {
             const options = {
