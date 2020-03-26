@@ -105,8 +105,12 @@ export default function BookNameEditor({ show }) {
 	const resetToDefault = (event) => {
 		let BookName =
 			constants.booksList[parseInt(AutographaStore.RequiredIndex, 10)];
-        setUpdatedValue(BookName);
-        setAnchorEl(null);
+		setUpdatedValue(BookName);
+		handleCloseMenu();
+	};
+
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
 	};
 
 	return (
@@ -171,7 +175,8 @@ export default function BookNameEditor({ show }) {
 						keepMounted
 						disableEnforceFocus
 						style={{ top: '-60px', left: '-16px' }}
-						open={Boolean(anchorEl)}>
+						open={Boolean(anchorEl)}
+						onClose={handleCloseMenu}>
 						<StyledMenuItem onClick={resetToDefault}>
 							<FormattedMessage id='label-button-reset'>
 								{(message) => (
