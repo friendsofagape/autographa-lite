@@ -3,7 +3,7 @@ import {css_1_col_ltr, css_2_col_ltr, css_1_col_rtl, css_2_col_rtl} from './expo
 const path = require('path');
 var fs = require("fs");
 module.exports = {
-	exportHtml: function(id, currentBook, db, direction, column, currentTrans){
+	exportHtml: function(id, currentBook, db, direction, column, currentTrans, currentBookname){
 	    	if(direction !== "RTL"){
 	        	let htmlContent = '';
 	        	let inlineData = `<!DOCTYPE html>
@@ -16,7 +16,7 @@ module.exports = {
 	                    ${ column == 1  ? css_1_col_ltr : css_2_col_ltr  }
 					</head>
 					<body class="body">
-					<center><h1>${currentBook.book_name}</h1></center>
+					<center><h1>${currentBookname}</h1></center>
 					<div class="newspaper">`
 					var contentFlag = false;
 					db.get(currentBook._id).then(function(doc) {
@@ -84,7 +84,7 @@ module.exports = {
 					${ column == 1  ? css_1_col_rtl : css_2_col_rtl  }
                 </head>
                 <body class="body">
-	                <center><h1>${currentBook.book_name}</h1></center>
+	                <center><h1>${currentBookname}</h1></center>
 	                <div class="newspaper">`
 	                var contentFlag = false;
 	                db.get(currentBook._id).then(function(doc) {

@@ -441,6 +441,15 @@ class SettingsModal extends React.Component {
                 })
             }
         }).then(() => {
+            db.get('translatedBookNames', function (err, doc) {
+                if (err) {
+                    return console.log(err);
+                } else {
+                    localStorage.setItem('editBookNamesMode', true);
+                    AutographaStore.editBookNamesMode = true
+                    doc.books = mobx.toJS(AutographaStore.translatedBookNames)                }
+                db.put(doc)
+            });
             this.setState({showLoader:false});
             this.setState({show:true});
             AutographaStore.showModalSettings = false;

@@ -1,4 +1,5 @@
 import AutographaStore from "../components/AutographaStore";
+import * as mobx from "mobx";
 const booksCodes = require(`${__dirname}/constants.js`).bookCodeList;
 const bibleSkel = require(`${__dirname}/../lib/full_bible_skel.json`)
 const path = require('path');
@@ -104,6 +105,11 @@ module.exports = {
                 }
             }
                 
+            } else if (splitLine[0].match(new RegExp(/\\mt$/gm))) {
+                let cleanedStr = replaceMarkers(line);
+                let bookid = book._id.split(/_+/)
+                let userBookList = AutographaStore.translatedBookNames
+                userBookList.splice(booksCodes.indexOf(bookid[2]), 1, cleanedStr)
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
             } else if (splitLine.length === 1) {
@@ -133,18 +139,8 @@ module.exports = {
             if (!usfmBibleBook)
                 // throw new Error('not usfm file');
                 return callback(new Error(`${fileName(options.usfmFile)}: ${AutographaStore.currentTrans["usfm-not-valid"]}`))
-            /*console.log(book);
-              require('fs').writeFileSync('/Users/fox/output.json', JSON.stringify(book), {
-              encoding: 'utf8',
-              flag: 'a'
-              });
-              require('fs').writeFileSync('/Users/fox/output.json', ',\n', {
-              encoding: 'utf8',
-              flag: 'a'
-              });*/
 
-            //	    const PouchDB = require('pouchdb-core')
-            //		  .plugin(require('pouchdb-adapter-leveldb'));
+
             if (options.targetDb === 'refs') {
                 for (let i = 0; i < book.chapters.length; i++) {
                     if (!(i in book.chapters)) {
