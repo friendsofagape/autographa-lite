@@ -258,6 +258,7 @@ class SettingsModal extends React.Component {
             targetPath: folderPath,
             langScript: AutographaStore.scriptDirection.toUpperCase()
         };
+        (AutographaStore.scriptDirection === 'RTL') ? AutographaStore.setTransfont = 'Awami Nastaliq' : AutographaStore.setTransfont = '' ;
         db.get("targetBible").then(
             doc => {
                 settingData._rev = doc._rev;
