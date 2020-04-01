@@ -26,6 +26,7 @@ module.exports = {
                 c = 0,
                 v = 0,
                 vnum = 0,
+                id = '',
                 usfmBibleBook = false,
                 validLineCount = 0,
                 id_prefix = options.lang + '_' + options.version + '_' + options.bibleName + '_';
@@ -48,6 +49,7 @@ module.exports = {
             } else if (splitLine[0] === '\\id') {
                 if (booksCodes.includes(splitLine[1].toUpperCase()))
                     usfmBibleBook = true;
+                    id = splitLine[1]
                 book._id = id_prefix + splitLine[1].toUpperCase();
             } else if (splitLine[0] === '\\c') {
                 book.chapters[parseInt(splitLine[1], 10) - 1] = {
@@ -107,10 +109,9 @@ module.exports = {
                 
             } else if (splitLine[0].match(new RegExp(/\\mt$/gm))) {
                 let cleanedStr = replaceMarkers(line);
-                let bookid = book._id.split(/_+/)
-                if (booksCodes.includes(bookid[2].toUpperCase())){
+                if (booksCodes.includes(id.toUpperCase())){
                     let userBookList = AutographaStore.translatedBookNames
-                    userBookList.splice(booksCodes.indexOf(bookid[2]), 1, cleanedStr)
+                    userBookList.splice(booksCodes.indexOf(id), 1, cleanedStr)
                 }
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
