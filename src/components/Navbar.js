@@ -789,7 +789,7 @@ class Navbar extends React.Component {
                                         {AutographaStore.translatedBookNames !== null && (
                                             bookData.map((item, index) => {
                                                 return <li key={index} >
-                                                    <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
+                                                    <Link key={index} style={{ cursor: 'pointer', fontFamily: "Awami Nastaliq", fontSize:"small" , padding: '0px'}} onClick={this.onItemClick.bind(this, item, index)}
                                                         value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
                                                         {item}
                                                         <Tooltip TransitionComponent={Zoom} placement="top" title="edit">
@@ -853,6 +853,7 @@ class Navbar extends React.Component {
                                             data-placement="bottom"
                                             title="Select Book"
                                             id="book-chapter-btn"
+                                            style={{ fontFamily: "Awami Nastaliq"}}
                                         >
                                             {bookName}
                                         </a>
