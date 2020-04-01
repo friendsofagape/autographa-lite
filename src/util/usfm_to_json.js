@@ -118,11 +118,13 @@ module.exports = {
                 // Do nothing here for now.
             } else if (splitLine[0].match(new RegExp(/\\m$/gm))) {
                 let cleanedStr = replaceMarkers(line);
-                cleanedStr = "\n" + cleanedStr;
-                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                cleanedStr = "\n" + cleanedStr
+                let verseIndex = book.chapters[c - 1].verses.findIndex(val => val.verse_number === vnum);
+                if(book.chapters[c - 1].verses[verseIndex].verse !== undefined)
+                book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
-            } else if (c > 0 && vnum > 0) {
+            } else if (c > 0 && v > 0) {
                 var qflag = false;
                 if(line.match(new RegExp(/[\\q\n]/g))){
                     qflag = true
@@ -131,7 +133,8 @@ module.exports = {
                 if(qflag === false){
                     cleanedStr = "\n" + cleanedStr;
                 }
-                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                let verseIndex = book.chapters[c - 1].verses.findIndex(val => val.verse_number === vnum);
+                book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             }
             
         });
