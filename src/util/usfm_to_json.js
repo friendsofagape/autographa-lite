@@ -120,8 +120,9 @@ module.exports = {
                 let cleanedStr = replaceMarkers(line);
                 cleanedStr = "\n" + cleanedStr
                 let verseIndex = book.chapters[c - 1].verses.findIndex(val => val.verse_number === vnum);
-                if(book.chapters[c - 1].verses[verseIndex].verse !== undefined)
-                book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                if(book.chapters[c - 1].verses[verseIndex].verse !== undefined) {
+                    book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                }
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
             } else if (c > 0 && v > 0) {
