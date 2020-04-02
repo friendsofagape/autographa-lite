@@ -782,18 +782,22 @@ class Navbar extends React.Component {
                                     </div>
                                 ) : ''
                             }
-                            <Tab eventKey={1} title="Book" >
+                            <Tab eventKey={1} title="Book" style={{ height: '450px', overflow: 'auto'}}>
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
                                         {AutographaStore.translatedBookNames !== null && (
                                             bookData.map((item, index) => {
                                                 return <li key={index} >
-                                                    <Link key={index} style={{ cursor: 'pointer', fontFamily: "Awami Nastaliq", fontSize:"small" , padding: '0px'}} onClick={this.onItemClick.bind(this, item, index)}
+                                                    <Link key={index} style={{ cursor: 'pointer', fontFamily: "Awami Nastaliq", padding: '0px', fontSize:"small"}} onClick={this.onItemClick.bind(this, item, index)}
                                                         value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
-                                                        {item}
+                                                        <span className="booklistcollapse">
+                                                            {item}
+                                                        </span>
                                                         <Tooltip TransitionComponent={Zoom} placement="top" title="edit">
+                                                        <span>
                                                         <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.bookindex !== index} onClick={this.editbooks} />
+                                                        </span>
                                                         </Tooltip>
                                                     </Link>
                                                 </li>

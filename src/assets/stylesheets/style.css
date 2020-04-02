@@ -8528,7 +8528,12 @@ button .caret {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
   color: #0b82ff;
-  font-weight: bold; }
+  font-weight: bold;
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 #chapterBtn {
   color: #0b82ff;
@@ -8919,4 +8924,12 @@ div::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
 background-color: darkgrey;
 outline: 1px solid slategrey;
+}
+.booklistcollapse {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 10em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
 }

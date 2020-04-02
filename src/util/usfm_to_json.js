@@ -25,6 +25,7 @@ module.exports = {
                 refDb = require(`${__dirname}/../util/data-provider`).referenceDb(),
                 c = 0,
                 v = 0,
+                id='',
                 vnum = 0,
                 usfmBibleBook = false,
                 validLineCount = 0,
@@ -48,6 +49,7 @@ module.exports = {
             } else if (splitLine[0] === '\\id') {
                 if (booksCodes.includes(splitLine[1].toUpperCase()))
                     usfmBibleBook = true;
+                    id = splitLine[1]
                 book._id = id_prefix + splitLine[1].toUpperCase();
             } else if (splitLine[0] === '\\c') {
                 book.chapters[parseInt(splitLine[1], 10) - 1] = {
@@ -107,10 +109,9 @@ module.exports = {
                 
             } else if (splitLine[0].match(new RegExp(/\\mt$/gm))) {
                 let cleanedStr = replaceMarkers(line);
-                let bookid = book._id.split(/_+/)
-                if (booksCodes.includes(bookid[2].toUpperCase())){
+                if (booksCodes.includes(id.toUpperCase())){
                     let userBookList = AutographaStore.translatedBookNames
-                    userBookList.splice(booksCodes.indexOf(bookid[2]), 1, cleanedStr)
+                    userBookList.splice(booksCodes.indexOf(id), 1, cleanedStr)
                 }
             } else if (splitLine[0].startsWith('\\s')) {
                 //Do nothing for section headers now.
@@ -119,10 +120,13 @@ module.exports = {
             } else if (splitLine[0].match(new RegExp(/\\m$/gm))) {
                 let cleanedStr = replaceMarkers(line);
                 cleanedStr = "\n" + cleanedStr;
-                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                let verseIndex = book.chapters[c - 1].verses.findIndex(val => val.verse_number === vnum);
+                if(book.chapters[c - 1].verses[verseIndex].verse !== undefined) {
+                book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                }
             } else if (splitLine[0].startsWith('\\r')) {
                 // Do nothing here for now.
-            } else if (c > 0 && vnum > 0) {
+            } else if (c > 0 && v > 0) {
                 var qflag = false;
                 if(line.match(new RegExp(/[\\q\n]/g))){
                     qflag = true
@@ -131,7 +135,8 @@ module.exports = {
                 if(qflag === false){
                     cleanedStr = "\n" + cleanedStr;
                 }
-                book.chapters[c - 1].verses[vnum - 1].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
+                let verseIndex = book.chapters[c - 1].verses.findIndex(val => val.verse_number === vnum);
+                book.chapters[c - 1].verses[verseIndex].verse += ((cleanedStr.length === 0 ? '' : ' ') + cleanedStr);
             }
             
         });

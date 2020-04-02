@@ -147,7 +147,7 @@ export default function BookNameEditor({ show }) {
 									value={updatedValue || ''}
 									name='updatedValue'
 									id='updatedValue'
-									// maxLength={20}
+									maxLength={100}
 								/>
 							)}
 						</FormattedMessage>
