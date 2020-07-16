@@ -14,6 +14,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Icon from '@material-ui/core/Icon';
+import * as auto_export from "../util/auto_export";
 const numberFormat = require("../util/getNumberFormat")
 const { dialog, getCurrentWindow } = require("electron").remote;
 const { Tab, Tabs, Modal, Col, Row, Nav, NavItem } = require("react-bootstrap/lib");
@@ -38,7 +39,8 @@ class SettingsModal extends React.Component {
                 langCodeValue: "",
                 langCode: "",
                 langVersion: "",
-                folderPath: ""
+                folderPath: "",
+                backupFrequency: ""
             },
             refSetting: {
                 bibleName: "",
@@ -96,6 +98,13 @@ class SettingsModal extends React.Component {
         });
     };
 
+    componentDidUpdate(){
+        const {langCode, langVersion, backupFrequency} = this.state.settingData;
+        if (langCode && langVersion && backupFrequency !== "none") {
+            auto_export.initializeBackUp();
+        }
+    }
+    
     loadSetting = () => {
         const settingData = this.state.settingData;
         db.get("targetBible").then(
@@ -250,13 +259,14 @@ class SettingsModal extends React.Component {
     saveSetting = () => {
         if (this.target_setting() === false) return;
         const currentTrans = AutographaStore.currentTrans;
-        const { langCode, langVersion, folderPath } = this.state.settingData;
+        const { langCode, langVersion, folderPath, backupFrequency} = this.state.settingData;
         const settingData = {
             _id: "targetBible",
             targetLang: langCode.toLowerCase(),
             targetVersion: langVersion,
             targetPath: folderPath,
-            langScript: AutographaStore.scriptDirection.toUpperCase()
+            langScript: AutographaStore.scriptDirection.toUpperCase(),
+            backupFrequency:backupFrequency
         };
         db.get("targetBible").then(
             doc => {
@@ -854,6 +864,9 @@ class SettingsModal extends React.Component {
     onChangeScriptDir = value => {
         AutographaStore.scriptDirection = value;
     };
+    onChangeBackupSetting = (value) => {
+        this.setState({ settingData: { ...this.state.settingData, backupFrequency: value} });
+        }
     onChangeRefScriptDir = value => {
         AutographaStore.refScriptDirection = value;
     };
@@ -927,7 +940,8 @@ class SettingsModal extends React.Component {
             langCodeValue,
             langCode,
             langVersion,
-            folderPath
+            folderPath,
+            backupFrequency
         } = this.state.settingData;
         const {
             bibleName,
@@ -1116,6 +1130,37 @@ class SettingsModal extends React.Component {
                                                     style={{ width: "70%" }}
                                                 />
                                             </RadioButtonGroup>
+                                        </div>
+                                        <div style={{"display": "flex", padding: "20px 0 0 0"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                        <label
+                                            style={{"marginTop": "-24px", "fontSize": "14px"}}
+                                            className="mdl-textfield__label"
+                                            id="label-autobackup"
+                                        >
+                                        <FormattedMessage id="label-auto-backup" />
+                                        </label>
+                                        <RadioButtonGroup
+                                            valueSelected={backupFrequency === "" ? "daily" : backupFrequency}
+                                            name="autobackup"
+                                            style={{display: "flex", marginBottom:"6%", marginTop: "8px"}}
+                                            onChange={(event, value) => this.onChangeBackupSetting(value)}
+                                        >
+                                            <RadioButton
+                                            value="none"
+                                            label={<span style={{ color: '#FF0000'}}><FormattedMessage id="label-none" /></span>}
+                                            style={{width: "70%"}}
+                                            />
+                                            <RadioButton
+                                            value="daily"
+                                            label={<FormattedMessage id="label-daily" />}
+                                            style={{width: "70%", marginLeft: "25px"}}
+                                            />
+                                            <RadioButton
+                                            value="weekly"
+                                            label={<FormattedMessage id="label-weekly" />}
+                                            style={{width: "70%", marginLeft: "25px"}}
+                                            />
+                                        </RadioButtonGroup>
                                         </div>
                                         <FormattedMessage id="btn-save">
                                             {message => (
