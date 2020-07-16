@@ -22,6 +22,7 @@ export class AutographaStore {
   @observable chapterActive = 1
   @observable currentRef = 'eng_ult'
   @observable bookData = Constant.booksList
+  @observable editbookData = Constant.booksEditList
   @observable translatedBookNames = null
   @observable openBookNameEditor = false
   @observable updatedTranslatedBookNames = ''
@@ -37,6 +38,7 @@ export class AutographaStore {
   @observable fontMax = 40
   @observable fontMin = 14
   @observable currentFontValue = 14
+  @observable setTransfont = ''
   @observable layout = 1
   @observable layoutContent = 1
   @observable layout3xDirect = true

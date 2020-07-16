@@ -8471,10 +8471,15 @@ ul {
   background-color: #f5f5f5 !important; }
 
 #bookdata {
-  padding-top: 20px; }
+  padding-top: 0px; }
 
 .translation {
-  font-weight: bold; }
+  font-weight: bold; 
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 .slider.slider-horizontal {
   width: 90px !important;
@@ -8919,4 +8924,12 @@ div::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
 background-color: darkgrey;
 outline: 1px solid slategrey;
+}
+.booklistcollapse {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 10em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
 }
