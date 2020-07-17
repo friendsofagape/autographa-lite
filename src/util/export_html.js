@@ -84,7 +84,7 @@ module.exports = {
 					${ column == 1  ? css_1_col_rtl : css_2_col_rtl  }
                 </head>
                 <body class="body">
-	                <center><h1>${currentBookname}</h1></center>
+	                <center><h1 style="font-family: 'Awami Nastaliq'">${currentBookname}</h1></center>
 	                <div class="newspaper">`
 	                var contentFlag = false;
 	                db.get(currentBook._id).then(function(doc) {

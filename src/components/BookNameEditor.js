@@ -131,7 +131,7 @@ export default function BookNameEditor({ show }) {
 				<Modal.Body style={{ height: '150px' }}>
 					<span>
 						<TextField
-							style={{ marginRight: '10px' }}
+							style={{ marginRight: '10px', fontFamily: "Awami Nastaliq" }}
 							value={AutographaStore.bookName}
 							name='defaultValue'
 							id='defaultValue'
@@ -143,6 +143,7 @@ export default function BookNameEditor({ show }) {
 									hintText={message}
 									onChange={onChange}
 									required
+									style={{ fontFamily: "Awami Nastaliq" }}
 									value={updatedValue || ''}
 									name='updatedValue'
 									id='updatedValue'

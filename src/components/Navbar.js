@@ -36,6 +36,7 @@ class Navbar extends React.Component {
         super(props);
         this.handleRefChange = this.handleRefChange.bind(this);
         this.getData = this.getData.bind(this);
+        this.fontChange = this.fontChange.bind(this)
         this.state = {
             showModal: false,
             showModalSettings: false,
@@ -52,6 +53,9 @@ class Navbar extends React.Component {
             toggled: false,
             setDiff: false,
             toggleEdit: false,
+            setFont1: "",
+            setFont2: "",
+            setFont3: ""
         };
 
         var verses, chapter;
@@ -78,6 +82,7 @@ class Navbar extends React.Component {
         this.resetDiffValue();
     }
     componentDidMount() {
+        this.fontChange()
         db.get('translatedBookNames', function (err, doc) {
             if (err) {
                 localStorage.setItem('editBookNamesMode', false);
@@ -99,6 +104,20 @@ class Navbar extends React.Component {
         })
         AutographaStore.editBookNamesMode = localStorage.getItem('editBookNamesMode');
     }
+
+    fontChange() {
+        let options = ['eng_ult', 'eng_ust', 'hin_irv']
+        if((options.indexOf(AutographaStore.activeRefs[0]) === -1))
+            this.setState({setFont1:  "Awami Nastaliq"})
+        else this.setState({ setFont1:  "" })
+        if((options.indexOf(AutographaStore.activeRefs[1]) === -1))
+            this.setState({ setFont2:  "Awami Nastaliq" })
+        else this.setState({ setFont2:  "" })
+        if((options.indexOf(AutographaStore.activeRefs[2]) === -1))
+            this.setState({ setFont3:  "Awami Nastaliq" })
+        else this.setState({ setFont3:  "" })
+    }
+
     getContent = (id, chapter) => {
         return refDb.get(id).then((doc) => {
             for (var i = 0; i < doc.chapters.length; i++) {
@@ -464,6 +483,7 @@ class Navbar extends React.Component {
             if (error)
                 console.log(error);
         });
+        this.fontChange(event.target.value);
     }
     isSameLanguage = async () => {
         const verseLangCode = "",
@@ -762,18 +782,22 @@ class Navbar extends React.Component {
                                     </div>
                                 ) : ''
                             }
-                            <Tab eventKey={1} title="Book" >
+                            <Tab eventKey={1} title="Book" style={{ height: '450px', overflow: 'auto'}} >
                                 <div className="wrap-center"></div>
                                 <div className="row books-li" id="bookdata">
                                     <ul id="books-pane">
                                         {AutographaStore.translatedBookNames !== null && (
                                             bookData.map((item, index) => {
                                                 return <li key={index} >
-                                                    <Link key={index} style={{ cursor: 'pointer' }} onClick={this.onItemClick.bind(this, item, index)}
+                                                    <Link key={index} style={{ cursor: 'pointer', fontFamily: "Awami Nastaliq", padding: '0px', fontSize:"small" }} onClick={this.onItemClick.bind(this, item, index)}
                                                         value={item} onMouseEnter={this.handlepopper} className={(AutographaStore.bookName === item) ? 'link-active' : ""} >
-                                                        {item}
+                                                        <span className="booklistcollapse">
+                                                            {item}
+                                                        </span>
                                                         <Tooltip TransitionComponent={Zoom} placement="top" title="edit">
+                                                        <span>
                                                         <EditIcon key={index} style={{ cursor: 'pointer', marginLeft: "9px" }} hidden={AutographaStore.bookindex !== index} onClick={this.editbooks} />
+                                                        </span>
                                                         </Tooltip>
                                                     </Link>
                                                 </li>
@@ -833,6 +857,7 @@ class Navbar extends React.Component {
                                             data-placement="bottom"
                                             title="Select Book"
                                             id="book-chapter-btn"
+                                            style={{ fontFamily: "Awami Nastaliq"}}
                                         >
                                             {bookName}
                                         </a>
@@ -895,27 +920,27 @@ class Navbar extends React.Component {
                 {
                     AutographaStore.layout === 1 &&
                     <div className="parentdiv">
-                        <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={1} layout={1} /><ReferencePanel refContent={refContent} /></div>
+                        <div className="layoutx"> <Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={1} layout={1} /><ReferencePanel refContent={refContent} font={this.state.setFont1} /></div>
                         <div style={{ padding: "10px" }} className="layoutx"><TranslationPanel onSave={this.saveTarget} tIns={AutographaStore.tIns[0]} tDel={AutographaStore.tDel[0]} /></div>
                     </div>
                 }
                 {
                     AutographaStore.layout === 2 &&
                     <div className="parentdiv">
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout={1} /><ReferencePanel refContent={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={21} layout={1} /><ReferencePanel refContent={refContent} refIds={AutographaStore.activeRefs[0]} font={this.state.setFont1} /></div>
 
-                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout={2} /><ReferencePanel refContent={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns={AutographaStore.tIns[1]} tDel={AutographaStore.tDel[1]} /></div>
+                        <div className="layout2x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={22} layout={2} /><ReferencePanel refContent={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns={AutographaStore.tIns[1]} tDel={AutographaStore.tDel[1]}  font={this.state.setFont2}/></div>
                         <div style={{ padding: "10px" }} className="layout2x"><TranslationPanel onSave={this.saveTarget} tIns={AutographaStore.tIns[0]} tDel={AutographaStore.tDel[0]} /></div>
                     </div>
                 }
                 {
                     AutographaStore.layout === 3 &&
                     <div className="parentdiv">
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout={1} /><ReferencePanel refContent={refContent} refIds={AutographaStore.activeRefs[0]} /></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 0)} refIds={AutographaStore.activeRefs[0]} id={31} layout={1} /><ReferencePanel refContent={refContent} refIds={AutographaStore.activeRefs[0]} font={this.state.setFont1} /></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout={2} /><ReferencePanel refContent={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns={AutographaStore.tIns[1]} tDel={AutographaStore.tDel[1]} /></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 1)} refIds={AutographaStore.activeRefs[1]} id={32} layout={2} /><ReferencePanel refContent={refContentOne} refIds={AutographaStore.activeRefs[1]} tIns={AutographaStore.tIns[1]} tDel={AutographaStore.tDel[1]} font={this.state.setFont2} /></div>
 
-                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout={3} /><ReferencePanel refContent={refContentTwo} refIds={AutographaStore.activeRefs[2]} tIns={AutographaStore.tIns[2]} tDel={AutographaStore.tDel[2]} /></div>
+                        <div className="layout3x"><Reference onClick={this.handleRefChange.bind(this, 2)} refIds={AutographaStore.activeRefs[2]} id={33} layout={3} /><ReferencePanel refContent={refContentTwo} refIds={AutographaStore.activeRefs[2]} tIns={AutographaStore.tIns[2]} tDel={AutographaStore.tDel[2]} font={this.state.setFont3} /></div>
                         <div style={{ padding: "10px" }} className="layout3x"><TranslationPanel onSave={this.saveTarget} tIns={AutographaStore.tIns[0]} tDel={AutographaStore.tDel[0]} /></div>
                     </div>
                 }
