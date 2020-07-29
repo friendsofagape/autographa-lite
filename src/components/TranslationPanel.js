@@ -5,6 +5,7 @@ import Statistic  from '../components/Statistic';
 import { FormattedMessage } from 'react-intl';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import '../assets/stylesheets/context-menu.css';
+import FontSelect from "./FontSelect";
 const i18n = new(require('../translations/i18n'));
 const db = require(`${__dirname}/../util/data-provider`).targetDb();
 let verseId = 0;
@@ -198,6 +199,7 @@ class TranslationPanel extends React.Component {
 				<div className="row">
 				<div className="col-12 center-align">
 					<p className="translation"><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
+					<FontSelect />
 				</div>
 				</div>
 				<div className="row">

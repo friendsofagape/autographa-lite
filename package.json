@@ -15,6 +15,7 @@
 		"diff-match-patch": "^1.0.0",
 		"electron-squirrel-startup": "^1.0.0",
 		"fs-jetpack": "^1.0.0",
+		"get-system-fonts": "^2.0.2",
 		"jquery": "^3.3.1",
 		"leveldown": "^5.0.0-2",
 		"material-ui": "^0.20.2",
