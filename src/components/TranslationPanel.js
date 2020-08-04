@@ -181,10 +181,10 @@ class TranslationPanel extends React.Component {
   
   	render (){
 		let verseGroup = [];
-    	const toggle = AutographaStore.toggle;
+		const toggle = AutographaStore.toggle;
 		for (let i = 0; i < AutographaStore.chunkGroup.length; i++) {
 		let vid="v"+(i+1);
-		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap"}}>
+		verseGroup.push(<div key={i} id={`versediv${i+1}`} onClick={this.highlightRef.bind(this, vid, i)} style={{cursor: "text", whiteSpace: "pre-wrap", fontFamily: AutographaStore.fontselected}}>
 			<ContextMenuTrigger id={(AutographaStore.jointVerse[i] === undefined ? "true" : "false")} disable={(i+1) === 1 ? true : false } verseId = {parseInt(i,10)+1}  collect = {props => props}><span className='verse-num' key={i}>{(i+1)}</span>
 			<span contentEditable={AutographaStore.jointVerse[i] === undefined ? true : false} suppressContentEditableWarning={true} id={vid} data-chunk-group={AutographaStore.chunkGroup[i]} onKeyUp={this.handleKeyUp}>
 			{AutographaStore.jointVerse[i] === undefined ? AutographaStore.translationContent[i] : <FormattedMessage id="label-joint-with-the-preceding-verse(s)"/>}
@@ -198,8 +198,9 @@ class TranslationPanel extends React.Component {
 			<div className="col-editor container-fluid trans-margin">
 				<div className="row">
 				<div className="col-12 center-align">
-					<p className="translation"><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a></p>
-					<FontSelect />
+					<p className="translation" style={{lineHeight:"68px"}}><a href="javscript:;" style = {{fontWeight: "bold", pointerEvents: toggle ? "none" : "" }} onClick={() => this.openStatPopup()}><FormattedMessage id="label-translation" /></a>
+					<div style={{ width: 200, float:"right", paddingTop:"10px" }}><FontSelect /></div>
+					</p>
 				</div>
 				</div>
 				<div className="row">

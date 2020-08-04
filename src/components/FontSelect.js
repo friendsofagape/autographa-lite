@@ -1,85 +1,41 @@
-import React, {useState,useEffect} from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-const getSystemFonts = require('get-system-fonts');
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper
-  }
-}));
+import React, {useEffect} from 'react';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import AutographaStore from "./AutographaStore";
+const fontList = require('font-list');
 
 export default function FontSelect() {
-  const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const [options,setOption] = useState([
-    "Select Font"
-  ]);
+  const [font,setFont]=React.useState();
+  const [value, setValue] = React.useState("");
+  let filtered = [];
 
-  const handleClickListItem = event => {
-    setAnchorEl(event.currentTarget);
-    const files = getSystemFonts([]);
-    // console.log("fonts",files);
-    files.then(function(val) { 
-        console.log(val); 
-        setOption(val);
-    });
-  };
-
-  const handleMenuItemClick = (event, index) => {
-    setSelectedIndex(index);
-    setAnchorEl(null);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-//   useEffect(()=>{
-//     const files = getSystemFonts([]);
-//     // console.log("fonts",files);
-//     files.then(function(val) { 
-//         // console.log(val); 
-//         setOption(val);
-//     });
-//   })
+  useEffect(()=>{
+    fontList.getFonts()
+    .then(fonts => {
+      fonts.forEach(element => {
+        filtered.push(element.replace(/\"/gm,""));
+      });
+      setFont(filtered);
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }, [])
 
   return (
-    <div className={classes.root}>
-      <List component="nav" aria-label="Device settings">
-        <ListItem
-          button
-          aria-haspopup="true"
-          aria-controls="lock-menu"
-          onClick={handleClickListItem}
-        >
-          <ListItemText primary={options[selectedIndex]} />
-        </ListItem>
-      </List>
-      <Menu
-        id="lock-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        {options.map((option, index) => (
-          <MenuItem
-            key={option}
-            disabled={index === 0}
-            selected={index === selectedIndex}
-            onClick={event => handleMenuItemClick(event, index)}
-          >
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
-      <p style = {{fontFamily: "Liberation Sans Narrow"}}>Autographa AUTOGRAPHA</p>
+    <div>
+      <Autocomplete
+        inputValue={value}
+        onInputChange={(_, val) => {
+          setValue(val);
+          AutographaStore.fontselected=val;
+        }}
+        id="controllable-states-demo"
+        options={font}
+        renderInput={params => (
+          <TextField {...params} label="Change Font" variant="outlined" />
+        )}
+      />
     </div>
   );
 }
