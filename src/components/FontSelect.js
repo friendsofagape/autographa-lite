@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import AutographaStore from "./AutographaStore";
+import { FormattedMessage } from 'react-intl';
 const fontList = require('font-list');
 
 export default function FontSelect() {
@@ -33,7 +34,7 @@ export default function FontSelect() {
         id="controllable-states-demo"
         options={font}
         renderInput={params => (
-          <TextField {...params} label="Change Font" variant="outlined" />
+          <TextField {...params} label={<FormattedMessage id="label-change-font" />} variant="outlined" />
         )}
       />
     </div>

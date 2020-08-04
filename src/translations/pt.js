@@ -100,6 +100,7 @@ export default {
 	"label-none": "Nenhum",
 	"label-daily": "Diariamente",
 	"label-weekly": "Semanal",
+	"label-change-font": "mudar fonte",
 	"export-html": "HTML",
 	"export-usfm": "USFM",
 	"export-html-1-column": "1 colunas HTML",

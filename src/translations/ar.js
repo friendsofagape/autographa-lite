@@ -103,6 +103,7 @@ export default {
 	"label-none": "لا يوجد",
 	"label-daily": "اليومي",
 	"label-weekly": "أسبوعي",
+	"label-change-font": "تغيير الخط",
 	"export-usfm": "USFM",
 	"export-html-1-column": "1-تخطيط العمود HTML",
 	"export-html-2-column": "2-تخطيط العمود HTML",
