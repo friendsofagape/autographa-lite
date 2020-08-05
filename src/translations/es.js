@@ -101,6 +101,7 @@ export default {
 	"label-none": "Ninguno",
 	"label-daily": "Diario",
 	"label-weekly": "Semanal",
+	"label-change-font": "cambiar fuente",
 	"export-html": "HTML",
 	"export-usfm": "USFM",
 	"export-html-1-column": "1 columnas HTML",
