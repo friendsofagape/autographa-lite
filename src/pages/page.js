@@ -17,6 +17,8 @@ import it from 'react-intl/locale-data/it';
 import { observer } from "mobx-react";
 import AutographaStore from "../components/AutographaStore";
 import dbUtil from '../util/DbUtil';
+const db = require(`${__dirname}/../util/data-provider`).targetDb();
+const Constant = require("../util/constants");
 const i18n = new(require('../translations/i18n'))();
 const refDb = require("../util/data-provider").referenceDb();
 addLocaleData([...en, ...es, ...fr, ...it]);
@@ -47,7 +49,27 @@ class Page extends React.Component {
         }).catch((err) => {
             this.setState({dbsetup: false})
 
+		})
+		db.get('translatedBookNames', function (err, doc) {
+            if (err) {
+                localStorage.setItem('editBookNamesMode', false);
+                let doc = {
+                    _id: "translatedBookNames",
+                    books: Constant.booksEditList,
+                }
+                db.put(doc, function (err, response) {
+                    if (err) {
+                        return console.log(err);
+                    } else {
+                        window.location.reload()
+                    }
+                });
+                return console.log(err);
+            } else {
+                AutographaStore.translatedBookNames = doc.books
+            }
         })
+        AutographaStore.editBookNamesMode = localStorage.getItem('editBookNamesMode');
     }
     
 	componentWillMount(){
