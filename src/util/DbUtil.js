@@ -60,6 +60,10 @@ const setupRefDb = async () => {
       refArbVdtJson,
       refHiIrvJson
     ];
+
+    // Below code is for adding the stage 5 Hindi IRV into existing reference list,
+    // The code checks for the Bible if it is not available then push it into db and
+    // works for the app which updates from v1.4.0-beta.4 or lower version to above.
     db.get('refs').then(async(doc)=>{
       let array
       array = (doc.ref_ids)
