@@ -3,6 +3,7 @@ const bibleJson = require(`${__dirname}/../lib/full_bible_skel.json`);
 const refEnUlbJson = require(`${__dirname}/../lib/eng_ult.json`);
 const refEnUdbJson = require(`${__dirname}/../lib/eng_ust.json`);
 const refHiUlbJson = require(`${__dirname}/../lib/hin_irv.json`);
+const refHiIrvJson = require(`${__dirname}/../lib/hin_irv_s5.json`);
 const refArbVdtJson = require(`${__dirname}/../lib/arb_vdt.json`);
 const chunksJson = require(`${__dirname}/../lib/chunks.json`);
 const refsConfigJson = require(`${__dirname}/../lib/refs_config.json`);
@@ -49,13 +50,45 @@ const setupTargetDb = async () => {
 const setupRefDb = async () => {
   try {
     const db = dataProvider.referenceDb();
+    // db.open();
+    let bible;
     const bulkDocsArray = [
       refsConfigJson,
       refEnUlbJson,
       refEnUdbJson,
       refHiUlbJson,
-      refArbVdtJson
+      refArbVdtJson,
+      refHiIrvJson
     ];
+
+    // Below code is for adding the stage 5 Hindi IRV into existing reference list,
+    // The code checks for the Bible if it is not available then push it into db and
+    // works for the app which updates from v1.4.0-beta.4 or lower version to above.
+    db.get('refs').then(async(doc)=>{
+      let array
+      array = (doc.ref_ids)
+      bible=(doc.ref_ids).find((value)=>value.ref_id==="hin_irv_s5")
+      if (bible===undefined){
+        const ref_entry= {
+          "ref_id": "hin_irv_s5",
+          "ref_lang_code": "hin",
+          "ref_name": "Hindi-IRV-S5",
+          "isDefault": true
+        };
+        array.push(ref_entry);
+        doc.ref_ids=array;
+        db.put(doc).then((res)=>{
+          refHiIrvJson.forEach((val)=>{
+            db.get(val._id).then((doc) => {
+              val._rev = doc._rev;
+              db.put(val)
+            }, (err) => {
+              db.put(val)
+            })
+          })
+        })
+      }
+    })
     const setup = await setupDb({db, bulkDocsArray});
     await db.put(chunksJson);
     return setup;
